@@ -1,0 +1,28 @@
+!
+! DEFINE ARRAY OF DIMENSION (HIGHEST ELEMENT DEFINED X 8)
+! DEFINE ARRAY FOR MASK ITEMS (HIGHEST ELEMENT DEFINED X 1)
+!
+*DIM,minfo,array,elmiqr(0,14),1
+*DIM,rinfo,array,elmiqr(0,14),1
+*DIM,einfo,array,elmiqr(0,14),1
+*DIM,emask,array,elmiqr(0,14),1
+!
+!-------------------------------------------------------------------------------------------------------------------------------------------------------CHECK--V
+! FILL TEMPAR WITH STATUS, RAMP FUNCTION, MAT, TYPE & REAL
+!
+*vget,emask(1),ELEM,1,ESEL
+*vmask,emask(1)
+!
+*vmask,emask(1)
+*vget,minfo(1),ELEM,1,ATTR,MAT
+*vmask,emask(1)
+*vget,einfo(1),ELEM,1,ATTR,TYPE
+*vmask,emask(1)
+*vget,rinfo(1),ELEM,1,ATTR,REAL
+!
+*vmask,emask(1)
+*vfun,mcomp,comp,minfo
+*vmask,emask(1)
+*vfun,ecomp,comp,einfo
+*vmask,emask(1)
+*vfun,rcomp,comp,rinfo

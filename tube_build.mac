@@ -1,0 +1,83 @@
+/pmacro
+*get,rinfo,PARM,rval,TYPE
+*if,rinfo,NE,0,then
+   rval=400
+*else
+	rval=rval+1
+*endif
+tcheck=1
+cm,ltemp,line
+allsel,below,line
+lsel,r,p
+*get,lcheck,line,0,count
+*if,lcheck,eq,1,then
+	lnum=LSNEXT(0)
+	cmsel,,ltemp  $allsel,below,line
+	ksel,r,p
+	*get,kcheck1,kp,0,count
+	*if,kcheck1,EQ,2,then
+		knum1=KPNEXT(0)
+		knum2=KPNEXT(knum1)
+		kdist,knum1,knum2
+		odval=_RETURN
+		cmsel,,ltemp   $allsel,below,line
+		ksel,r,p
+		*get,kcheck2,kp,0,count
+		*if,kcheck2,EQ,2,then
+			tcheck=0
+			knum3=KPNEXT(0)
+			knum4=KPNEXT(knum3)
+			kdist,knum3,knum4
+			thkval=_RETURN
+			*get,lgot,line,lnum,LENG
+			*get,kn1,line,lnum,kp,1
+			*get,kn2,line,lnum,kp,2
+			kdist,kn1,kn2
+			lcalc=_RETURN
+            r,rval,odval,thkval,1,1,0
+            real,rval
+			*if,lcalc,eq,lgot,then
+				lesize,lnum,0.2,,
+			*else
+				lesize,lnum,,,9
+			*endif
+            type,1
+			lmesh,lnum
+            *if,lcalc,ne,lgot,then
+				cmsel,,ltemp   $allsel,below,line
+				ksel,r,p
+				kn4=KPNEXT(0)
+				NPKT,0,kn4
+				nsll,u,1
+				np1=NDNEXT(0)
+				lsel,,line,,lnum   $allsel,below,line
+				emodif,all,3,np1
+				emodif,all,type,3
+			*endif
+		*endif
+	*endif
+*endif
+
+*if,tcheck,EQ,0,then
+   knum1=
+	 knum2=
+	 knum3=
+	 knum4=
+	 lnum=
+	 lcheck=
+	 lcalc=
+	 lgot=
+	 kn1=
+	 kn2=
+	 kcheck1=
+	 kcheck2=
+	 _return=
+	 odval=
+	 thnkval=
+   cmsel,,ltemp
+   allsel,below,line
+   cmdele,ltemp
+*else
+	*msg,warn
+	Macro did not ran properly... a missing data on the requested information.
+*endif

@@ -1,0 +1,35 @@
+/pmacro
+tcheck=1
+cm,vtemp,volu
+cm,etemp,elem
+allsel,below,volu
+lsel,r,p
+*get,lcheck,line,0,count
+*if,lcheck,eq,2,then
+  lnum1=LSNEXT(0)
+  lnum2=LSNEXT(lnum1)
+  tcheck=0
+  *get,kn1,line,lnum1,kp,1
+  *get,kn2,line,lnum1,kp,2
+  *get,kn3,line,lnum2,kp,1
+  kwplan,1,kn1,kn2,kn3
+*endif
+
+*if,tcheck,EQ,0,then
+  tcheck=
+  lcheck=
+  lnum1=
+  lnum2=
+  kn1=
+  kn2=
+  kn3=
+  cmsel,a,vtemp
+  allsel,below,volu
+  cmsel,a,etemp
+  nsle
+  cmdele,vtemp
+  cmdele,etemp
+*else
+  *msg,warn
+  Macro did not ran properly... a missing data on the requested information.
+*endif

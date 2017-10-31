@@ -1,0 +1,25 @@
+! Pink
+cmsel,,mdl_air
+/color,elem,1,all
+! Magenta
+cmsel,,mdl_supply
+/color,elem,2,all
+! Purple
+cmsel,,mdl_scavenge
+/color,elem,3,all
+! Blue
+cmsel,,mdl_vsv_vbv
+/color,elem,4,all
+! LightBlue
+cmsel,,mdl_oil
+/color,elem,5,all
+! green/cyan
+cmsel,,mdl_l3
+/color,elem,7,all
+
+cmsel,all
+allsel
+
+abbres,,Catch\mac\general\c_prep,abr
+
+ save,assembly,db,,model

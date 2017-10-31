@@ -1,0 +1,15 @@
+echeck=elmiqr(0,13)
+nsle
+*do,i,1,1000,1
+	esln	
+	nsle
+	echeck2=elmiqr(0,13)
+	*msg,info,echeck,echeck2
+	Seleccion antes %I y despues %I
+	*if,echeck,eq,echeck2,then
+		*exit
+	*else
+		i=1
+		echeck=echeck2
+	*endif
+*enddo
