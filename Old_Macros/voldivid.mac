@@ -1,0 +1,45 @@
+!     This Macro slices the volume(s) by the working plane                 
+cswpla,40,0                                                                     
+*ask,ar10,'volu# to be sliced or 0 - plane',0
+*if,ar10,eq,0, THEN
+*get,mxxloc,kp,0,mxloc,x                                                        
+*get,mxyloc,kp,0,mxloc,y                                                        
+*get,mixloc,kp,0,mnloc,x                                                        
+*get,miyloc,kp,0,mnloc,y                                                        
+xlen=mxxloc-mixloc                                                              
+ylen=mxyloc-miyloc                                                              
+xfact=xlen*.3                                                                   
+yfact=ylen*.3                                                                   
+/user,1
+cm,tarea,area
+cmsel,u,tarea
+rectang,mixloc-xfact,mxxloc+xfact,miyloc-yfact,mxyloc+yfact   
+/pnum,area,1
+/noerase
+aplot
+/erase
+/pnum,area,0
+cmsel,a,tarea
+csys,0
+/auto
+Fnc_VSBA_div
+*ELSE
+cm,temp,volu
+vsel,s,volu,,ar10,,,1
+cswpla,40,0
+*get,mxxloc,kp,0,mxloc,x
+*get,mxyloc,kp,0,mxloc,y
+*get,mixloc,kp,0,mnloc,x
+*get,miyloc,kp,0,mnloc,y
+xlen=mxxloc-mixloc
+ylen=mxyloc-miyloc
+xfact=xlen*.3
+yfact=ylen*.3
+asel,none
+rectang,mixloc-xfact,mxxloc+xfact,miyloc-yfact,mxyloc+yfact
+*get,ar12,area,,num,max
+vsba,ar10,ar12
+cmsel,a,temp
+allsel,below,volu
+csys,0
+*ENDIF

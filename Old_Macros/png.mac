@@ -1,0 +1,12 @@
+/sys,rm *.png
+!NAME=
+!*DIM,NAME,CHAR,4
+!*get,name(1),active,,jobnam,,start,1
+!*ask,fname,filename for MS epsi file,'%name(1)%'
+fname=arg1
+/ui,copy,save,png,graph,color,reverse,portrait,yes
+/syp,rename_png,fname
+!/sys,cp *.jpg ~/temp
+/sys,mv *.png ~/"my pictures"
+!/sys,alldone
+

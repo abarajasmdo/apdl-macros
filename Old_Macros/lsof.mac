@@ -1,0 +1,7 @@
+!
+!         lsof.mac          This macro turns line numbers off.
+!
+/nopr                                                                           
+/pnum,line,   
+lplo                                                         
+/gopr                                                                           

@@ -1,0 +1,14 @@
+! alpl.mac   Plots Areas and Lines Simultaneously
+!
+! USAGE:     alpl   (no arguments)
+!
+/nopr
+aplo                                                                            
+/noer 
+/user                                                                          
+!/ploff,1,1,1,1
+lplo                                                                            
+/erase                                                                          
+!/ploff
+/gopr
+erase

@@ -1,0 +1,13 @@
+!
+!  make_21s  - loops thru selected nodes to make stif 21's
+!
+/NOPR
+PARSAV
+*GET,CNT,NODE,,COUNT
+ND=0
+*DO,LOOP,1,CNT
+ND=NDNEXT(ND)
+E,ND
+*ENDDO
+PARRES
+/GOPR

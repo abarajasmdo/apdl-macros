@@ -1,0 +1,162 @@
+!
+! macro pgaps:  builds stif 40 gaps between pressure faces for nearly
+!		coincident nodes. 
+!
+! requires:  Blade pressure face nodes selected
+!	A local coordinate system with Z normal to pressure face and
+!	x direction in slot axis direction
+!	The stif 40  element type established.
+!	Put target (external) disk nodes in component diskx
+!  BY: Dan Bohlen
+!
+!	Get model data
+!
+xtime
+/nopr
+*GET,ACTIV_CS,ACTIVE,,CSYS
+*GET,NNDS,NODE,,COUNT
+EMAX=ELMIQR(0,14)
+CM,DUMMY,NODE
+*DIM,NODES,ARRAY,2,NNDS
+N=0
+!	READ NODES INTO ARRAY
+*DO,I,1,NNDS
+N=NDNEXT(N)
+NODES(1,I)=N
+*ENDDO
+!*go,:jump
+!
+!	CHECK DISTANCES BETWEEN NODE PAIRS
+!
+*cfopen,ndcheck
+*vwrite
+( ' NODE PAIR Number      Node 1          Node 2          Dist Between Nodes')
+!
+!   set initial value for coupled set number to 1
+ND=0
+DMAX=0
+!  
+!       cycle through coupled sets
+!
+*DO,CP,1,NNDS
+!
+nall
+ND=NODES(1,CP)
+nodes(2,cp)=NNEAR(ND)
+d=distnd(ND,nodes(2,cp))
+*IF,D,GT,DMAX,THEN
+DMAX=D
+*ENDIF
+!
+!   if the distance is greater than .01, jump down to the 
+!   message that flags this line of output
+!
+*if,d,ge,.001,then
+!
+!   write the line of output with out the flag
+!
+*vwrite,cp,nd,nodes(2,cp),d
+(5x,f4.0,8x,f6.0,3x,f6.0,9x,f8.4,'  <-----')
+*ELSE
+*vwrite,cp,nd,nodes(2,cp),d
+(5x,f5.0,8x,f10.0,3x,f10.0,9x,f8.4)
+*ENDIF
+*ENDDO
+
+!   now that we're finished, close the file ndcheck
+*cfclos
+/UIS,MSGPOP,2
+*MSG,INFO,DMAX
+THE MAX DISTANCE BETWEEN ELEMENT NODE PAIRS IS %G
+
+!
+*msg,note
+/////////////////////////////////////////////////////////////////// &
+---> THE NODE PAIRS AND DISTANCES BETWEEN AR ON FILE "ndcheck" &
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+beep
+*ASK,GO_ON,0 - TO CONTINUE: 1 TO STOP,0
+*IF,GO_ON,GT,.1,:DONE
+!
+:jump
+!	GET USER INFO
+!
+/COM,
+/COM,THIS ASK DEFAULTS TO THE CURRENTLY ACTIVE SYSTEM.
+*ASK,ACTIV_CS,PRESS FACE CSYS:DEFAULT ACTIVE,ACTIV_CS
+CSYS,ACTIV_CS
+*MSG,INFO,EMAX
+MAX CURRENT ELEMENT NUMBER IS %G
+*ASK,ENEW,STARTING ELEMENT NUMBER CURRENT=,EMAX+1
+*ASK,NCOLS,NUMBER OF COLUMNS FWD TO AFT,1
+*ASK,NROWS,NUMBER OF ROWS INBOARD OUT,1
+
+
+!	START MAKING ELEMENTS
+
+!	DO LOOP TO SELECT MAX Y COLUMN OF NODES
+
+*DO,C,1,NCOLS
+
+Y0FF=.001
+CMSEL,S,DUMMY
+*GET,YMAX,NODE,,MXLOC,Y
+        *DO,N,1,10
+        NSEL,R,LOC,Y,YMAX-Y0FF,YMAX+Y0FF
+        *GET,NUM,NODE,,COUNT
+        *IF,NUM,EQ,NROWS,EXIT
+        *IF,NUM,LT,NROWS,THEN
+        *MSG,WARN,NUM,C
+        GOT %I NODES FOR COLUMN %I
+        *ELSE
+        *ENDIF
+        Y0FF=Y0FF-.001
+       *ENDDO
+	CM,ROW,NODE
+	CMSEL,S,DUMMY
+	CMSEL,U,ROW
+	CM,DUMMY,NODE
+!
+! 	MAKE ELEMENTS IN ROW R
+
+	*DO,R,1,NROWS
+	cmsel,s,row
+	*get,xMAX,node,,mnloc,x
+	*GET,YMAX,NODE,,MNLOC,Y
+	NLAST=NODE(xmax,YMAX,0)
+	r,enew,1e8,,,-1e-9
+	REAL,ENEW
+	nall
+	n2=NNEAR(NLAST)
+	EN,ENEW,NLAST,n2
+	NROTAT,NLAST
+	NROTAT,n2
+	ENEW=ENEW+1
+	cmsel,s,row
+	NSEL,U,NODE,,NLAST
+	cm,row,node
+	*ENDDO
+
+!	END CLOUMN LOOPS
+
+*ENDDO	
+beep
+:DONE
+NLAST=
+ND=
+YMIN=
+NUM=
+XMAX=
+FWD=
+R=
+N=
+cp=
+DMAX=
+D=
+ND=
+nodes=
+CMDEL,DUMMY
+CMDELE,ROW
+XTIME
+/gopr
+!

@@ -1,0 +1,27 @@
+!
+!  macro seal_prep.mac  does some preprocessing for a surfseal input file
+!
+!
+!	jobname
+/sys,rm surfseal.inp
+*cfopen,surfseal,inp
+*get,jn,active,,jobnam,,start,1
+*vwrit,jn
+("rrst,",A,".rst")
+!	title
+*get,t1,active,,title,,start,1
+*get,t2,active,,title,,start,9
+*get,t3,active,,title,,start,17
+*get,t4,active,,title,,start,25
+*get,t5,active,,title,,start,33
+*get,t6,active,,title,,start,41
+*get,t7,active,,title,,start,49
+*get,t8,active,,title,,start,58
+*get,t9,active,,title,,start,66
+*vwrit,t1,t2,t3,t4,t5,t6,t7,t8,t9
+("titl,"9A)
+!surfseal.inp
+!
+!
+*cfclos
+/sys,more surfseal.inp

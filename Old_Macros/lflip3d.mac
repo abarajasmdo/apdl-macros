@@ -1,0 +1,17 @@
+! This macro will flip the coord-system so that it is ok
+! for axisymmetric analysis. Uses system 11. Should be
+! executed right after reading in the IGES file.(in Prep7).
+! $Log: flip.mac,v $
+/com,Revision 1.1  1996/03/18  18:13:11  buyuk
+/com,Initial revision
+/com,
+! $Id: flip.mac,v 1.1 1996/03/18 18:13:11 buyuk Exp $
+! Osman Buyukisik 243-4282
+_nsys=arg1
+*if,_nsys,eq,0,then
+ _nsys=11
+*endif
+local,_nsys,0,0,0,0,-90
+csys,0
+ltran,_nsys,all,,,,,1
+_nsys=

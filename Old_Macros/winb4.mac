@@ -1,0 +1,22 @@
+/nopr
+!
+!    winb4.mac
+!
+!    a macro to set up the four standard view
+!    in the maximum window that ANSYS allows.
+!
+/wind,1,-1,.34,-1,0                                                                   
+,2,-1,.34,0,1                                                                         
+,3,.34,1.67,-1,0                                                                 
+,4,.34,1.67,0,1
+/auto,1
+rp4,1                                           
+/type,1,2                                                                       
+rp4,1                                                                                                                                                         
+/view,1                                                           
+/view,2,,1                                                                         
+/view,3,1                                                                       
+/view,4,1,1,1                                                                   
+/ploff,,,1
+
+/gopr

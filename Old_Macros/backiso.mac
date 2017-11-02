@@ -1,0 +1,6 @@
+/nopr 
+!
+!     backiso.mac           A macro to look at a model from the
+!                                       negative Z direction, isometric orientation.                                                                        
+/view,arg1,1,1,-1                                                               
+/gopr                                                                           

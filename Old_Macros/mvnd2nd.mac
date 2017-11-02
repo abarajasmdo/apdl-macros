@@ -1,0 +1,28 @@
+/nopr
+/pmacro
+cm,_tmp_,node
+*msg,note,
+Select node 2 b moved
+nsel,r,p
+nd=ndnext(0)
+cmsel,,_tmp_
+
+*msg,note,
+Select target node
+nsel,r,p
+target=ndnext(0)
+percent=1
+!*ask,percent, Percent dist nd to target 0..1,1
+cmsel,,_tmp_
+
+nmod,nd,nx(nd)+( (nx(target)-nx(nd))*percent ),ny(nd)+( (ny(target)-ny(nd))*percent ), nz(nd)+( (nz(target)-nz(nd))*percent )
+cmdele,_tmp_
+/eras
+!lplo
+!gplo
+!/replot
+noeras
+eplo
+/eras
+
+)/gopr

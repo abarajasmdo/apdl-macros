@@ -1,0 +1,35 @@
+/nopr
+
+!  Usage: arc3ptc,centerpoint,arcstartpoint,arcendpoint
+
+!          arg1 = the point in the middle of the arc
+
+!          arg2 = the point where the arc starts
+
+!          arg3 = the point where the arc ends
+
+!  This macro calculates the average radius between
+
+!  the center point and points at the beginning and
+
+!  end of the arc.
+
+
+*get,x1,kx,arg1                                                                 
+*get,y1,ky,arg1                                                                 
+*get,z1,kz,arg1                                                                 
+*get,x2,kx,arg2                                                                 
+*get,y2,ky,arg2                                                                 
+*get,z2,kz,arg2                                                                 
+*get,x3,kx,arg3                                                                 
+*get,y3,ky,arg3                                                                 
+*get,z3,kz,arg3                                                                 
+r2=((x2-x1)**2+(y2-y1)**2+(z2-z1)**2)**.5                                       
+r3=((x3-x1)**2+(y3-y1)**2+(z3-z1)**2)**.5                                       
+r=(r2+r3)/2                                                                     
+larc,arg2,arg3,arg1,r                                                           
+/gopr
+
+*msg,NOTE,r
+('Circle With Radius = ',f10.5)
+

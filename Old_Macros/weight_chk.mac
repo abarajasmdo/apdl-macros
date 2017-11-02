@@ -1,0 +1,137 @@
+
+fini
+
+*cfopen,weight2d,txt,,
+
+
+/sol
+ESEL,S,MAT,,71  
+allsel,below, elem
+/uis,msgpop,3
+irlf,-1
+psolve,elform
+psolve,elprep
+irlist
+*get,mtot,elem,,mtot,x
+*get,mcx,elem,,mc,x
+*get,mcy,elem,,mc,y
+*get,mcz,elem,,mc,z
+ 
+*cfwrite, , mtot, mcx, mcy, 
+
+fini
+/sol
+ESEL,S,MAT,,72  
+allsel,below, elem
+
+/uis,msgpop,3
+irlf,-1
+psolve,elform
+psolve,elprep
+irlist
+*get,mtot,elem,,mtot,x
+*get,mcx,elem,,mc,x
+*get,mcy,elem,,mc,y
+*get,mcz,elem,,mc,z
+ 
+*cfwrite, , mtot, mcx, mcy, 
+fini
+/sol
+ESEL,S,MAT,,73 
+allsel,below, elem
+/uis,msgpop,3
+irlf,-1
+psolve,elform
+psolve,elprep
+irlist
+*get,mtot,elem,,mtot,x
+*get,mcx,elem,,mc,x
+*get,mcy,elem,,mc,y
+*get,mcz,elem,,mc,z
+ 
+ fini
+*cfwrite, , mtot, mcx, mcy, 
+/sol
+ESEL,S,MAT,,74  
+allsel,below, elem
+
+/uis,msgpop,3
+irlf,-1
+psolve,elform
+psolve,elprep
+irlist
+*get,mtot,elem,,mtot,x
+*get,mcx,elem,,mc,x
+*get,mcy,elem,,mc,y
+*get,mcz,elem,,mc,z
+ 
+*cfwrite, , mtot, mcx, mcy, 
+
+fini
+/sol
+ESEL,S,MAT,,75  
+allsel,below, elem
+/uis,msgpop,3
+irlf,-1
+psolve,elform
+psolve,elprep
+irlist
+*get,mtot,elem,,mtot,x
+*get,mcx,elem,,mc,x
+*get,mcy,elem,,mc,y
+*get,mcz,elem,,mc,z
+ 
+*cfwrite, , mtot, mcx, mcy, 
+
+
+fini
+/sol
+ESEL,S,MAT,,76 
+allsel,below, elem
+
+/uis,msgpop,3
+irlf,-1
+psolve,elform
+psolve,elprep
+irlist
+*get,mtot,elem,,mtot,x
+*get,mcx,elem,,mc,x
+*get,mcy,elem,,mc,y
+*get,mcz,elem,,mc,z
+ 
+*cfwrite, , mtot, mcx, mcy, 
+
+fini
+/sol
+
+ESEL,S,MAT,,77 
+allsel,below, elem
+
+/uis,msgpop,3
+irlf,-1
+psolve,elform
+psolve,elprep
+irlist
+*get,mtot,elem,,mtot,x
+*get,mcx,elem,,mc,x
+*get,mcy,elem,,mc,y
+*get,mcz,elem,,mc,z
+ 
+*cfwrite, , mtot, mcx, mcy, 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

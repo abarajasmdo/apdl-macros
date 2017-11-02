@@ -1,0 +1,12 @@
+!
+! frss5.mac  calc rss of forces and moments in beam etab
+!
+sexp,fzi2,fzi,,2
+sexp,fyi2,fyi,,2
+sadd,fsum2,fzi2,fyi2
+sexp,mzi2,mzi,,2
+sexp,myi2,myi,,2
+sadd,msum2,mzi2,myi2
+sexp,fsumyz,fsum2,,.5
+sexp,msumyz,msum2,,.5
+

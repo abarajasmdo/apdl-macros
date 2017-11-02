@@ -1,0 +1,16 @@
+! macro gapfix  fixes stif 52 gaps by lining up the J to the I 
+PARSAV
+*GET,NELE,ELEM,,COUNT
+!IMME,0
+EL=0
+*DO,I,1,NELE
+EL=ELNEXT(EL)
+NI=NELEM(EL,1)
+NJ=NELEM(EL,2)
+NMOD,NJ,,NY(NI),NZ(NI)
+*ENDDO
+PARRES
+
+
+
+

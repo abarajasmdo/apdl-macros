@@ -1,0 +1,119 @@
+/nopr
+/com
+/com
+/com,  cut_forc.mac  extracts nodal forces from a result for input to another
+/com,                model.  Must have nodes selected and elems on the other
+/com,                side of the nodes from where you are modeling to get
+/com,                the forces to be applied ONTO the submodel.
+/com,
+/com,	{FORCES}     [NODES] [ELEMENTS]
+/com,
+/com,              <---._
+/com,               <--._|
+/com,    Elems in      ._| Select these elements in model w/ results
+/com,    submodel   -->._|
+/com,                  ._|
+/com,
+!  USAGE: CUTFORC,'COMP',SF  
+!		COMP=FX,FY,...   SF=FORCE SF FACTOR (OPTOPNAL)
+/com
+!		NOTE: COMP MUST BE ENCLOSED IN SINGLE QUOTES!!!
+/com
+! AUTHOR  D BOHLEN  LAST UPDATED 6/10/96
+/NOPR
+parsav
+!
+! GET DATABASE/RESULT GENL INFO
+!
+*get,jn,active,,jobnam,,start,1
+*get,q1,active,,title,,start,1
+*get,q2,active,,title,,start,9
+*get,q3,active,,title,,start,17
+*get,q4,active,,title,,start,25
+*get,q5,active,,title,,start,33
+*get,q6,active,,title,,start,41
+*get,q7,active,,title,,start,49
+*get,q8,active,,title,,start,57
+*get,q9,active,,title,,start,65
+*GET,LS,ACTIVE,,SET,LSTP
+*GET,SS,ACTIVE,,SET,SBST
+*GET,TM,ACTIVE,,SET,TIME
+*get,CI,ACTIVE,,SOLU,NCMIT
+*ASK,FC,FORCE COMP. (see output window) FY,'fy'
+/COM
+/com,Enter force component ie.  'fx' or 'fy' ...
+/com,'fz' , 'mx' , 'my' , 'mz'
+/com,THE CHARACTERS *MUST* BE ENCLOSED IN SINGLE QUOTES!!!
+*ASK,SF,SCALE FACTOR : (Result Force)*SF,1
+*ask,FWRIT,FORCE COMP TO WRITE,'FZ'
+*IF,SF,EQ,0,THEN
+SF=1
+*ENDIF
+CM,PMETCAM,NODE
+*GET,NNDS,NODE,,COUNT
+*DIM,NODES,ARRAY,NNDS
+ND=NDNEXT(0)
+*DO,K,1,NNDS
+*VFILL,NODES(K),DATA,ND
+ND=NDNEXT(ND)
+*ENDDO
+*CFOPEN,jn,cut_forces
+*vwrit,q1,q2,q3,q4,q5,q6,q7,q8,q9
+('/com,',9A)
+*vwrit,ls,ss,tm,ci
+('/com,Load step ',F4.0,', Substep ',F4.0,', Time ',F4.0,', Cum Iter ',F4.0)
+*VWRIT,JN
+('/com,JOBNAME='A,' * CUT BOUNDARY FORCES')
+*vwrit,FC,Fwrit
+('/com,Result file force->',A,'mapped to submodel force->',A)
+*vwrit,sf
+('/com,Result file forces/submodel F commands scale factor=',F12.6)
+*DO,I,1,NNDS
+NSEL,,,,NODES(I)
+FSUM
+*GET,NFORC,FSUM,,ITEM,FC
+*CFWRIT,F,NODES(I),%FWRIT%,NFORC*SF    ! SF FORCE FOR 160TH OF MODEL
+ND=NDNEXT(ND)
+*ENDDO
+*CFCLOS
+CMSEL,S,PMETCAM
+CMDELE,PMETCAM
+*msg,note,JN
+FORCES ON FILE %C .cut_forces
+blank=' '
+*uilist,%JN%,cut_forces
+!/syp,more,%blank%%jn%
+!
+TT=
+LS=
+SS=
+TM=
+NODES=
+ND=
+NNDS=
+NFORC=
+K=
+I=
+FC=
+COUNT=
+SF=
+CI=
+JN=
+Q1=
+Q2=
+Q3=
+Q4=
+Q5=
+Q6=
+Q7=
+Q8=
+Q9=
+PARRES
+/sys,rm junk.junk
+/gopr
+
+
+
+
+
+

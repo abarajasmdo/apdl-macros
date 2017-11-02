@@ -1,0 +1,104 @@
+/nopr
+!
+!  plall.mac  a macro to plot all desired entities
+!
+!  usage:  plall,kp,ls,ar,vl,n,el
+!       where 0 indicates this entity will not be
+!       plotted, and 1 means that it will be turned on.
+!
+!  special case:  if no numbers are entered, then all
+!                 entities are plotted.
+!
+!  store the screen settings in the temporary
+!  file "tempview".
+!/gsave,tempview
+!
+!  erase the screen
+erase
+!
+!  create a temporary component of the keypoints
+cm,_zdummy,kp
+ksel,all
+ksel,inve
+!
+!  make a kplot of the empty set of keypoints so the
+!  window outline will be on the screen
+kplo
+!
+!  select the original set of keypoints
+cmse,s,_zdummy
+!
+!  delete the dummy set of original keypoints
+cmde,_zdummy
+/plopts,wins,off
+/plopts,info,off
+!
+!
+/noer
+!
+!  if plall is entered without any arguments
+!  then plot everything.
+!
+*if,arg1,eq,0,then
+*if,arg2,eq,0,then
+*if,arg3,eq,0,then
+*if,arg4,eq,0,then
+*if,arg5,eq,0,then
+*if,arg6,eq,0,then
+vplo
+aplo
+lplo
+kplo
+eplo
+nplo
+*endif
+*endif
+*endif
+*endif
+*endif
+*endif
+!
+!
+!  if individual arguments are equal to 1, 
+!  then just plot the individual entities.
+!
+*if,arg4,eq,1,then
+vplo
+*endif
+!
+*if,arg3,eq,1,then
+aplo
+*endif
+!
+*if,arg2,eq,1,then
+lplo
+*endif
+!
+*if,arg1,eq,1,then
+kplo
+*endif
+!
+*if,arg6,eq,1,then
+eplo
+*endif
+!
+*if,arg5,eq,1,then
+nplo
+*endif
+!
+!  reset the plot options
+!
+/plopts,info,on
+/plopts,wins,on
+/erase
+!
+!  resume the original graphics settings
+!/gresume,tempview
+!
+!  a system dependent command to remove the
+!  temporary view file.  (Uncool programming...)
+!/sys,rm tempview
+!
+!
+/erase
+/gopr

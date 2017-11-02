@@ -1,0 +1,104 @@
+/nopr
+!
+!  aproj.mac  a macro to project the selected areas onto the
+!               current active coordinate system.  z=0 for the
+!               new areas.  50 points are created to describe
+!               the new lines.
+!
+!  lnum = number of originally selected lines
+!  lmax = max line ID number in the original set
+!  kmax = max kp ID number in the original set
+!
+!  make sure we're in prep7
+/prep7
+!
+!  create a component of the original lines
+cm,lorig,line
+!
+!  create a component of the original kps
+cm,kporig,kp
+!  create a component of the original areas
+cm,areas,area
+!  create a component which will hold the original and new
+!  areas
+cm,allareas,area
+!
+!  get the number of selected areas
+*get,anum,area,,count
+!
+!  start with the lowest area ID
+areaid=0
+!
+*do,k,1,anum
+!  select the original component of areas
+cmse,s,areas
+!
+!  start with the next highest area ID
+areaid=arnext(areaid)
+!
+!  select this area
+asel,s,area,,areaid
+!  get the lines on this area
+lsla
+!
+!  create a component of these lines so we can 
+!  remove them from the selected set of lines when
+!  we create the new area
+cm,lnarea,line
+!
+!  call lproj.mac to project the lines for this area
+lproj
+!
+!  unselect the component of lines for the original
+!  area from the currently selected lines
+cmse,u,lnarea
+!
+!  the remaining lines will be used to create an area
+al,all
+!
+!  print a progress message for the user
+*msg,info,k,anum
+Just created area %i of %i total areas
+!
+!  additionally select the areas in allareas
+cmse,a,allareas
+!
+!  store the old version of allareas with the new area
+!  which was just created
+cm,allareas,area
+!  go to the top of the do-loop and do the next area
+*enddo
+!  
+!  select the new and old areas
+cmse,s,allareas
+!
+!  unselect the original areas, leaving the new areas
+cmse,u,areas
+!  
+!  select the lines on the new areas
+lsla
+!
+!  select their keypoints
+ksll
+!
+!  merge any coincident keypoints
+numm,kpoi,.0001,.0001
+!
+!  now that we have all the new entities we created, lets
+!  additionally select the original kps, lines, and areas
+cmse,a,kporig
+cmse,a,lorig
+cmse,a,areas
+!  
+!
+!  delete the temporary components
+cmde,kporig
+cmde,lorig
+cmde,areas
+cmde,allareas
+!
+!  clean up the parameters
+anum=
+areaid=
+k=
+/gopr

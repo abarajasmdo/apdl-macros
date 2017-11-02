@@ -1,0 +1,13 @@
+parsav
+*GET,NNDS,NODE,,COUNT
+N=0
+imme,0
+*DO,I,1,NNDS
+N=NDNEXT(N)
+*GET,XANGLE,NODE,N,ANG,ZX
+NMODIF,N,,,,,,(-1)*XANGLE
+*ENDDO
+PARRES
+imme,1
+
+

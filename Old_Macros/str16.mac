@@ -1,0 +1,63 @@
+/nopr
+!                                                                                                                                 
+!     str16.mac       This macro get stresses and forces on STIF16 elements
+!
+/nopr                                                                          
+!    von mises stress at node i, STIF16
+stress,sigi,16,27                                                           
+!    von mises stress at node j, STIF16    
+,sigj,16,31                                                 
+!    direct (axial) stress at node i, STIF16                    
+,sdi,16,13                                                        
+!    bending stress at node i, STIF16              
+,sbi,16,14
+!    torsional stress at node i, STIF16
+,sti,16,15
+!    hoop stress at node i, STIF16
+,spi,16,16
+!    shear stress at node i, STIF16
+,ssi,16,17
+!    direct (axial) stress at node j, STIF16
+,sdj,16,18
+!    bending stress at node j, STIF16
+,sbj,16,19
+!    torsional stress at node j, STIF16
+,stj,16,20
+!    hoop stress at node j, STIF16
+,spj,16,21
+!    shear stress at node j, STIF16
+,ssj,16,22
+!    stress intensification factor at node i, STIF16
+,sifi,16,32
+!    stress intensification factor at node j, STIF16
+,sifj,16,33
+!    average element temperature
+,tavg,16,34
+!     average element pressure
+,eprs,16,37
+
+,fxi,16,1
+
+,fyi,16,2
+
+,fzi,16,3
+
+,mxi,16,4
+
+,myi,16,5
+
+,mzi,16,6
+
+,fxj,16,7
+
+,fyj,16,8
+
+,fzj,16,9
+
+,mxj,16,10
+
+,myj,16,11
+
+,mzj,16,12
+                                                                
+/gopr                                                                                                                                          

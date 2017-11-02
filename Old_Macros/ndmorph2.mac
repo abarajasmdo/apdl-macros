@@ -1,0 +1,23 @@
+!  Creates dnsol commands for
+!  run ndmorph1 first
+!
+*get,nnds,node,,count
+csys,0
+*dim,nnode,,nnds,4
+n1=ndnext(0)
+*do,loop,1,nnds
+nnode(loop,1)=n1
+nnode(loop,2)=nx(n1)
+nnode(loop,3)=ny(n1)
+nnode(loop,4)=nz(n1)
+n1=ndnext(n1)
+*enddo
+!
+/post1
+rsys,0
+*do,loop,1,nnds
+dnsol,onode(loop,1),U,X,nnode(loop,2)-onode(loop,2),nnode(loop,3)-onode(loop,3),nnode(loop,4)-onode(loop,4)
+*enddo
+/prep7
+
+

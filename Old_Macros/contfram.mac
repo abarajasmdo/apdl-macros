@@ -1,0 +1,19 @@
+! ----- Create animation sequence for last contour plot-----
+*ask,ar10,number of frames,12
+    /dscale,1,user            ! Hold previous autoscaling from displaced plot 
+    /repl
+    /contour,1,,user          ! Hold previous autoscaling value for contours
+    /user                     ! Hold previous autoscaling values for display 
+			      !     and distance focus
+    /seg,dele                 ! Remove any stored images from local seg memory
+    /seg,multi                ! Turn on the local seg memory storage capability
+    *do,index,1,ar10          ! Start of a DO loop
+        set,1,1,index/ar10    ! Read in results with values scaled by 1/N
+    arg2=CHRVAL(index)
+    arg3=CHRVAL(ar10)
+    /title,LOAD = %arg2%/%arg3% OF TOTAL LOAD
+        /repl
+    *enddo                    ! End of DO loop
+    /seg,off                  ! Turn off the local seg memory storage capability
+    /auto                     ! Return to autoscaling for display dist & focus
+    /contour,1,,auto

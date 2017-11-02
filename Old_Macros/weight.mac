@@ -1,0 +1,15 @@
+/nopr
+parsav
+totmass=0
+mass=
+*do,loop,1,5
+*ask,mass,mass for item %loop%,0
+*if,mass,eq,0,*exit
+totmass=totmass+mass
+*enddo
+weight=totmass*32.2*12
+*msg,info,weight
+Total weight = %g lbs
+parres
+totmass=
+/gopr

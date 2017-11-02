@@ -1,0 +1,55 @@
+/nopr
+parsav,all
+/uis,msgpop,3
+!
+!      wavopt5.mac   A macro which will run through all the
+!                                possible wavefront calculations.
+!
+/runst
+rwfrnt
+*get,start_wf,runst,,rwfrnt,rms
+/prep7
+eall
+nall
+*msg,note
+Doing WAVES .....
+waves
+csys,0
+*msg,note
+Doing CSYS 0 .....
+wsort,all
+csys,1
+*msg,note
+Doing CSYS 1 .....
+wsort,all
+csys,2
+*msg,note
+Doing CSYS 2 .....
+wsort,all
+MAXCS=csyiqr(0,14)
+*DO,N,11,MAXCS
+*msg,note,n
+Checking for csys %i
+/outp,junk,me
+*get,CHK,CDSY,N,ATTR,KCS
+/outp,term
+*if,chk,lt,0,*CYCLE
+*msg,NOTE,n
+Doing CSYS %I ....
+csys,n
+wsort,all
+*ENDDO
+*get,end_wf,runst,,rwfrnt,rms
+*MSG,INFO,START_WF,END_WF
+STARTING WF= %G , ENDING WF= %G
+csys
+n=
+CHK=
+/uis,msgpop,2
+parres
+/gopr
+/prep7
+
+
+
+

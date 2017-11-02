@@ -1,0 +1,21 @@
+!ll
+!    This Macro slices the current volume at the working plane                 
+!!                                                                              
+cm,temp,volu
+vsel,s,volu,,arg1,,,1                                                           
+cswpla,40,0                                                                     
+*get,mxxloc,kp,0,mxloc,x                                                        
+*get,mxyloc,kp,0,mxloc,y                                                        
+*get,mixloc,kp,0,mnloc,x                                                        
+*get,miyloc,kp,0,mnloc,y                                                        
+xlen=mxxloc-mixloc                                                              
+ylen=mxyloc-miyloc                                                              
+xfact=xlen*.3                                                                   
+yfact=ylen*.3                                                                   
+asel,none                                                                       
+rectang,mixloc-xfact,mxxloc+xfact,miyloc-yfact,mxyloc+yfact                     
+*get,arnum,area,,num,max                                                        
+vsba,arg1,arnum                                                                 
+cmsel,a,temp
+allsel,below,volu
+csys,0

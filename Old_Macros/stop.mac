@@ -1,0 +1,7 @@
+/usr/bin/l $PWD/*.D* > $PWD/loop.files
+echo "*STOP">$PWD/stop
+while read files
+do
+cat $PWD/stop $files > $PWD/temp
+cp $PWD/temp $files
+done < $PWD/loop.files

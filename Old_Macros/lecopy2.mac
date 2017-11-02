@@ -1,0 +1,148 @@
+From e067976@asbc22.phx1.aro.allied.com Tue Jan 21 15:55:01 EST 1997
+Received: from gemb1.ae.ge.com by c0112.ae.ge.com with SMTP
+	(1.37.109.16/16.2) id AA045540101; Tue, 21 Jan 1997 15:55:01 -0500
+Return-Path: <e067976@asbc22.phx1.aro.allied.com>
+Received: from thomas.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA20264; Tue, 21 Jan 1997 15:52:54 -0500
+Received: from ns.ge.com (ns.ge.com [192.35.39.24]) by thomas.ge.com (8.8.4/8.7.5) with ESMTP id PAA24818 for <dan.bohlen@ae.ge.com>; Tue, 21 Jan 1997 15:55:25 -0500 (EST)
+Received: from tmpil001.tmp.allied.com (tmpil001.tmp.allied.com [198.80.19.2]) by ns.ge.com (8.8.4/8.7.3) with SMTP id PAA24067 for <dan.bohlen@ae.ge.com>; Tue, 21 Jan 1997 15:50:48 -0500 (EST)
+Received: by tmpil001.tmp.allied.com id AA17629
+  (InterLock SMTP Gateway 3.0 for dan.bohlen@ae.ge.com);
+  Tue, 21 Jan 1997 13:52:28 -0700
+Message-Id: <199701212052.AA17629@tmpil001.tmp.allied.com>
+Received: by tmpil001.tmp.allied.com (Internal Mail Agent-1);
+  Tue, 21 Jan 1997 13:52:28 -0700
+Date: Tue, 21 Jan 1997 13:54:27 -0700
+From: John Crawford <e067976@asbc22.phx1.aro.allied.com>
+Apparently-To: dan.bohlen@ae.ge.com
+Status: R
+
+
+
+Dan,
+
+Here what you need to set up the line-mesh-copy function in ANSYS.
+There is the granule stuff, and the macro it calls.  See if it works
+okay.
+
+John
+
+
+
+
+:! **********************************************
+:N Fnc_LECOPY
+:S      0,     0,     0
+:T Cmd_P
+:C )! Fnc_LECOPY
+:A COPY LDIV
+:D Copy LDIV
+:C )cm,_Y1,line
+Inp_P
+Cmd_lsel
+Fld_0
+ Prm_Copy Mesh Criteria of One
+Fld_0
+ Prm_ Line to Another Line(s)
+ Fld_2
+  Typ_DEF_R
+ Fld_5
+  Prm_  Pick or enter line
+  Typ_LINE
+  Min_1
+  Cnt_1
+  PCN_0
+Cal_Fnc_LECOPY2
+:E END
+:! 
+:N Fnc_LECOPY2
+:S      0,     0,     0
+:T Cmd_N
+:C )! Fnc_LECOPY2
+:A NODES
+:D Copy LDIV/SPAC
+:C )cm,_Y2,line
+:C )cmsel,s,_Y1
+:C )cmsel,u,_Y2
+Inp_P
+Cmd_lsel
+ Fld_2
+  Typ_DEF_R
+ Fld_5
+  Prm_  Pick or enter line(s)
+  Typ_LINE
+  Min_1
+  Cnt_s
+  PCN_1
+   PFM_1
+Cmd_lmcopy2
+:E END
+:! **********************************************
+
+
+
+
+/nopr
+!
+!  lmcopy2.mac a macro to copy one line's meshing
+!              parameters to other lines.
+!
+!              this macro is called from a granule
+!
+!              first select the example line, then select
+!              the lines which will be given the meshing
+!              control parameters.
+!
+!              the granule provides the prototype line in
+!              component _Y2, and the set of lines which
+!              will have the ndiv/spac criteria from
+!              the prototype line applied to them is in
+!              component _Y3.  The set of originally
+!              selected lines is in component _Y1.
+!
+!  written by: John Crawford
+!
+cm,_Y3,line
+!  get the example line
+cmse,s,_Y2
+!
+!  get it's ndiv and spacing attributes
+*get,arg21,line,lsnext(0),attr,ndiv
+!
+!  check to see if ndiv=0, if so then set it
+!  to -1 so that 0 line divisions will be assigned.
+*if,arg21,eq,0,then
+arg21=-1
+*endif
+!
+!*get,arg22,line,lsnext(0),attr,spac
+!
+!
+!  select the group of lines which will have ndiv and spac
+!  applied to them
+cmse,s,_Y3
+!
+lesi,all,,,arg21,arg22,1
+!
+!  get the originally selected set of lines
+cmse,s,_Y1
+!
+!  delete the components
+cmde,_Y1
+cmde,_Y2
+cmde,_Y3
+!
+/gopr
+
+
+
+
+
+
+
+
+
+
+
+
+

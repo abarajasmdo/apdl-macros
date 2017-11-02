@@ -1,0 +1,113 @@
+!
+!      usage xytemp50
+!
+!  this macro calculates the thermal growth for CF6-50.   The macro selects nodes
+!  that have some fixed nodal displacement and puts the radial and axial 
+! displacements as boundary conditions.  NOTE! the nodes are rotated into the
+! engine cylindrical coordinate system 11 (which should exist prior to running the
+! macro) other fixities should be added before (with caution) or after the macro.
+! this version is for ANSYS44A. Thermal data from dwg 9105M12. The 
+! displacements calculated assume the model connection is on the engine casing.
+!
+dsys,0
+csys,11
+nsel,d,-9e9,9e9  ! select all nodes with some displacemnet BC
+nrot,all
+csys,0
+!
+*get,n,ndmn    ! get node min/max for looping control
+*get,nmax,ndmx
+!
+!  loop to calc and assign nodal displacements
+!
+:lp
+!
+*get,r,nx,n
+*get,z,nz,n
+!
+*if,z,lt,195.908,:err
+*if,z,le,235.821,:gp1
+*if,z,le,245.611,:gp2
+*if,z,le,279.181,:gp3
+*if,z,le,292.536,:gp4
+*if,z,gt,292.536,:err
+!
+!   constants
+!
+:gp1
+zl=195.908
+zh=235.821
+dzl=-.005
+dzh=.1
+drl=.053
+drh=.395
+*go,:cal
+!
+:gp2
+zl=235.821
+zh=245.611
+dzl=.1
+dzh=.185
+drl=.395
+drh=.25
+*go,:cal
+!
+:gp3
+zl=245.611
+zh=279.181
+dzl=.185
+dzh=.478
+drl=.25
+drh=.331
+*go,:cal
+!
+:gp4
+zl=279.181
+zh=292.536
+dzl=.478
+dzh=.596
+drl=.331
+drh=.468
+*go,:cal
+!
+!
+!
+! use constants to calculate thermal displacements
+!
+!
+:cal
+!
+dz=((z-zl)/(zh-zl))*(dzh-dzl)+dzl
+dr=(((z-zl)/(zh-zl))*(drh-drl)+drl)/2
+!
+d,n,uz,dz
+d,n,ux,dr
+!
+*if,n,ge,nmax,:end     ! do last node yet? if not unselect node, get next highest one
+!                                   and go to start of loop.  
+nuse,,n
+*get,n,ndmn
+*go,:lp
+!
+:err
+*msg,error,n
+(' *** ERROR***  -> Z coord of node',i6,'  is outside macro limits')
+!*ask,enter,key to clear screen
+!
+:end
+csys,0
+dsys,0
+dz=
+dr=
+zl=
+zh=
+dzl=
+dzh=
+drl=
+drh=
+n=
+nmax=
+z=
+r=
+
+

@@ -1,0 +1,38 @@
+!     This Macro slices the volume(s) by an engine radius 
+parsav
+/pmacro
+cm,tmp,AREA
+csys,11	                
+*msg,info,
+select AREA
+Asel,r,p
+*ask,div_rad,Enter radius; 0 to pick KP,0
+*if,div_rad,eq,0,then
+ksel,r,p
+kpchop=kpnext(0)
+div_rad=kx(kpchop)
+*endif
+
+!*get,vol2div,vlnext(0)
+ALLSEL,BELOW,AREA 
+*get,mxzloc,kp,0,mxloc,z                                                        
+*get,mxyloc,kp,0,mxloc,y                                                        
+*get,mizloc,kp,0,mnloc,z                                                        
+*get,miyloc,kp,0,mnloc,y
+!  create keypoints and dividing area
+kstart=kpinqr(0,14)+1
+k,kstart,div_rad,miyloc-1,mizloc-.1
+k,kstart+1,div_rad,miyloc-1,mxzloc+.1
+k,kstart+2,div_rad,mxyloc+1,mxzloc+.1
+k,kstart+3,div_rad,mxyloc+1,mizloc-.1
+a,kstart, kstart+1,   kstart+2,  kstart+3,                                      
+achop=_return
+!*ask,aok,ok to do the chopping? 1=yes,0
+!*if,aok,eq,1,then
+Asba,all,%achop%
+!*endif
+cmsel,a,tmp
+cmdele,tmp
+parres
+
+

@@ -1,0 +1,63 @@
+! sets area attributes of all selected areas to mat=XARG1 leaving other att alone
+/pmacro
+parsav
+cm,_start_,area
+asel,r,p
+cm,_temp_,area
+*get,nofa,area,,count
+qarea=arnext(0)
+*if,nofa,eq,1,then
+*get,qmat,area,qarea,attr,mat
+*get,qreal,area,qarea,attr,real
+*get,qtype,area,qarea,attr,type
+*get,qesys,area,qarea,attr,esys
+*else
+qmat=0
+qreal=0
+qtype=0
+qesys=0
+*endif
+
+
+zmultipro,'start',4  !  number of params
+*cset,1,3,XARG1,'mat attr (zero=leave unchanged)',qmat
+*cset,4,6,XARG2,'real attr (zero=leave unchanged)',qreal
+*cset,7,9,XARG3,'type attr (zero=leave unchanged)',qtype
+*cset,10,12,XARG4,'esys attr (zero=leave unchanged)',qesys
+zmultipro,'end'
+
+*do,loop,1,nofa
+asel,,,,qarea
+
+*if,XARG1,lt,1,then
+*get,qmat,area,qarea,attr,mat
+*else
+qmat=XARG1
+*endif
+
+*if,XARG2,lt,1,then
+*get,qreal,area,qarea,attr,real
+*else
+qreal=XARG2
+*endif
+
+*if,XARG3,lt,1,then
+*get,qtype,area,qarea,attr,type
+*else
+qtype=XARG3
+*endif
+
+*if,XARG4,lt,1,then
+*get,qesys,area,qarea,attr,esys
+*else
+qesys=XARG4
+*endif
+
+aatt,qmat,qreal,qtype,qesys
+cmsel,,_temp_
+qarea=arnext(qarea)
+*enddo
+cmsel,,_start_
+cmdele,_start_
+cmdele,_temp_
+parres

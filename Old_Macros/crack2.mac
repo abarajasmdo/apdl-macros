@@ -1,0 +1,35 @@
+!
+! below.mac  goes thru all components, for those that are assemblies
+!		select areas and below and make new assembly
+PARSAV
+zmof
+*GET,_NUM,COMP,,NCOMP	! # OF COMPS
+!*DO,C,1,2
+*DO,C,1,_NUM
+*GET,_NAME,COMP,C,NAME
+*GET,SUB_,COMP,%_NAME%,NSCOMP
+*IF,SUB_,GT,0,THEN
+CMSEL,,%_NAME%
+!LSLA
+!KSLL
+!NSLA,,1 
+!ESLN,,1 
+eplot
+*ASK,DUMMY,RETURN FOR NEXT) HERE IS ASSEMBLY %_NAME% ,0
+*ENDIF
+*ENDDO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

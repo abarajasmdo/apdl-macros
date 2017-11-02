@@ -1,0 +1,14 @@
+!
+!  nubox.mac  UnSelects box of nodes in active coordinate system
+!
+!    Select four nodes that define the edges of the box.
+!
+*get,left,ny,min
+*get,rght,ny,max
+*get,top,nx,max
+*get,bott,nx,min
+nelem
+nusel,y,left,rght
+!nusel,x,bott,top
+enode,1
+

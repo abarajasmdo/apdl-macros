@@ -1,0 +1,41 @@
+/nopr
+!      Macro npli5.mac
+!       
+!      Usage:      npli5,node i.d.
+!
+!      This macro lists nodal coordinates with 
+!      greater accuracy than the default ANSYS
+!      command "nlist".  
+!
+!       For ANSYS 5.0
+!
+!      The coordinate is listed in the currently
+!       selected CSYS.
+!
+*if,arg1,le,0,:eloop  
+*get,ar11,nx,arg1                                                                 
+,ar12,ny,arg1                                                                     
+,ar13,nz,arg1              
+,ar15,ntxy,arg1
+,ar16,ntyz,arg1
+,ar17,ntxz,arg1                                                       
+*get,ar14,csys
+!*msg,info,arg1,ar11,ar12,ar13
+!(' Coords. of node ',f5.0,'  are',3f14.7)                                        
+!*msg,info,ar15,ar16,ar17,ar14
+!(' ',6x,'with rotation angles',3f14.7,/,6x,' in CSYS ',f3.0)
+*msg,info,arg1,ar11,ar12,ar13,ar14
+('  Node %i is at %g %g %g/  in CSYS %i
+*ask,enter,Hit the enter key to clear the screen
+*go,:end
+:eloop
+*msg,info
+ Node number must be a positive integer 
+*ask,enter,Hit the enter key to clear the screen
+:end
+
+/gopr                     
+
+
+
+

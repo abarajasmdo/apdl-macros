@@ -1,0 +1,23 @@
+/nopr
+!
+!            case.mac             
+!
+!            Description
+!
+!                 This macro will post process and do a root
+!            sum square operation on 3 output sets like those
+!            which result from 3 DOF excitation.
+!
+!
+!    
+
+lclim,4                                                                         
+lcase,1                                                                         
+set,1,arg1                                                                      
+lcase,2                                                                         
+set,2,arg1                                                                      
+lcase,3                                                                         
+set,3,arg1                                                                      
+lcsrss,4,1,2,3                                                                  
+lcase,4                                                                         
+/gopr

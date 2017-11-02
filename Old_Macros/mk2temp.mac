@@ -1,0 +1,275 @@
+!  mk2temp.mac  for ANSYS44A
+!
+!  a macro to create a fake material temperature table so that
+! ansys will calculate the case temperature for a given
+! Z plane coordinate.
+!
+!   start with a new model space, as this file creates 6 material
+!   property tables.
+!
+!   use   /inp,maketemp,mac   to input this data
+!
+!  to use this data....
+!       for engine temp at a Z location
+!        mpli,1,,,evlt,ZPLANE
+!
+!       engine temp is in two tables
+!
+!         table 1 - z=201.6 to 246.1
+!         table 2 - z=246.1 to 317.6
+!
+!       for axial growth growth at a Z location
+!         mpli,7,,,evlt,ZPLANE
+!
+!       for material coef. of thermal expansion
+!       use mat table 3 - M152        
+!              mat table 4 - IN718
+!              mat table 5 - R220
+!              mat table 6 - WASPALLOY
+!
+!          Z Coordinate      Material Table     Material Name
+!           201.6 - 222.3             3                        M152
+!           222.3 - 236.8             4                        IN718
+!           236.8 - 262.9             5                         R220
+!           262.9 - 271.8             4                        IN718
+!           271.8 - 304.9             6                   WASPALLOY
+!           304.9 - 317.6             4                        IN718
+!
+!    enter mpli,TABNUM,,,evlt,TEMP    for value of alpha
+!
+!    a simple macro like the one listed below could be used to
+!    display both temp and axial growth
+!
+!     *create,tempax,mac
+!     mpli,1,,,evlt,arg1
+!     mpli,7,,,evlt,arg1
+!     *end
+!
+!  mp,stloc,t1,t2,t3,t4,t5,t6
+
+mptemp,1,201.6,206,210,214,218,222.3
+,7,224,226,228.6,230,231,232.3
+,13,233,235,236.8,241.6,243.9,246.1
+
+!  mpdata,lab,mat,stloc,c1,c2,c3,c4,c5,c6
+
+mpda,ex,1,1,363.05,389.84,438.35,488.78,542.01,566.77
+mpda,ex,1,7,592.28,596.42,674.87,795.60,797.1,725.23
+mpda,ex,1,13,624.1,630.15,955.65,1100.3,1159,1173.7
+
+mptemp,1,246.1,246.9,248.3,250.3,252,256.1
+,7,262.9,273.1,293,297,301,304.9
+,13,308,311,314,317.6
+
+!  mpdata,lab,mat,stloc,c1,c2,c3,c4,c5,c6
+
+mpda,ex,2,1,1173.7,1176.2,1170,1157.8,1135.8,1130.6
+mpda,ex,2,7,920.58,955.78,871.63,821.07,783.05,863.57
+mpda,ex,2,13,947.23,950.59,954.54,957.55
+
+
+
+
+
+
+!  help for mpli command to list temps
+!
+!  now type in the following command to get the temperature
+!  for a specific Z coordinate
+!
+!  mpli,1,,,evlt,Z coordinate
+
+!  create table for engine axial displacements
+!  in material table 7, EX
+
+mptemp   !  to reset temp table
+
+mptemp,1,201.457,222.91,236.212,255.376,262.011,276.278
+,7,303.193,309.4,315.754,319.14
+
+!  put in corresponding axial displacements
+!  for material 6
+mpda,ex,7,1,.005,.049,.101,.246,.288,.388
+,ex,7,7,.608,.655,.705,.730
+
+!  to obtain axial displacement
+!  type  mpli,6,,,evlt,Z coordinate
+
+!  here are the material properties for  the engine case
+!  M152  IN718  R220  WASPALLOY
+!  for materials 2 3 4 5 respectively
+
+/COM
+/COM     CREATED BY ESPEC_ANS : 9 / 22 /   93
+/COM
+/COM
+/COM============================================================================
+/COM
+/COM     ***  M 152         ***     ESPEC PROPERTY FILE DATED   MAR31'89
+/COM
+/COM                              E         G         A         K         C
+/COM
+/COM     RED BOOK CURVE #      2439      2439      2438      2441      2440
+/COM
+/COM============================================================================
+MPTEMP
+MPTEMP,1,  70.
+DENS,       3, .72565E-03
+MPTGEN,1,16,  70.,  75.
+MPDATA,  EX,       3, 1, .30431E+08, .29991E+08, .29569E+08, .29155E+08
+MPDATA,  EX,       3, 5, .28742E+08, .28322E+08, .27885E+08, .27424E+08
+MPDATA,  EX,       3, 9, .26931E+08, .26397E+08, .25814E+08, .25174E+08
+MPDATA,  EX,       3,13, .24469E+08, .23690E+08, .22829E+08, .21879E+08
+MPTGEN,1,16,  70.,  75.
+MPDATA, GXY,       3, 1, .11821E+08, .11637E+08, .11460E+08, .11287E+08
+MPDATA, GXY,       3, 5, .11114E+08, .10937E+08, .10754E+08, .10561E+08
+MPDATA, GXY,       3, 9, .10354E+08, .10131E+08, .98862E+07, .96179E+07
+MPDATA, GXY,       3,13, .93223E+07, .89958E+07, .86350E+07, .82365E+07
+MPTGEN,1,16,  70.,  75.
+MPDATA,NUXY,       3, 1, .28709E+00, .28858E+00, .29006E+00, .29155E+00
+MPDATA,NUXY,       3, 5, .29309E+00, .29471E+00, .29645E+00, .29834E+00
+MPDATA,NUXY,       3, 9, .30045E+00, .30283E+00, .30555E+00, .30870E+00
+MPDATA,NUXY,       3,13, .31238E+00, .31672E+00, .32190E+00, .32815E+00
+MPTGEN,1,16,  70.,  88.
+MPDATA,ALPX,       3, 1, .64699E-05, .62242E-05, .60808E-05, .60238E-05
+MPDATA,ALPX,       3, 5, .60372E-05, .61049E-05, .62110E-05, .63395E-05
+MPDATA,ALPX,       3, 9, .64742E-05, .65992E-05, .66985E-05, .67561E-05
+MPDATA,ALPX,       3,13, .67560E-05, .66820E-05, .65183E-05, .62489E-05
+MPTGEN,1,16,  75.,  88.
+MPDATA, KXX,       3, 1, .24842E-03, .25644E-03, .26491E-03, .27369E-03
+MPDATA, KXX,       3, 5, .28262E-03, .29156E-03, .30036E-03, .30886E-03
+MPDATA, KXX,       3, 9, .31692E-03, .32439E-03, .33111E-03, .33694E-03
+MPDATA, KXX,       3,13, .34173E-03, .34532E-03, .34757E-03, .34834E-03
+MPTGEN,1,16,  85.,  75.
+MPDATA,   C,       3, 1, .37500E+02, .39637E+02, .41774E+02, .43911E+02
+MPDATA,   C,       3, 5, .46047E+02, .48184E+02, .50321E+02, .52458E+02
+MPDATA,   C,       3, 9, .54595E+02, .56732E+02, .58868E+02, .61005E+02
+MPDATA,   C,       3,13, .63142E+02, .65278E+02, .67415E+02, .69552E+02
+/COM============================================================================
+/COM
+/COM     ***  INCO 718      ***     ESPEC PROPERTY FILE DATED   MAR31'89
+/COM
+/COM                              E         G         A         K         C
+/COM
+/COM     RED BOOK CURVE #       575       575     62702     62706      1964
+/COM
+/COM============================================================================
+MPTEMP
+MPTEMP,1,  70.
+DENS,       4, .77202E-03
+MPTGEN,1,16,  80., 108.
+MPDATA,  EX,       4, 1, .30127E+08, .29601E+08, .29076E+08, .28550E+08
+MPDATA,  EX,       4, 5, .28020E+08, .27486E+08, .26942E+08, .26382E+08
+MPDATA,  EX,       4, 9, .25799E+08, .25183E+08, .24520E+08, .23795E+08
+MPDATA,  EX,       4,13, .22989E+08, .22080E+08, .21042E+08, .19843E+08
+MPTGEN,1,16,  80., 108.
+MPDATA, GXY,       4, 1, .11488E+08, .11274E+08, .11061E+08, .10846E+08
+MPDATA, GXY,       4, 5, .10631E+08, .10413E+08, .10192E+08, .99642E+07
+MPDATA, GXY,       4, 9, .97269E+07, .94760E+07, .92063E+07, .89113E+07
+MPDATA, GXY,       4,13, .85834E+07, .82134E+07, .77906E+07, .73027E+07
+MPTGEN,1,16,  80., 108.
+MPDATA,NUXY,       4, 1, .31119E+00, .31276E+00, .31439E+00, .31609E+00
+MPDATA,NUXY,       4, 5, .31786E+00, .31973E+00, .32171E+00, .32384E+00
+MPDATA,NUXY,       4, 9, .32617E+00, .32875E+00, .33169E+00, .33511E+00
+MPDATA,NUXY,       4,13, .33918E+00, .34417E+00, .35044E+00, .35859E+00
+MPTGEN,1,16,  75.,  95.
+MPDATA,ALPX,       4, 1, .70973E-05, .72199E-05, .73424E-05, .74650E-05
+MPDATA,ALPX,       4, 5, .75876E-05, .77101E-05, .78327E-05, .79552E-05
+MPDATA,ALPX,       4, 9, .80778E-05, .82003E-05, .83229E-05, .84454E-05
+MPDATA,ALPX,       4,13, .85680E-05, .86905E-05, .88131E-05, .89357E-05
+MPTGEN,1,16, -65., 123.
+MPDATA, KXX,       4, 1, .15234E-03, .16348E-03, .17504E-03, .18701E-03
+MPDATA, KXX,       4, 5, .19939E-03, .21219E-03, .22541E-03, .23904E-03
+MPDATA, KXX,       4, 9, .25308E-03, .26754E-03, .28241E-03, .29770E-03
+MPDATA, KXX,       4,13, .31341E-03, .32953E-03, .34606E-03, .36301E-03
+MPTGEN,1,16, -65., 123.
+MPDATA,   C,       4, 1, .35820E+02, .37662E+02, .39503E+02, .41345E+02
+MPDATA,   C,       4, 5, .43187E+02, .45029E+02, .46871E+02, .48713E+02
+MPDATA,   C,       4, 9, .50554E+02, .52396E+02, .54238E+02, .56080E+02
+MPDATA,   C,       4,13, .57922E+02, .59764E+02, .61606E+02, .63447E+02
+/COM============================================================================
+/COM
+/COM     ***  RENE 220  C   ***     ESPEC PROPERTY FILE DATED   MAR31'89
+/COM
+/COM                              E         G         A         K         C
+/COM
+/COM     RED BOOK CURVE #      3478      3478      3477      3479      3480
+/COM
+/COM============================================================================
+MPTEMP
+MPTEMP,1,  70.
+DENS,       5, .80052E-03
+MPTGEN,1,16,  65., 109.
+MPDATA,  EX,       5, 1, .29913E+08, .29408E+08, .28893E+08, .28365E+08
+MPDATA,  EX,       5, 5, .27826E+08, .27274E+08, .26710E+08, .26133E+08
+MPDATA,  EX,       5, 9, .25539E+08, .24925E+08, .24285E+08, .23608E+08
+MPDATA,  EX,       5,13, .22880E+08, .22080E+08, .21175E+08, .20127E+08
+MPTGEN,1,16,  65., 109.
+MPDATA, GXY,       5, 1, .11401E+08, .11196E+08, .10986E+08, .10771E+08
+MPDATA, GXY,       5, 5, .10552E+08, .10327E+08, .10098E+08, .98626E+07
+MPDATA, GXY,       5, 9, .96210E+07, .93712E+07, .91107E+07, .88353E+07
+MPDATA, GXY,       5,13, .85391E+07, .82131E+07, .78451E+07, .74183E+07
+MPTGEN,1,16,  65., 109.
+MPDATA,NUXY,       5, 1, .31183E+00, .31335E+00, .31497E+00, .31670E+00
+MPDATA,NUXY,       5, 5, .31853E+00, .32049E+00, .32258E+00, .32482E+00
+MPDATA,NUXY,       5, 9, .32724E+00, .32988E+00, .33277E+00, .33602E+00
+MPDATA,NUXY,       5,13, .33975E+00, .34417E+00, .34960E+00, .35656E+00
+MPTGEN,1,16, 200., 100.
+MPDATA,ALPX,       5, 1, .70070E-05, .70659E-05, .71311E-05, .72040E-05
+MPDATA,ALPX,       5, 5, .72860E-05, .73784E-05, .74826E-05, .75996E-05
+MPDATA,ALPX,       5, 9, .77307E-05, .78769E-05, .80395E-05, .82194E-05
+MPDATA,ALPX,       5,13, .84177E-05, .86355E-05, .88738E-05, .91335E-05
+MPTGEN,1,16,  65., 109.
+MPDATA, KXX,       5, 1, .13395E-03, .14687E-03, .16027E-03, .17412E-03
+MPDATA, KXX,       5, 5, .18836E-03, .20288E-03, .21753E-03, .23212E-03
+MPDATA, KXX,       5, 9, .24643E-03, .26015E-03, .27293E-03, .28438E-03
+MPDATA, KXX,       5,13, .29402E-03, .30132E-03, .30566E-03, .30639E-03
+MPTGEN,1,16, 100.,  80.
+MPDATA,   C,       5, 1, .39724E+02, .40246E+02, .40791E+02, .41357E+02
+MPDATA,   C,       5, 5, .41945E+02, .42556E+02, .43188E+02, .43842E+02
+MPDATA,   C,       5, 9, .44518E+02, .45214E+02, .45930E+02, .46659E+02
+MPDATA,   C,       5,13, .47392E+02, .48107E+02, .48761E+02, .49273E+02
+/COM============================================================================
+/COM
+/COM     ***  WASPALOY      ***     ESPEC PROPERTY FILE DATED   MAR31'89
+/COM
+/COM                              E         G         A         K         C
+/COM
+/COM     RED BOOK CURVE #       472       472       472      1215         0
+/COM
+/COM============================================================================
+MPTEMP
+MPTEMP,1,  70.
+DENS,       6, .76684E-03
+MPTGEN,1,16,   0., 110.
+MPDATA,  EX,       6, 1, .30900E+08, .30500E+08, .30100E+08, .29700E+08
+MPDATA,  EX,       6, 5, .29300E+08, .28800E+08, .28400E+08, .27850E+08
+MPDATA,  EX,       6, 9, .27300E+08, .26700E+08, .26100E+08, .25400E+08
+MPDATA,  EX,       6,13, .24750E+08, .24000E+08, .23150E+08, .22200E+08
+MPTGEN,1,16,   0., 110.
+MPDATA, GXY,       6, 1, .11803E+08, .11640E+08, .11477E+08, .11315E+08
+MPDATA, GXY,       6, 5, .11152E+08, .10948E+08, .10786E+08, .10562E+08
+MPDATA, GXY,       6, 9, .10338E+08, .10094E+08, .98494E+07, .95645E+07
+MPDATA, GXY,       6,13, .93000E+07, .89947E+07, .86488E+07, .82621E+07
+MPTGEN,1,16,   0., 110.
+MPDATA,NUXY,       6, 1, .30899E+00, .31012E+00, .31127E+00, .31246E+00
+MPDATA,NUXY,       6, 5, .31369E+00, .31527E+00, .31658E+00, .31845E+00
+MPDATA,NUXY,       6, 9, .32040E+00, .32262E+00, .32495E+00, .32783E+00
+MPDATA,NUXY,       6,13, .33065E+00, .33412E+00, .33834E+00, .34348E+00
+MPTGEN,1,16, 150.,  90.
+MPDATA,ALPX,       6, 1, .67000E-05, .69000E-05, .70000E-05, .71000E-05
+MPDATA,ALPX,       6, 5, .72000E-05, .73000E-05, .74000E-05, .75000E-05
+MPDATA,ALPX,       6, 9, .75500E-05, .76500E-05, .77500E-05, .79000E-05
+MPDATA,ALPX,       6,13, .81000E-05, .82500E-05, .85000E-05, .88000E-05
+MPTGEN,1,16, -65., 125.
+MPDATA, KXX,       6, 1, .13934E-03, .14948E-03, .16039E-03, .17207E-03
+MPDATA, KXX,       6, 5, .18452E-03, .19774E-03, .21172E-03, .22648E-03
+MPDATA, KXX,       6, 9, .24200E-03, .25830E-03, .27536E-03, .29320E-03
+MPDATA, KXX,       6,13, .31180E-03, .33117E-03, .35131E-03, .37222E-03
+MPDATA,   C,       6,0.0
+
+
+
+
+
+

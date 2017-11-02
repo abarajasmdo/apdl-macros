@@ -1,0 +1,11 @@
+!
+!  s14prrf  gets reaction forces for stg14 static runs
+!
+reset
+store,disp,real,rforc
+set,1,1
+csys,11
+/outp,39
+prrf
+/outp,6
+

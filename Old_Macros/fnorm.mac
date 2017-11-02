@@ -1,0 +1,28 @@
+!
+!  select nodes, rsys to csys to get direction, pick one as spoint
+
+/nopr
+/post1
+noeras
+cm,_all,node
+enode
+cm,_eall,elem
+*GET,NNDS,NODE,,COUNT
+ND=1
+*DO,N,1,NNDS
+	ND=NDNEXT(ND)
+	nsel,r,node,,nd
+	esln,r,0
+	nforce
+	*GET,NFOR,FSUM,,ITEM,FY
+	DNSOL,ND,U,Z,((-1)*NFOR)
+!	plns,u,z
+	cmsel,s,_all
+	cmsel,s,_eall
+	*ENDDO
+/eras
+/gopr
+ND=
+NFOR=
+NNDS=
+N=

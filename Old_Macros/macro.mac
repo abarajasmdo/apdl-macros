@@ -1,0 +1,10 @@
+!
+! macro lists other macros from inside asnsy
+!
+!  macs,macro name
+!
+*ask,file,MACRO FILENAME IN QUOTE,macro
+*list,file,mac,/users/abmo01t/ansys51/macros/
+
+
+

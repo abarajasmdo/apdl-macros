@@ -1,0 +1,49 @@
+!
+!     Macro   cng2.mac
+!
+!      Create Node Group 2
+! 
+!      This macro creates a group of nodes called ng2.  This group
+!      is actually a macro called ng2.mac  in the problem
+!      subdirectory which has a series of nsel commands which select 
+!      the nodes in the group.  
+!
+!      To Create The Stored Group:    Select the nodes of interest, then type "cng2".
+!
+!      To Recall The Stored Group:   Type "ng2".
+!
+!      This macro unselects the selected nodes as it constructs
+!      macro ng2.mac.  Therefore,  no nodes will be currently
+!      selected after this macro is executed.    
+!
+!      This macro can be changed to make additional groups of elements,
+!      (eg2, eg3, etc.) and groups of nodes, keypoints, and so forth.
+!      Use nsel,nall,kpall,lssel, etc. for other entities.
+!
+/nopr
+*get,cnt,nsel
+*cfop,ng2.mac
+*cfwr,/nopr
+*cfwr,nall
+*cfwr,ninv
+:top
+*get,nn,nsel
+*get,n,ndmx
+*cfwr,nase,,n
+nuse,,n
+*if,nn,eq,1.0,:end
+*go,:top
+:end
+*cfwri,/gopr
+*cfcl
+*msg,NOTE,cnt
+('Node Group "ng2" Has',f6.0,'  Nodes In It.')
+cnt=
+nn=
+n=
+/gopr
+
+
+
+
+

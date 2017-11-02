@@ -1,0 +1,102 @@
+!
+!
+!
+!    This macro Performs Automatic Submodeling
+!
+!          By: PRB         Date:  8/31/94
+save
+finish
+/prep7
+!
+*msg,note
+  Submodeling Macro - jobname.node must exist - Submodel must be Active
+!
+!prompt user for coarse model and get fine modeljobname
+!
+!!*ask,jfn,Fine_Model_name_single_quotes
+*ask,ar10, 1 if you need NWRITE,0
+*if,ar10,eq,1,then
+  nwrite
+*endif
+!
+*get,jfn,active,,jobnam
+!
+*ask,jname,Coarse Model -- in single quotes 
+!
+*ask,lsnum,Load Step Number <Default = 1>,1
+!
+*if,lsnum,le,1,then
+  lsnum=1.0
+*endif
+!
+*ask,ssnum,Substep Number <Default = 1>,1
+!
+*if,ssnum,le,1,then
+  ssnum=1.0
+*endif
+!
+*ask,ksh,Solid KSH=0 Shell-Solid KSH=1,0
+!
+*if,ksh,lt,1,then
+  ksh=0
+*endif
+!
+!
+*ask,tinter,Temp. Interp. <no=0> <yes=1>,0
+!
+*if,tinter,gt,.1,then
+  cm,temp99,node
+  nsel,all
+  nwrite,bla,node
+  cmsel,s,temp99
+*endif
+!
+!  write parameters to temp files
+!
+parsav,all,bla,param
+!
+fini
+!
+!   Postprocess coarse model
+!
+/filename,%jname%
+/post1
+resume
+eall
+nall
+parres,change,bla,param
+set,lsnum,ssnum
+cbdof,%jfn%,node,,,,,,,ksh
+!
+!    perform temperature interplotation
+!
+*if,tinter,gt,.1,then
+  bfint,bla,node,,,,,,,ksh
+*endif
+!
+!
+finish
+/filename,%jfn%
+resume
+parres,change,bla,param
+/prep7
+/nopr
+/input,%jname%,cbdo
+*if,ksh,gt,.1,then
+/nopr
+/input,%jname%,cbdo,,:cb1
+*endif
+nsel,all
+*if,tinter,gt,.1,then
+/nopr
+/input,%jname%,bfin
+*endif
+/gopr
+fini
+/solu
+!
+!/sys,rm bla.*
+!
+*msg,note
+  Submodeling Macro Completed. Fine Model Boundary Conditions Active
+

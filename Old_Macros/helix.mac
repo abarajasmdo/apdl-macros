@@ -1,0 +1,127 @@
+/prep7
+*ask,wear,MAX WEAR AT END (MILS),0
+esel,stif,52
+e=elnext(0)
+*do,loop,1,19
+real=(centrz(e)-centrz(21))*(wear/1.95)-wear
+r,e,30e6,real,1
+emod,e,real,e
+e=elnext(e)
+*enddo
+all
+/solu
+solve
+/post1
+plotforc
+
+
+From - Fri Aug 24 09:57:21 2001
+Received: from bcsmsx.ae.ge.com ([129.202.40.118]) by ev001msxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2653.13)
+	id RNFYH7AC; Thu, 23 Aug 2001 14:39:31 -0400
+Received: from int-ch1gw-4.online-age.net (int-ch1gw-4.online-age.net [3.159.232.68])
+	by bcsmsx.ae.ge.com (8.8.6 (PHNE_17135)/8.8.6) with ESMTP id OAA19119
+	for <dan.bohlen@ae.ge.com>; Thu, 23 Aug 2001 14:41:32 -0400 (EDT)
+Received: from ext-ch1gw-2.online-age.net (localhost [127.0.0.1])
+	by int-ch1gw-4.online-age.net (8.9.3+Sun/8.9.1/990426-RLH) with ESMTP id OAA04843
+	for <dan.bohlen@ae.ge.com>; Thu, 23 Aug 2001 14:41:01 -0400 (EDT)
+Received: from n14.groups.yahoo.com (n14.groups.yahoo.com [216.115.96.64])
+	by ext-ch1gw-2.online-age.net (8.9.3+Sun/8.9.1/990426-RLH) with SMTP id OAA28046
+	for <dan.bohlen@ae.ge.com>; Thu, 23 Aug 2001 14:41:00 -0400 (EDT)
+Received: from [10.1.4.53] by jk.egroups.com with NNFMP; 23 Aug 2001 18:40:31 -0000
+Received: (EGP: mail-7_3_1); 23 Aug 2001 18:40:28 -0000
+Received: (qmail 96769 invoked from network); 23 Aug 2001 18:38:09 -0000
+Received: from unknown (10.1.10.26)
+  by l7.egroups.com with QMQP; 23 Aug 2001 18:38:09 -0000
+Received: from unknown (HELO ns1.sbs.siemens.com) (63.160.24.134)
+  by mta1 with SMTP; 23 Aug 2001 18:38:09 -0000
+Received: from mail2.sbs.siemens.com (mail2 [129.73.68.7])
+	by ns1.sbs.siemens.com (8.11.1/8.10.1) with ESMTP id f7NIc8p22813
+	for <xansys@yahoogroups.com>; Thu, 23 Aug 2001 14:38:08 -0400 (EDT)
+Received: from orla1bna.orla.siemens.com (orla1bna.orla.siemens.com [209.243.214.53])
+	by mail2.sbs.siemens.com (8.11.4/8.11.4) with ESMTP id f7NIc7O06671
+	for <xansys@yahoogroups.com>; Thu, 23 Aug 2001 14:38:08 -0400 (EDT)
+Received: by orla1bna.orla.siemens.com with Internet Mail Service (5.5.2653.19)
+	id <RPVSMV9G>; Thu, 23 Aug 2001 14:38:06 -0400
+Received: from swpc.siemens.com (orlc272x.orla.siemens.com [129.73.47.177]) by orla182a.orla.siemens.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2653.13)
+	id Q9ZA82CS; Thu, 23 Aug 2001 14:38:03 -0400
+X-eGroups-Return: sentto-57960-27558-998592031-dan.bohlen=ae.ge.com@returns.onelist.com
+X-Sender: Don.Shaffer@swpc.siemens.com
+X-Apparently-To: xansys@yahoogroups.com
+X-Envelope-Sender-Is: Don.Shaffer@swpc.siemens.com (at relayer ns1.sbs.siemens.com)
+Sender: shaffedl@mail2.sbs.siemens.com
+Message-ID: <3B854D33.91524E16@swpc.siemens.com>
+Organization: SPWC
+X-Mailer: Mozilla 4.7 [en] (X11; I; SunOS 5.6 sun4u)
+X-Accept-Language: en
+To: xansys@yahoogroups.com
+References: <85256AB1.00627610.00@ABB-US01-USMTP2.abb.com>
+From: "Don L. Shaffer" <Don.Shaffer@swpc.siemens.com>
+MIME-Version: 1.0
+Mailing-List: list xansys@yahoogroups.com; contact xansys-owner@yahoogroups.com
+Delivered-To: mailing list xansys@yahoogroups.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@yahoogroups.com>
+Date: Thu, 23 Aug 2001 14:36:35 -0400
+Reply-To: xansys@yahoogroups.com
+Subject: Re: [xansys] STRUC: Helical thread geometry
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAAX+L0BAAgm5J5JQCgg3Gx0utjVdfJq
+
+Sorry for the mixup.  I somehow picked the wrong macro
+out of the file. Here is the correct one, I hope.
+
+
+
+Don Shaffer
+
+
+
+
+
+  ----------
+
+! helix 
+! radius = arg1
+! pitch = arg2
+! number of coils= arg3
+
+r=arg1
+p=arg2
+n=arg3
+tlen=arg3*arg2
+
+*get,mxkp,kp,,num,max
+
+csys,0
+*afun,rad
+pi=acos(-1)
+*do,i,1,(4*n+1),1
+kpno=mxkp+i
+x=r*cos((i-1)*(pi/2))
+y=r*sin((i-1)*(pi/2))
+z=tlen*((i-1)/(4*n))
+k,kpno,x,y,z
+*enddo
+csys,1
+krotate,all
+l,mxkp,mxkp+1
+*repeat,(4*n),1,1
+csys,0
+
+
+[Non-text portions of this message have been removed]
+
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@yahoogroups.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@yahoogroups.com
+
+ARCHIVED on:
+http://www.yahoogroups.com/messages/xansys 
+
+Your use of Yahoo! Groups is subject to http://docs.yahoo.com/info/terms/ 
+

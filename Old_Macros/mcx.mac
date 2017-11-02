@@ -1,0 +1,8 @@
+!  
+!            mcx.mac
+! 
+!          mcx,modestart,modeend
+*dim,mcx,array,25
+*do,n,arg1,arg2
+*get,mcx(n),mode,n,mcoeff
+*enddo

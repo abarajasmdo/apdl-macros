@@ -1,0 +1,22 @@
+/nopr
+!
+!          emax.mac      
+!
+!                     This macro finds the maximum node and
+!                     element numbers in the model, and the number of
+!                     nodes and elements in the currently selected group
+!                     and displays them.
+!
+*get,ar11,mxnd
+*get,ar12,mxel
+*get,ar13,nsel
+*get,ar14,esel
+*msg,note,ar11,ar12,
+MAX NODE IN MODEL= %I MAX ELEM IN MODEL= %I 
+*msg,note,ar13,ar14
+MAX NODE SELECTED= %I MAX ELEM SELECTED= %I                                           
+!
+/gopr
+
+
+

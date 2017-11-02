@@ -1,0 +1,65 @@
+node2d=
+/post1
+/sys, ls *.rst
+*ask,fname,filename,'assy'
+FILE,%fname%,rst,
+SET,LAST
+*cfopen,%fname%_cutbcs,inp
+!  s5 cut boundary  UX and UY
+*cfwrit,/com s5 cut boundary  UX and UY
+,d,s5row1,ux,ux(8457)
+,d,s5row1,uy,uy(8457)
+,d,s5row2,ux,ux(8486)
+,d,s5row2,uy,uy(8486)
+,d,s5row3,ux,ux(8497)
+,d,s5row3,uy,uy(8497)
+,d,s5row4,ux,ux(8508)
+,d,s5row4,uy,uy(8508)
+,d,s5row5,ux,ux(8519)
+,d,s5row5,uy,uy(8519)
+,d,s5row6,ux,ux(8530)
+,d,s5row6,uy,uy(8530)
+,d,s5row7,ux,ux(8470)
+,d,s5row7,uy,uy(8470)
+,/com s6 cut boundary  UX only  (FY)
+,d,s6row1,ux,ux(10903)
+,d,s6row2,ux,ux(11089)
+,d,s6row3,ux,ux(11090)
+,d,s6row4,ux,ux(11091)
+,d,s6row5,ux,ux(11092)
+,d,s6row6,ux,ux(11093)
+,d,s6row7,ux,ux(10887)
+!  get cut forces
+*dim,node2d,,7
+node2d(1)=10903
+node2d(2)=11089
+node2d(3)=11090
+node2d(4)=11091
+node2d(5)=11092
+node2d(6)=11093
+node2d(7)=10887
+cmsel,,s6cut
+*do,loop,1,7
+nsel,,%node2d(loop)%
+fsum
+*get,fy_2d,fsum,,item,fy
+*cfwrit,f,s6row%loop%,fy,fy_2d/88/22	! 1/88th sector , 22 nodes
+*enddo
+*ask,speed,speed burst:7010  chop:1865,7010
+*cfwrit,omega,,speed*3.14159265/30	! speed in rad/sec
+*ask,out_cav,outer cavity press burst:34.7 chop:15.7,34.7
+*cfwrit,esel,all
+*cfwrit,sf,cav1n,press,%out_cav%
+*ask,in_cav,inner cavity press burst:17.3 chop:14.5,17.3
+*cfwrit,sf,cav2n,press,%in_cav%
+*cfclos
+node2d=
+
+
+
+
+
+
+
+
+

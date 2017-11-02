@@ -1,0 +1,7 @@
+/nerr,0
+zmultipro,'start',2
+        *cset,1,3,reacttol,'Enter the Reaction Tolerance',1.0
+        *cset,4,6,max_iter,'Enter the Max. No. of Iterations',50.0
+zmultipro,'end'
+
+/nerr,5

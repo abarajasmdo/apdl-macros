@@ -1,0 +1,11 @@
+!
+! kpnodes.mac  - creates kpts at a bunch of nodes
+!
+*GET,NNDS,NODE,,COUNT
+ND=NDNEXT(0)
+*DO,I,1,NNDS
+KNODE,,ND
+ND=NDNEXT(ND)
+*ENDDO
+NNDS=
+ND=

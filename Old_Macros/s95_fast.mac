@@ -1,0 +1,76 @@
+fini
+/prep7
+xtime
+!
+!    example of macro to take degenerate 20-noded(95s) that
+!    are tet shapes and replace them with 92s
+!
+!
+esel,s,ename,,95  ! select all 95 elements
+!
+*get,ecount,elem,,count
+!
+! get max. element type reference number
+!
+*get,etmax,etyp,,num,max
+etmax=etmax+1
+!
+!  add the 92 element to element type table (avoid conflicts)
+et,etmax,92
+type,etmax
+counter=0     ! initialize counter
+flag=0
+!    
+!    note, we do not need a MODMSH,DETACH but we do need
+!    a MODMSH,NOCHECK
+!
+modmsh,nocheck
+/nerr,0,99999
+shpp,off
+/nopr
+immed,0
+*get,eact,elem,,num,min
+*do,i,1,ecount
+! test to see if element is tet
+test=nelem(eact,5)-nelem(eact,6)+nelem(eact,3)-nelem(eact,4)
+*if,test,eq,0,then
+!*get,matv,elem,eact,attr,mat
+!MAT,matv
+!*get,realv,elem,eact,attr,real
+!REAL,realv
+ni=nelem(eact,1)
+nj=nelem(eact,2)
+nk=nelem(eact,3)
+nl=nelem(eact,5)
+nm=nelem(eact,9)
+nn=nelem(eact,10)
+no=nelem(eact,12)
+np=nelem(eact,17)
+nq=nelem(eact,18)
+nr=nelem(eact,19)
+emodif,eact,1,ni,nj,nk,nl,nm,nn,no,np
+emodif,eact,9,nq,nr
+!
+counter=counter+1
+flag=flag+1
+	*if,flag,eq,1000,then
+	flag=0
+	!
+	*MSG,INFO,eact,counter
+ 	*** Tet Element No. %I fixed.  Total Fixed = %I ***
+   	*endif
+*endif
+eact=elnext(eact)
+*enddo
+C***
+*MSG,INFO,counter,ecount
+    *** %I Tet Elements Fixed out of %I Total SOLID95 Elements ***
+C***
+modmsh,check
+shpp,defa
+/nerr
+allsel
+/gopr
+immed,1
+
+

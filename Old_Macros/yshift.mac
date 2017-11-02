@@ -1,0 +1,26 @@
+!
+! macro Yshift  moves set of selected nodes to the max or min Y value 
+!	of any node in the set.  Good for temperature interpolation
+!
+/pmacro
+/gopr
+csys,0
+parsav
+CM,_TEMP_,NODE
+MODMSH,noch
+SHPP,OFF
+*msg,note
+Select set of nodes you want to move
+beep
+nsel,r,p
+*ask,mxormin,Move nodes to min (0) or max (1) value of those selected?,0
+*IF,mxormin,GT,0,THEN
+*GET,NEWY,NODE,,MXLOC,Y
+*ELSE
+*GET,NEWY,NODE,,MNLOC,Y
+*ENDIF
+NMOD,ALL,,NEWY,,,,,
+CMSEL,,_TEMP_
+CMDELE,_TEMP_
+PARRES
+

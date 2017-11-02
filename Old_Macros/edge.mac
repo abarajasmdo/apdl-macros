@@ -1,0 +1,27 @@
+! toggles element edges on/off
+*get,_ESTAT_,graph,1,edge !
+*IF,_ESTAT_,EQ,0,THEN
+/EDGE,ALL,1,45
+*ELSE
+/EDGE,ALL,0,45
+*ENDIF
+/REPLO
+*ask,aok,OK ? 0 NO  1 YES,1
+	*IF,aok,eq,0,then
+*get,_ESTAT_,graph,1,edge !	
+*IF,_ESTAT_,EQ,0,THEN
+/EDGE,ALL,1,45
+*ELSE
+/EDGE,ALL,0,45
+*ENDIF
+*GET,_GLINE_,GRAPH,1,GLINE
+*IF,_GLINE_,EQ,0,THEN
+/GLINE,ALL,-1
+/REPLO
+*ELSE,
+/GLINE,ALL,0
+/REPLO
+*ENDIF
+	*ENDIF
+
+

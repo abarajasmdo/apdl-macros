@@ -1,0 +1,6 @@
+!
+! macro for  turning boundary conditions off
+!
+/pbc,all,
+/psf,pres,norm,0
+

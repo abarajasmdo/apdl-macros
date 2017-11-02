@@ -1,0 +1,146 @@
+From - Tue Jul 11 12:56:52 2000
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2650.21)
+	id 3R9Z6J8A; Tue, 11 Jul 2000 12:46:44 -0400
+Received: from unknown-24-5.pilot.net by gemb1.ae.ge.com (8.8.8/1.1.22.3/16Sep99-0217PM)
+	id MAA0000012063; Tue, 11 Jul 2000 12:47:31 -0500 (CDT)
+Received: from unknown-147-100.pilot.net (localhost [127.0.0.1]) by unknown-24-5.pilot.net with ESMTP id JAA15870 for <dan.bohlen@ae.ge.com>; Tue, 11 Jul 2000 09:46:43 -0700 (PDT)
+Received: from jj.egroups.com (jj.egroups.com [208.50.144.82]) by unknown-147-100.pilot.net with SMTP id JAA01964 for <dan.bohlen@ae.ge.com>; Tue, 11 Jul 2000 09:46:41 -0700 (PDT)
+Received: from [10.1.10.38] by jj.egroups.com with NNFMP; 11 Jul 2000 16:46:19 -0000
+Received: (qmail 29926 invoked from network); 11 Jul 2000 16:26:42 -0000
+Received: from unknown (10.1.10.26) by m4.onelist.org with QMQP; 11 Jul 2000 16:26:42 -0000
+Received: from unknown (HELO coal.sentex.ca) (209.112.4.16) by mta1 with SMTP; 11 Jul 2000 16:26:41 -0000
+Received: from grizzly.ist (mail.otsg.com [209.112.7.194]) by coal.sentex.ca (8.8.8/8.8.7) with ESMTP id MAA10304 for <xansys@egroups.com>; Tue, 11 Jul 2000 12:26:41 -0400 (EDT) (envelope-from pbudgell@otsg.com)
+Received: by GRIZZLY with Internet Mail Service (5.0.1460.8) id <3L1C8J8J>; Tue, 11 Jul 2000 12:26:23 -0400
+X-eGroups-Return: sentto-57960-13298-963333980-dan.bohlen=ae.ge.com@returns.onelist.com
+Message-ID: <95D57D718A3CD411B4770060080CE9940107FD@GRIZZLY>
+To: xansys@egroups.com
+X-Mailer: Internet Mail Service (5.0.1460.8)
+From: Peter Budgell <pbudgell@otsg.com>
+MIME-Version: 1.0
+Mailing-List: list xansys@egroups.com; contact xansys-owner@egroups.com
+Delivered-To: mailing list xansys@egroups.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@egroups.com>
+Date: Tue, 11 Jul 2000 12:26:20 -0400
+Reply-To: xansys@egroups.com
+Subject: RE: [xansys] Animation of rotating model
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAgJ6BiAAAgm5J5JQCgg3Gx0utjVdfJq
+
+How about this one:
+
+! ------------------------------------------------------------
+! MY_ROT.MAC       A quick-and-dirty animation of rotation
+! ------------------------------------------------------------
+!
+! Plots are based on /REPLOT so an initial plot has to have been
+! performed by the user.
+!
+! For information only -- use at your own risk!!!
+!
+! The resulting animation file (Windows NT) gets saved using the jobname
+!   and the extension ".avi". The animation file usually compresses well.
+! The user should set the size of the graphics window so the animation
+!   graphics window is of satisfactory shape and size.
+!
+! NO Error Checking Is Performed ! ! ! ! !
+!
+! What will be plotted is based on /REPLO therefore on the last user plot
+! Scaling, etc. are all based on the last user plot.
+! It may be desirable to have /ZOOM level set explicitly so the model
+!   does not move in and out as the model rotates.
+! The use may wish to modify number of frames in the *do statement below.
+!
+! Time delay apparently is limited to 1.0 seconds max
+!
+!       Call with:
+!
+!            my_rot, time_delay_for_frame
+!
+ar11=arg1
+*if,arg1,eq,0,then
+  ar11=0.1
+*endif
+/NOPR
+/gsav,xxx,gsav,,temp
+/seg,delete
+/seg,multi,,ar11
+*do,iii_,0,355,5
+   /angle,all,iii_,ys,0
+   /replot
+*enddo
+/seg,off
+anim,1,1,ar11
+/gres,xxx,gsav
+/GOPR
+
+
+____________________________
+Peter C. Budgell
+Senior Development Engineer
+Innovative Steam Technologies
+549 Conestoga Blvd.
+Cambridge, Ontario, Canada  N1R 7P4
+mailto:pbudgell@otsg.com
+Tel: 519-740-0757 ext.249
+FAX: 519-740-2051
+http://www.otsg.com
+
+
+
+	   Date: Tue, 11 Jul 2000 10:21:16 -0400
+	   From: JPatterson@hendrickson-intl.com
+	Subject: Animation of rotating model
+
+
+	Hello All,
+
+	I would like to create an animation of my model rotating.  I don't
+want any
+	results plotted, just the elements.  I've been trying the following
+	sequence with no luck...
+
+	1. PlotCtrls>Redirect Plots>To Animation file.
+	2. Run a short macro that uses the /ANGLE command to rotate the
+model about
+	the y-axis.
+
+	Nothing seems to be created.  Anybody have any ideas how to do this?
+The
+	documentation didn't help too much.
+
+	Thanks,
+
+	Jim P.
+
+	
+****************************************************************************
+**
+
+	James J. Patterson
+	Engineering Analyst
+	Hendrickson Trailer Suspension Systems
+	2070 Industrial Place SE
+	Canton, OH 44707
+	Tele:  330-489-0095
+	Fax:   330-489-0450
+	email:  jpatterson@hendrickson-intl.com
+	
+****************************************************************************
+**
+
+
+
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@onelist.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@onelist.com
+
+ARCHIVED on:
+http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+http://www.eScribe.com/software/xansys/
+             

@@ -1,0 +1,35 @@
+/nopr
+parsav,all
+!  ndist5.mac    Usage: ndist5,node1,node2
+!        This macro calculates the distance between
+!        node1 and node2.  For ANSYS 5.0.
+!
+*get,acoord,active,,csys   
+csys,acoord                                                          
+dx=nx(arg2)-nx(arg1)                                                                        
+dy=ny(arg2)-ny(arg1)                                                                        
+dz=nz(arg2)-nz(arg1)                 
+d=distnd(arg1,arg2)                                                       
+/output,NODE_DISTANCES
+*msg,info,d,arg1,arg2
+%/ &
+ ________________________________________________________________ %/ &
+%/ &
+DISTANCE=  %g        Between NODES %I and %I %/ &
+%/&
+________________________________________________________________ %/  
+*msg,info,acoord,dx,dy,dz
+In Coordinate System %I , the relative distance between KPs is... %/ &
+%/ &
+DX= %G %/ &
+%/ &
+DY= %G %/ &
+%/ &
+DZ= %G  %/ &
+%/ &
+________________________________________________________________
+/output,term
+*uilist,NODE_DISTANCES
+/SYS,rm -f NODE_DISTANCES
+parres 
+/gopr

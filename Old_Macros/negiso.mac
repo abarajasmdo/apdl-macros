@@ -1,0 +1,6 @@
+/nopr 
+!
+!             negiso.mac     A macro to look at a model from the
+!                                       negative X direction, isometric orientation.                                                                          
+/view,arg1,-1,1,1                                                               
+/gopr                                                                           

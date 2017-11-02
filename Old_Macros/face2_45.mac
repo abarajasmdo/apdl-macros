@@ -1,0 +1,145 @@
+!
+! face1_45.mac  - macro that modifies surface stif 45's so  that face 2
+!                  is on the surface.
+!
+!  - before running have elements selected
+!
+!  - changes element to type 2 (use keyopt 6=1)
+!
+!  - Does not handle wedges, tets,  for corner elements it uses the largest
+!    face as face1
+!
+!  SURFACE ELEM STUFF
+!
+/NOPR
+NOERAS
+ET,99,63
+TYPE,99
+MAT,2
+/PNUM,MAT,1
+cm,_el,elem
+eall
+*get,emax,elem,,num,max
+numstr,elem,emax
+cmsel,s,_el
+nelem
+!
+MODMSH,NOCHECK
+*DIM,N,ARRAY,8
+*DIM,FACE,ARRAY,6
+*VFILL,FACE(1),DATA,0
+*GET,ELE,ELEM,,NUM,MAX
+*GET,NEL,ELEM,,COUNT
+!
+!  LOOP THROUGH ELEMS
+!
+*DO,EL,1,NEL,1
+*VFILL,FACE(1),DATA,0
+!/gopr
+*DO,FILL,7,8
+!/gopr
+N(FILL)=NELEM(ELE,FILL)
+*ENDDO
+*IF,N(7),NE,N(8),THEN
+!
+!  FIND FREE FACES OF BRICKS
+!
+NFACE=0
+*DO,NQ,1,6
+FACE(NQ)=0
+CHK=ELADJ(ELE,NQ)
+*IF,CHK,EQ,0,THEN
+NFACE=NFACE+1
+FACE(NQ)=1
+FACE2=NQ
+*ENDIF
+*ENDDO
+!
+!  CORNER ELEMENT LOGIC BLOCK
+!
+*IF,NFACE,GT,1.1,THEN
+!
+FAREA=0
+*DO,F,1,6 
+!!/gopr  
+FNUM=FACE(F)                 *FACE AREA CALC AND CHECK
+*IF,FNUM,GT,.5,THEN
+!*msg,note,F
+!checking face %I        *SKIP NON-FREE FACES
+*DO,X1,1,8  
+!!!/gopr                 *GET NODES ON FACE (NONFACE NODES=0)
+N(X1)=NDFACE(ELE,F,X1)
+*ENDDO
+!
+NSEL,NONE                    *SELECT NODES ON FACE "F"
+*DO,SEL,1,8
+!!!/gopr
+*IF,N(SEL),GT,.5,THEN
+NSEL,A,,,N(SEL)
+*ENDIF
+*ENDDO
+!!!/gopr
+AREA=ARFACE(ELE)
+*IF,AREA,GT,FAREA,THEN
+FAREA=AREA
+FACE2=F
+*ENDIF
+!
+*ENDIF                  *END OF NON-FREE FACE CHECK
+*ENDDO                  *END OF FACE AREA CALC DO LOOP
+*ENDIF                  *END OF CORNER ELEMENT CHECK "IF"
+!
+!    NOW THAT WE KNOW THE FACE LET'S FIX THE ELEMENT
+!
+*DO,FIL,1,8
+!!!/gopr
+N(FIL)=NELEM(ELE,FIL)
+NSEL,A,,,N(FIL)
+*ENDDO
+!
+!/GOPR
+!*msg,info,face2
+!surface face is %I
+*IF,FACE2,EQ,1,THEN
+EMOD,ELE,-1,N(1),N(2),N(6),N(5),N(4),N(3),N(7),N(8)
+*ELSEIF,FACE2,EQ,3
+EMOD,ELE,-1,N(2),N(3),N(4),N(1),N(6),N(7),N(8),N(5)
+*ELSEIF,FACE2,EQ,4
+EMOD,ELE,-1,N(3),N(4),N(1),N(2),N(7),N(8),N(5),N(6)
+*ELSEIF,FACE2,EQ,5
+EMOD,ELE,-1,N(4),N(1),N(2),N(3),N(8),N(5),N(6),N(7)
+*ELSEIF,FACE2,EQ,6     
+EMOD,ELE,-1,N(5),N(6),N(2),N(1),N(8),N(7),N(3),N(4)
+*ENDIF
+EMOD,ELE,TYPE,2
+!
+!  MAKE THERMAL SHELL TO GRAPHICALY SHOW FACE 2
+!
+NSEL,NONE
+*DO,T,1,8
+NSEL,A,,,NELEM(ELE,T)
+*ENDDO
+E,NELEM(ELE,1),NELEM(ELE,2),NELEM(ELE,6),NELEM(ELE,5)
+!*GO,:DONE1
+!
+!   WEDGE NOTE
+!
+!:WEDGE
+*ELSE
+*MSG,WARN,ELE
+CAN'T DO WEDGE ELEMENT %I
+*ENDIF
+!:DONE1
+*GET,ELE,ELEM,ELE,NXTL        *DO NEXT ELEMENT
+*ENDDO
+MODMSH,CHECK
+/ERAS
+/GOPR
+
+
+
+
+
+
+
+

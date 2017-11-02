@@ -1,0 +1,24 @@
+! checks distance between gap nodes
+*get,nele,elem,,count
+*cfopen,gap,data
+*vwrite
+("element        distance")
+ele=elnext(0)
+csys,14
+*do,loop,1,nele
+d=abs(NX(nelem(ele,1))-NX(nelem(ele,2)))
+*vwrit,ele,d
+(I10,2x,E15.6)
+*if,d,gt,1e-4,then
+*msg,warn,ele,d
+Element %I nodes are %G apart!
+*endif
+ele=elnext(ele)
+*enddo
+*cfclos
+*msg,info
+Your gap data is on file gap.data
+d=
+ele=
+
+

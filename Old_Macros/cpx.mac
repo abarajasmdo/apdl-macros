@@ -1,0 +1,14 @@
+!
+! cpxp.mac
+!
+!  usage cpx,node1,node2   - couples twp nodes in translational DOF's
+!
+!
+*get,cpmx,mxcp
+ncp=cpmx+1
+cp,ncp,ux,all
+nelem
+nusel,cp,1,1000
+nplo
+!cplgen,ncp,uy,uz
+

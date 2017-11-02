@@ -1,0 +1,9 @@
+!  # rows  , # cols
+!  to use a *DIM table it must be sized exactly no extra columns or rows of zeroes
+run_data=
+mission=
+*dim,run_data,table,230,5
+*dim,mission,,230,7
+*tread,run_data,mto_hot,params
+*MFUN,mission(1,1),COPY,run_data(1,1)
+!*VEDIT,,83  

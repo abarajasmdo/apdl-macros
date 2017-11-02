@@ -1,0 +1,30 @@
+!
+!  e2vol.mac makes selected bricks into volumes
+!
+/NOPR
+/uis,msgpop,3
+PARSAV
+CSYS,0
+*DIM,KPP,,8
+*GET,NELES,ELEM,,COUNT
+ELE=0
+*DO,E,1,NELES		!ELEMENT LOOP
+ELE=ELNEXT(ELE)
+!
+	*DO,N,1,8	! NODE LOOP
+	K,,NX(NELEM(ELE,N)),NY(NELEM(ELE,N)),NZ(NELEM(ELE,N))
+	KPP(N)=_RETURN
+	*ENDDO
+	V,KPP(1),KPP(2),KPP(3),KPP(4),KPP(5),KPP(6),KPP(7),KPP(8)
+*ENDDO	! NEXT ELEMENT
+KPP=
+/uis,msgpop,
+PARRES
+kpp=
+/uis,msgpop,2
+/NERR,5,10000, 
+/gopr
+
+
+	
+	

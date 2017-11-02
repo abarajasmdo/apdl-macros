@@ -1,0 +1,16 @@
+/nopr
+cm,_junk,line
+kpof
+lsof
+lplo
+noeras
+lsel,s,,,arg1
+lson
+lplo
+!kpof
+!lplo
+cmsel,s,_junk
+kpls
+/eras
+cmdele,_junk
+/gopr

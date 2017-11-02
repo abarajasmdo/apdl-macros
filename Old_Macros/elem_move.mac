@@ -1,0 +1,172 @@
+From - Thu Apr  6 12:47:38 2000
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2650.21)
+	id 2DXK5HKF; Thu, 6 Apr 2000 12:34:54 -0400
+Received: from unknown-24-5.pilot.net by gemb1.ae.ge.com (8.8.8/1.1.22.3/16Sep99-0217PM)
+	id MAA0000023229; Thu, 6 Apr 2000 12:35:04 -0500 (CDT)
+Received: from unknown-147-100.pilot.net (localhost [127.0.0.1]) by unknown-24-5.pilot.net with ESMTP id JAA29087 for <dan.bohlen@ae.ge.com>; Thu, 6 Apr 2000 09:20:17 -0700 (PDT)
+Received: from mv.egroups.com (mv.egroups.com [208.50.144.81]) by unknown-147-100.pilot.net with SMTP id JAA12182 for <dan.bohlen@ae.ge.com>; Thu, 6 Apr 2000 09:20:09 -0700 (PDT)
+Received: from [10.1.10.35] by mv.egroups.com with NNFMP; 06 Apr 2000 17:19:40 -0000
+Received: (qmail 25943 invoked from network); 6 Apr 2000 16:19:39 -0000
+Received: from unknown (10.1.10.26) by m1.onelist.org with QMQP; 6 Apr 2000 16:19:39 -0000
+Received: from unknown (HELO qg.egroups.com) (10.1.2.27) by mta1 with SMTP; 6 Apr 2000 16:19:39 -0000
+Received: (qmail 31341 invoked from network); 6 Apr 2000 16:19:39 -0000
+Received: from n5.onelist.org (HELO hl.egroups.com) (10.1.10.44) by iqg.egroups.com with SMTP; 6 Apr 2000 16:19:39 -0000
+Received: from [10.1.10.93] by hl.egroups.com with NNFMP; 06 Apr 2000 16:19:39 -0000
+X-eGroups-Return: sentto-57960-10161-dan.bohlen=ae.ge.com@returns.onelist.com
+X-eGroups-Return: shen-yeh.chen@honeywell.com
+To: xansys@egroups.com
+Message-ID: <8cideh+20ej@eGroups.com>
+In-Reply-To: <NCBBJDOLKKIAACHHMICKAEDECIAA.mhiller@in2solutions.com>
+User-Agent: eGroups-EW/0.82
+X-Mailer: eGroups Message Poster
+MIME-Version: 1.0
+Mailing-List: list xansys@egroups.com; contact xansys-owner@egroups.com
+Delivered-To: mailing list xansys@egroups.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@egroups.com>
+Date: Thu, 06 Apr 2000 16:19:29 -0000
+X-eGroups-From: "Shen-Yeh Chen" <shen-yeh.chen@honeywell.com>
+From: "Shen-Yeh Chen" <shen-yeh.chen@honeywell.com>
+Reply-To: xansys@egroups.com
+Subject: Re:  RE: [xansys] Moving elements/nodes   
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAQrnQYAAAgm5J5JQCgg3Gx0utjVdfJq
+
+Try this.......it is fast.....
+
+
+! ==================================================
+! Syntax :
+!
+!  x_noffst,_DX,_DY,_DZ
+!  x_noffst
+! 
+!  Leaving all of the arguments blank, or set all arguments to zeros
+!  will invoke a GUI for inputing the offset values. Rotation of the
+!  mesh can be done by setting the CSYS to the polar coordinate 
+!  system. 
+!
+! External programs called :
+!  None
+! ==================================================
+/nop                            ! suppress printout for this macro
+/prep7
+/NERR,0,10000
+MODMSH,DETACH
+MOSMSH,NOCHECK
+*get,znnode,node,,num,max        ! get number of nodes
+
+*dim,x,,znnode                   ! set up arrays for node locations
+*dim,y,,znnode
+*dim,z,,znnode
+
+*dim,sel,,znnode                 ! set up array for select vector
+
+*vget,x(1),node,1,loc,x         ! get coordinates
+*vget,y(1),node,1,loc,y
+*vget,z(1),node,1,loc,z
+
+*vget,sel(1),node,1,nsel        ! get selected set
+
+ZDIST=ARG1**2.0+ARG2**2.0+ARG3**2.0
+*IF,ZDIST,EQ,0.0,THEN
+  *ASK,ZDX,delta x
+  *ASK,ZDY,delta y
+  *ASK,ZDZ,delta z
+*ELSE
+  ZDX=ARG1
+  ZDY=ARG2
+  ZDZ=ARG3
+*ENDIF
+*voper,x(1),x(1),add,ZDX       ! offset locations
+*voper,y(1),y(1),add,ZDY
+*voper,z(1),z(1),add,ZDZ
+
+SHPP,OFF
+*vmask,sel(1)
+nmodif,(1:ZNNODE),x(1:ZNNODE),y(1:ZNNODE),z(1:ZNNODE)
+x(1) =       ! delete parameters (cleanup)
+y(1) =
+z(1) =
+sel(1) =
+i=
+znnode=
+zdx=
+zdy=
+zdz=
+ZDIST=
+MODMSH,CHECK
+/NERR,DEFA
+/go          ! resume printout
+
+
+
+
+--- In xansys@egroups.com, "Michael W. Hiller" <mhiller@i...>  wrote:
+>  
+> if you can make an offset coordinate system and use the TRANSFER 
+command, I
+> find it is MUCH MUCH faster than copy commands or NMODIF within a 
+do-loop.
+> 
+> 
+> Good luck, and regards,
+> 
+>     Michael W. Hiller
+>     In2 Solutions, Inc.
+> MCAE Consultants specializing in Multi-Physics ANSYS FEA and Pro/E 
+Modeling
+> and Design Automation
+> "Offering consulting, training, implementation, and other 
+individualized
+> solutions for your product design and analysis challenges"
+> 229 Strathburgh Lane   Suite 201
+> Cary,  NC   27511
+> Tele:    919/851-0373
+> Fax:     same number, Tele first to arrange
+> Email:   mhiller@in2solutions.com
+> Web:     www.in2solutions.com
+> 
+> 
+> -----Original Message-----
+> From: Sanjeev Srivastav [mailto:sanjeev@exponent.com]
+> Sent: Thursday, April 06, 2000 9:48 AM
+> To: 'xansys@onelist.com'
+> Subject: [xansys] Moving elements/nodes
+> 
+> 
+> I have to move a set of nodes and elements by applying a 
+translation.
+> Is the ngen/egen combination the only way to achieve this, or is 
+there
+> another way?
+> 
+> Sanjeev
+> ---
+> S. Srivastav
+> Exponent, Inc.
+> 
+> 
+> -----------------------------------------------------------------
+> 
+> TO SUBSCRIBE:   send blank email to xansys-subscribe@onelist.com
+> TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@onelist.com
+> 
+> ARCHIVED on:
+> http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+> http://www.eScribe.com/software/xansys/
+
+
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@onelist.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@onelist.com
+
+ARCHIVED on:
+http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+http://www.eScribe.com/software/xansys/
+             

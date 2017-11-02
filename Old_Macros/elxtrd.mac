@@ -1,0 +1,40 @@
+/nopr
+!
+!
+!     elxtrd,dx,dy,dz,mat,type,real                                                       
+!
+!                   extrudes selected shell elements into solid                                   
+!                   elements in the indicated direction.           
+!     
+!                   mat,type,real are the attributes to be assigned 
+!                   to the new solid elements.
+!
+!                   the old shell elements are not deleted.                                
+!
+nelem
+*get,einc,mxel
+*get,mxnd,mxnd
+ngen,2,mxnd,all
+nsel,,mxnd+1,9e6
+ngen,2,mxnd,all,,,arg1,arg2,arg3
+mat,arg4
+type,arg5
+real,arg6
+:lp1
+*get,elmx,elmx,einc+1
+*if,elmx,le,.5,:end
+*get,ni,en1,elmx
+*get,nj,en2,elmx
+*get,nk,en3,elmx
+*get,nl,en4,elmx
+n1=mxnd
+n2=mxnd+mxnd
+e,ni+n1,nj+n1,nk+n1,nl+n1,ni+n2,nj+n2,nk+n2,nl+n2
+euse,,elmx
+*go,:lp1
+:end
+/gopr
+
+
+
+

@@ -1,0 +1,16 @@
+!	helps in the morphing process by creating DNSOL commands based 
+!   on new and old node locations  this one stores the current positon
+!
+*get,nnds,node,,count
+csys,0
+*dim,onode,,nnds,4
+n1=ndnext(0)
+*do,loop,1,nnds
+onode(loop,1)=n1
+onode(loop,2)=nx(n1)
+onode(loop,3)=ny(n1)
+onode(loop,4)=nz(n1)
+n1=ndnext(n1)
+*enddo
+n1=
+loop=

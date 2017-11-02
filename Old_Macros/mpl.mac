@@ -1,0 +1,18 @@
+/nopr
+
+!          This macro plots elements for each material property table entry
+
+!           so it can be seen if there are any material property entries which
+
+!           are not in use.
+
+!           SYNTAX :  mpl,starttab,endtab
+
+*set,a,arg1                                                                     
+:lb1                                                                            
+esel,mat,a                                                                     
+eplo                                                                            
+*set,a,a+1                                                                      
+*if,a,le,arg2,:lb1                        
+
+/gopr                                     

@@ -1,0 +1,7 @@
+/pmacro
+LCDEF,ERASE 
+/post1
+*MSG,UI,
+PICK BASE RST FILE #1  WHERE 1-2= DESIRED
+Fnc_ReadOpts_p1
+

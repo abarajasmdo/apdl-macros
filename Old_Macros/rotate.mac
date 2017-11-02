@@ -1,0 +1,26 @@
+
+/nopr
+!
+!      rm.mac   A macro to rotate about the screen coordinate
+!                   system.  Like RM in IDEAS.
+!
+!        usage:    rm,angx,angy,angz,win
+!             where:   angx=rotation about model x axis
+!                           angy=rotation about model y axis
+!                           angz=rotation about model z axis
+!                           win=window this is done in (defaults to 1)
+!
+!          note:  commands are done sequentially, with x first,
+!                    y second, and z third.  Rotations will be with
+!                    respect to each subsequent model position.
+!
+/angle,arg4,arg1,xm,1
+/angle,arg4,arg2,ym,1
+/angle,arg4,arg3,zm,1
+/repl
+/gopr
+
+
+
+
+

@@ -1,0 +1,53 @@
+ti_me=arg1
+/sys,rm  cutbc.cbdo temps.bf pressure.inp speed all.bcs
+*if,ti_me,eq,0,then
+*ask,ti_me,input ti_me please,1
+*endif
+*cfopen,TiMe
+*cfwrit,*set,ti_me,%ti_me%
+*cfclos
+
+resume,PCG%ti_me%,db,,
+/inp,TiMe
+/sys,rm TiMe
+getspeed
+/POST1  
+FILE,PCG%ti_me%,rst,
+cmsel,,obp
+subset,last
+rsys,0
+CBDOF,cutbc,node,,cutbc,cbdo,,0, ,0 	! cut bcs
+!*ask,wait,wait.
+!bfint,bfint,node,,temps,bf,,,,,		! temps
+!
+parsave,scalar,cav,press
+/sys,grep "*SET,P" cav.press > pressure.inp  			 !  pressures
+/sys,echo "/prep7" >> pressure.inp
+/sys, echo "*DO,LOOP,1,999"  >> pressure.inp
+/sys, echo "*get,check,comp,cav%loop%,type"  >> pressure.inp  
+/sys, echo "*if,check,eq,0,*cycle"   >> pressure.inp
+/com,/sys, echo "*endif  "   >> pressure.inp
+/sys, echo "sf,cav%loop%,pres,P%loop%"   >> pressure.inp 
+/sys, echo "pchk=P %loop%"   >> pressure.inp
+/sys, echo "*if,pchk,lt,1,then"   >> pressure.inp
+/sys, echo "*msg,warning,%loop%,pchk"   >> pressure.inp
+/sys, echo "The pressure for cavity %I is %G"   >> pressure.inp
+/sys, echo "*endif"   >> pressure.inp
+/sys, echo "*enddo"    >> pressure.inp
+/title,CF34-8e OBP Armpit fillet submodel time= %ti_me%
+
+*cfopen,speed
+*cfwrit,omega,,ay			!  speed
+*cfwrit,TIME,%ti_me%
+*cfclos
+
+				! file clean-up
+/sys,cat cutbc.cbdo temps.bf pressure.inp speed > all.bcs
+/sys, grep -v EOF all.bcs > junk
+
+/rename,junk,,,sub_bc,%ti_me%
+
+
+
+
+

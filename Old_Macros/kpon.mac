@@ -1,0 +1,7 @@
+!
+!         kpon.mac          This macro turns keypoint numbers on.
+!
+/nopr                                                                           
+/pnum,kpoi,1      
+/replot                                                             
+/gopr                                                                           

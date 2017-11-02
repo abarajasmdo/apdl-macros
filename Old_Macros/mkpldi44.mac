@@ -1,0 +1,63 @@
+!
+!
+!    makepldi.mac   A macro to make a series of 
+!                             displacement plots for animation
+!                             in ANSYS 44 to display in 50
+!
+!                 usage:   makepldi,n,mxsc,mnsc
+!
+!                     where:  n=number of plots from dscale=mnsc to
+!                                      dscale=mxsc
+!                                  mxsc=maximum dscale for deformed shape
+!                                  mnsc=minimum dscale for deformed shape
+!                                                       (optional)
+!
+store,disp,real,
+lclim,10
+lcabs,1
+lcase,1
+/gopr
+set,1,arg3
+lcase,2
+set,2,arg3
+lcase,3
+set,3,arg3
+lcsrss,4,1,2,3
+lcase,4
+!
+/view,1,1,1,1
+!/show,delete,me
+!nplo
+!/show,animate,plot
+!/user,1
+!,2
+!,3
+!,4
+arg1=arg1-1
+!/seg,dele
+!/seg,multi
+cnt=.1e-9
+
+:lp
+scal=(arg2*cnt)/arg1
+/dsca,1,scal
+/dsca,2,scal
+/dsca,3,scal
+/dsca,4,scal
+!count=cnt+1
+
+!*msg,info,count,scale
+!Making Plot  %I  Scale =  %G
+
+pldi
+*if,cnt,ge,arg1,:end
+cnt=cnt+1
+*go,:lp
+:end
+!/seg,off
+/dsca,1
+,2
+,3
+,4
+/gopr
+

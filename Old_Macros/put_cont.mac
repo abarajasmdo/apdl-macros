@@ -1,0 +1,12 @@
+parsav
+/CONT,1,9,USER 
+*GET,ncont,GRAPH,1,CONTOUR,NCONT
+/CONT,1,ncont,user
+*GET,vmin,GRAPH,1,CONTOUR,vmin
+*GET,vinc,GRAPH,1,CONTOUR,vinc
+*cfopen,grafx_set,inp,/tmp/
+*cfwrit,/cont,1,ncont,vmin,vinc,
+*cfclos
+/cont,1,9,auto
+parres
+

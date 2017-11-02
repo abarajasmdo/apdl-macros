@@ -1,0 +1,16 @@
+
+/com,      usage:   *use,k2post,arg1
+/com,           where  arg1 = frequency of interest
+
+,sene
+,kene
+
+lclim,4                                                                         
+lcase,1                                                                         
+set,1,arg1                                                                      
+lcase,2                                                                         
+set,2,arg1                                                                      
+lcase,3                                                                         
+set,3,arg1                                                                      
+lcsrss,4,1,2,3                                                                  
+lcase,4                                                                         

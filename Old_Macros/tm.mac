@@ -1,0 +1,13 @@
+/nopr
+!
+!    tm.mac   A macro to display clock and cpu times
+!
+*get,cltm,cltm
+*get,cptm,cptm
+*msg,info,cltm,cptm
+('  Clock time is  ',f14.8,/,'  CPU time is    ',f14.8)
+cltm=
+cptm=
+/gopr
+
+

@@ -1,0 +1,13 @@
+!
+!  deletes concatenated areas and lines
+!
+cm,tmp_area,area
+cm,tmp_line,line
+selcata
+selcatl
+adele,all
+ldele,all
+cmsel,a,tmp_area
+cmsel,a,tmp_line
+cmdele,tmp_line
+cmdele,tmp_area

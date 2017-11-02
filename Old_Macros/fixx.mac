@@ -1,0 +1,25 @@
+!  does nmod of group of nodes based on one of the nodes selected
+! fixes x (radial) dimension
+/pmacro
+/nopr
+parsav
+cm,_start_,node
+*msg,info
+select nodes to be fixed!
+nsel,r,p
+cm,fix_us,node
+*msg,info
+SELECT NODE AS BASE
+nsel,r,p
+nbase=ndnext(0)
+newrad=nx(nbase)
+cmsel,,_start_
+nmod,fix_us,newrad
+cmdele,_start_
+cmdele,fix_us
+nnof
+eplo
+parres
+/gopr
+
+

@@ -1,0 +1,89 @@
+!
+!   Written by David Schwartz 6/25/99
+!   GEAE propriatary
+!
+!   CLEAN.MAC - deletes extra real constants, material properties 
+!               and element types from your database
+!
+!/nopr
+*msg,info
+____________________________________________________________________ %/ &
+%/ REAL CONSTANT DELETION... %/&
+____________________________________________________________________ %/
+!/GOPR
+/prep7
+R=0
+rdel=0
+!
+!       GET HIGHEST REAL CONSTANT NUMBER
+!
+RMAX=RLINQR(0,14)
+*do,r,1,rmax
+!
+!  CHECK IF REAL,R NUMER IS USED
+!
+*IF,RLINQR(R,1),EQ,0,*CYCLE
+!
+!  NOW CHECK IF MORE THAN ONE ELEMENT USES REAL,R
+!
+ESEL,S,REAL,,R
+*GET,ENUM,ELEM,,COUNT
+*IF,ENUM,LT,1,THEN
+*MSG,NOTE,R
+NOTE:  REAL CONSTANT SET= %I IS NOT USED AND IS BEING DELETED! %/
+rdel,r
+*set,rdel,rdel+1
+*endif
+*enddo
+M=0
+Mdel=0
+!
+!       GET HIGHEST MAT TABLE NUMBER
+!
+MMAX=MPINQR(0,,14)
+*do,m,1,mmax
+!
+!  CHECK IF REAL,R NUMER IS USED
+!
+*IF,MPINQR(M,,1),EQ,0,*CYCLE
+!
+!  NOW CHECK IF MORE THAN ONE ELEMENT  USES REAL,R
+!
+ESEL,S,MAT,,M
+*GET,ENUM,ELEM,,COUNT
+*IF,ENUM,LT,1,THEN
+*MSG,NOTE,M
+NOTE:  MATERIAL TABLE  SET= %I IS NOT USED AND IS BEING DELETED! %/
+mpdel,all,m
+*set,mdel,mdel+1
+*endif
+*enddo
+ET=0
+ETdel=0
+!
+!       GET HIGHEST ELEMENT TYPE NUMBER
+!
+ETMAX=ETYIQR(0,14)
+*do,ET,1,ETMAX
+!
+!  CHECK IF REAL,R NUMER IS USED
+!
+*IF,ETYIQR(ET,1),EQ,0,*CYCLE
+!
+!  NOW CHECK IF MORE THAN ONE ELEMENT  USES REAL,R
+!
+ESEL,S,TYPE,,ET
+*GET,ENUM,ELEM,,COUNT
+*IF,ENUM,LT,1,THEN
+*MSG,NOTE,ET
+NOTE:  ELEMENT TYPE= %I IS NOT USED AND IS BEING DELETED! %/
+ETDEL,ET
+*set,ETdel,etdel+1
+*endif
+*enddo
+*MSG,NOTE,rdel
+DELETED  %I Real Constant Sets! %/
+*MSG,NOTE,mdel
+DELETED  %I Material Tables! %/
+*MSG,NOTE,etdel
+DELETED  %I Element Types! %/

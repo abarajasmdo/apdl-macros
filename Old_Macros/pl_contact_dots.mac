@@ -1,0 +1,15 @@
+! plots dots on contact40 nodes that are closed
+parsav
+/anno,dele
+cm,temp_e,elem
+ETAB,NF,SMISC,2	
+ESEL,U,ETAB,NF,0,0
+*get,gaps,element,,count
+el=elnext(0)
+*do,loop,1,gaps
+/an3d,symb,3,nx(nelem(el,1)),ny(nelem(el,1)),nz(nelem(el,1)),
+el=elnext(el)
+*enddo
+cmsel,,temp_e
+cmdele,temp_e
+

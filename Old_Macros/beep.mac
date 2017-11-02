@@ -1,0 +1,6 @@
+/nopr
+!
+!  beep.mac   send audio indication
+!
+/sys,echo '\007'
+/gopr

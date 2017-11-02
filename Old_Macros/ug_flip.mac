@@ -1,0 +1,14 @@
+!  flips  cf34-8e UG file into ansys coord system
+/prep7
+WPCSYS,-1,0
+wpro,90.000000,,
+wpro,,90.000000,
+wpro,,90.000000,
+CSWPLA,99,0,1,1,
+lTRAN,0,all, , , ,1,1  
+allsel
+/auto
+/angle,1,0
+/vup,,x 
+/view,,,,-1 
+/rep

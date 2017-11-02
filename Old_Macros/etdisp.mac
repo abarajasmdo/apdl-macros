@@ -1,0 +1,13 @@
+!
+!  etdisp.mac  macro does etab command for displacements and than RSS's them
+!                       for total "disp" displacements.
+!
+etab,ux,u,x
+etab,uy,u,y
+etab,uz,u,z
+sexp,ux2,ux,,2
+sexp,uy2,uy,,2
+sexp,uz2,uz,,2
+sadd,tttt,ux2,uy2
+sadd,dsp2,tttt,uz2
+sexp,disp,dsp2,,.5

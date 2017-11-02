@@ -1,0 +1,8 @@
+*DO,LOOP,1,1
+n=arg1
+*IF,arg1,LT,1,THEN
+/com, then
+*else
+/com,else
+*endif
+*ENDDO

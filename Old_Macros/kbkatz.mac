@@ -1,0 +1,42 @@
+/nopr
+
+!      kbkatz.mac      Usage: kbkatz,KP1,KP2,Z
+
+!            This macro creates a point with a given Z coordinate along a straight line
+!            which passes through two given points.
+!             
+!     get the coordinates of KP1
+z=arg3
+*get,x1,kx,arg1                                 
+*get,y1,ky,arg1                                                                 
+*get,z1,kz,arg1                          
+!     get the coordinates of KP2                                       
+*get,x2,kx,arg2                                                                 
+*get,y2,ky,arg2                                                                 
+*get,z2,kz,arg2                          
+!     calculate the X coordinate for Z=arg3                   
+x=(z-(z2-(x2*z1)/x1)/(1-(x2/x1)))*((x2-x1)/(z2-z1))
+!     calculate the Y coordinate for Z=arg3
+y=(z-(z2-(y2*z1)/y1)/(1-(y2/y1)))*((y2-y1)/(z2-z1))
+!
+!     get the highest keypoint number in the model
+*get,mxkp,mxkp
+!     increment the highest keypoint number by one for the new keypoint ID.
+kpn=mxkp+1
+!     create the new keypoint 
+k,kpn,x,y,z
+!     make a message telling what has happened
+*msg,note,arg1,arg2,arg3
+('Point Created Between Points',f5.0,' And ',f5.0,'At Z =',f12.6)                                                    
+x1=
+y1=
+z1=
+x2=
+y2=
+z2=
+kpn=
+x=
+y=
+z=
+mxkp=
+/gopr

@@ -1,0 +1,32 @@
+!/SHOW,FILE
+/post1
+all
+nsel,ext
+enode
+subset,last
+etab,ssige,surf,19
+/gresum,bolthole,gsav
+gfull
+all
+cmsel,u,bolt
+cmsel,u,nut
+plns,sige
+cmsel,,c_case
+/TLAB,DELE
+/anno,dele
+/tlab,.5,.9,COMBUSTOR CASE
+re
+/TLAB,DELE
+/anno,dele
+/tlab,.5,.9,SUPPORT
+cmsel,,support
+RE
+/TLAB,DELE
+/anno,dele
+/tlab,.5,.9,LPT CASE
+cmsel,,lp_case
+RE
+fini
+/exit,nosave
+
+

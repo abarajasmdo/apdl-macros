@@ -1,0 +1,27 @@
+/nopr
+!
+!     lz.mac   A macro to create a line parallel with the Z axis.
+!                 
+!
+!     Usage:  lhorz,keypoint,Z direction length
+!
+!          where,     keypoint=starting point for the line
+!                           Z direction length= length of line in the
+!                           Z direction.  Note
+!                                         that this can be either
+!                                         positive or negative.
+!
+*get,kx,kx,arg1
+*get,ky,ky,arg1
+*get,kz,kz,arg1
+*get,knum,mxkp
+knum=knum+1
+kz=kz+arg2
+k,knum,kx,ky,kz
+l,arg1,knum
+kx=
+ky=
+kz=
+knum=
+/gopr
+

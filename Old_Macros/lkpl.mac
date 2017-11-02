@@ -1,0 +1,12 @@
+/nopr
+! lkpl.mac   Plots lines and keypoints Simultaneously
+!
+! USAGE:     lkpl   (no arguments)
+!
+
+kplo
+noeras
+lplo
+/eras
+/eras
+/gopr

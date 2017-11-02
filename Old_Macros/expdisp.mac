@@ -1,0 +1,22 @@
+!  macro expdisp  - extracts dispacement results for selected model portion
+!
+rsys,solu
+*GET,NDS,node,,count
+*cfopen,exp,disps
+nd=ndnext(0)
+*vwrite
+('/nopr $ imme,0 $ /solu')
+*DO,LOOP,1,NDS
+*vwrite,nd,ux(nd)
+('D,',1x,I8,1x,',UX,'E20.10)
+*vwrite,nd,uy(nd)
+('D,',1x,I8,1x,',UY,'E20.10)
+*vwrite,nd,uz(nd)
+('D,',1x,I8,1x,',UZ,'E20.10)
+nd=ndnext(nd)
+*ENDDO
+*vwrite
+('/gopr $ imme,1')
+*cfCLOS
+
+

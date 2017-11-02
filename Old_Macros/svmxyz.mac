@@ -1,0 +1,117 @@
+From owner-xansys@im.ge.com Tue Feb 10 14:29:04 EST 1998
+Received: from gemb1.ae.ge.com (gemb1.ae.ge.com [129.202.7.246])
+	by c0112.ae.ge.com (8.8.6/8.8.6) with SMTP id OAA18786
+	for <bohlen@c0112.ae.ge.com>; Tue, 10 Feb 1998 14:29:04 -0500 (EST)
+Received: from [3.47.28.29] by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA28571; Tue, 10 Feb 1998 14:38:39 -0500
+Received: (from majordom@localhost) by im.ge.com (8.6.10/8.6.10) id OAA01205 for xansys-outgoing; Tue, 10 Feb 1998 14:47:54 -0500
+Received: from thomas3.ge.com (thomas3.ge.com [3.47.28.19]) by im.ge.com (8.6.10/8.6.10) with ESMTP id OAA01200 for <xansys@im.ge.com>; Tue, 10 Feb 1998 14:47:51 -0500
+Received: from ns.ge.com (ns.ge.com [192.35.39.24])
+	by thomas3.ge.com (8.8.7/8.8.7) with ESMTP id OAA19512
+	for <xansys@im.ge.com>; Tue, 10 Feb 1998 14:28:36 -0500 (EST)
+Received: from tmpil001.tmp.allied.com (tmpil001.tmp.allied.com [198.80.19.2])
+	by ns.ge.com (8.8.7/8.8.6) with SMTP id OAA22724
+	for <xansys@im.ge.com>; Tue, 10 Feb 1998 14:28:25 -0500 (EST)
+Received: by tmpil001.tmp.allied.com id AA01895
+  (InterLock SMTP Gateway 3.0 for xansys@im.ge.com);
+  Tue, 10 Feb 1998 12:28:16 -0700
+Received: by tmpil001.tmp.allied.com (Internal Mail Agent-1);
+  Tue, 10 Feb 1998 12:28:16 -0700
+Message-Id: <c=US%a=_%p=ALLIED%l=ALLIED/NAAERO1/005EC41F@tmpcn510.wins.allied.com>
+From: "Crawford, John" <John.Crawford@alliedsignal.com>
+To: ANSYS Users List <xansys@im.ge.com>
+Subject: XANS: SVMXYZ.MAC Macro
+Date: Tue, 10 Feb 1998 12:25:00 -0700
+X-Mailer:  Microsoft Exchange Server Internet Mail Connector Version 4.0.995.52
+Encoding: 79 TEXT
+Sender: owner-xansys@im.ge.com
+Precedence: bulk
+Reply-To: xansys@im.ge.com
+Status: R
+
+
+Ooops!
+
+I found an error in the macro which has been corrected here.  I had a
+typo on the *if,arg3,eq,0,then lines, which should have read
+*if,arg4,eq,0,then.  I also decided to remove the offset from
+"arg3-.0001" so the macro should work on axisymmetric problems as well.
+This was kind of a quick macro, and I apologize for the error.
+
+Well, I don't know about the rest of you but I'm going to play around
+with this a little more and then add this capability to our /POST1 menu.
+ This will be a handy addition for all of our ANSYS users.
+
+(If anybody finds any other dumb mistakes in this macro, please let me
+know.)
+
+John Crawford
+AlliedSignal Engines
+Phoenix, AZ
+john.crawford@alliedsignal.com
+
+/nopr
+!
+!  svmxyz.mac  a macro which calculates Von Mises stress at a
+!              given point in space
+!
+!  usage:  svmxyz,X,Y,Z,avg
+!
+!    where:  X= x coordinate
+!            Y= y coordinate
+!            Z= z coordinate
+!            avg=0 for averaged result, 1 for unaveraged result
+!
+!  written by: John Crawford  date: 2-10-98
+!
+!  make sure we are in /post1
+*get,ar20,active,,rout
+*if,ar20,eq,31,then
+!
+!  turn off annoying warning messages
+/uis,msgpop,3
+!
+!  set up the path
+path,path1,2,,
+!
+!  define two path points
+ppath,1,,arg1-.0001,arg2-.0001,arg3
+ppath,2,,arg1,arg2,arg3
+!
+!  define the result on the path
+*if,arg4,eq,0,then
+pdef,vonmises,s,eqv,avg
+*else
+pdef,vonmises,s,eqv,noav
+*endif
+!
+!  get the result from the last point on the path
+*get,ar21,path,,max,vonmises
+!
+!  print the result
+*if,arg4,eq,0,then
+*msg,ui,arg1,arg2,arg3,ar21
+The averaged Von Mises Stress at X= %g, Y= %g, Z= %g &
+%/ is %g
+*else
+*msg,ui,arg1,arg2,arg3,ar21
+The unaveraged Von Mises Stress at X= %g, Y= %g, Z= %g &
+%/ is %g
+*endif
+!
+!  turn warning messages back on
+/uis,msgpop,2
+!
+*else
+!
+!  print warning message if user is not in /post1
+*msg,ui
+*** You need to be in /POST1 to run SVMXYZ ***
+*endif
+/gopr
+
+
+
+
+
+

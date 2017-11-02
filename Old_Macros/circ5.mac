@@ -1,0 +1,9 @@
+!
+!  circ5.mac easy command to make circles regardless of csys
+!
+!  usage  circ5,kcent,kend
+!
+*get,kaxi,kp,,num,max
+kaxi=kaxi+1
+kgen,2,arg1,,,,,.1,kaxi-arg1  *generates kp normal to WP
+d=kdist5,arg1,arg2

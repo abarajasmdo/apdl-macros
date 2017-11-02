@@ -1,0 +1,8 @@
+/pmacro
+cm,_temp_,node
+*GET,NNDS,NODE,,COUNT
+!NNDS=2
+*DO,I,1,NNDS/2
+driven
+cmsel,,_temp_
+*ENDDO

@@ -1,0 +1,274 @@
+!
+! ful360.mac - changes real constants amd forces/moments from per radian to 
+!	full 360 degree basis
+!
+! usage: ful360
+!
+!  By: Dan Bohlen       Last Changed: 2-24-96
+!
+/nopr
+/uis,msgpop,2
+*MSG,WARN,
+Macro FUL360 changes real constant values from per radian to full 360 degree &
+basis for stif=3,12,21,40,42 ONLY!  Changes ALL nodal forces and moments from &
+per radian to full 360 degree basis. It can't handle forces/moments > 1e28.  &
+It does not change UNUSED real constants. &
+IF YOU ARE CONVERTING AN ANSYS44A MODEL, IT IS SUGGESTED THAT YOU HAVE DONE &
+A CDWRITE AND CDREAD ON THIS DATABASE PRIOR TO RUNNING THIS MACRO... %/
+!
+*MSG,INFO
+____________________________________________________________________ %/ &
+%/ REAL CONSTANT CONVERSION... %/&
+____________________________________________________________________ %/
+!/GOPR
+/prep7
+R=0
+PI2=2*3.141592654
+!
+!	GET HIGHEST REAL CONSTANT NUMBER
+!
+RMAX=RLINQR(0,14)
+!
+*DO,R,1,RMAX
+!/GOPR
+!
+!  CHECK IF REAL,R NUMER IS USED
+!
+*IF,RLINQR(R,1),EQ,0,*CYCLE
+!
+!  CHECK  ELEMENT TYPE IS USED 
+!
+ESEL,S,REAL,,R
+*GET,ENUM,ELEM,,COUNT
+*IF,ENUM,LT,1,THEN
+*MSG,NOTE,R
+NOTE:  REAL CONSTANT SET= %I IS NOT USED BY ANY ELEMENTS! %/
+*CYCLE
+*ENDIF
+*GET,ETYP,ELEM,ELNEXT(0),ATTR,TYPE
+*GET,ENAM,ETYP,ETYP,ATTR,ENAM
+ESEL,R,TYPE,,ETYP
+*GET,NUME,ELEM,,COUNT
+*IF,NUME,NE,ENUM,THEN
+*MSG,WARN,R
+MORE THAN ONE ELEMENT TYPE REFERS TO REAL SET # %I
+WILL CONVERT TO 360 BASIS, BUT YOU SHOULD CHECK IF OK!
+*ENDIF
+!
+! OK, FIGURE OUT ELEMENT TYPE AND CHANGE APPROPRIATE REAL VAULES
+!
+! 	CHECK FOR ZERO VALUES
+!
+*GET,R1O,RCON,R,CONST,1
+!*IF,R1O,LT,1E-9,THEN
+!R1=0
+!*ELSE
+R1=R1O
+!*ENDIF
+!
+*GET,R2O,RCON,R,CONST,2
+!*IF,R2O,LT,1E-9,THEN
+!R2=0
+!*ELSE
+R2=R2O
+!*ENDIF
+!
+*GET,R3O,RCON,R,CONST,3
+!*IF,R3O,LT,1E-9,THEN
+!R3=0
+!*ELSE
+R3=R3O
+!*ENDIF
+!
+*GET,R4O,RCON,R,CONST,4
+!*IF,R4O,LT,1E-9,THEN
+!R4=0
+!*ELSE
+R4=R4O
+!*ENDIF
+!
+*GET,R5O,RCON,R,CONST,5
+!*IF,R5O,LT,1E-9,THEN
+!R5=0
+!*ELSE
+R5=R5O
+!*ENDIF
+!
+*GET,R6O,RCON,R,CONST,6
+!*IF,R6O,LT,1E-9,THEN
+!R6=0
+!*ELSE
+R6=R6O
+!
+!*ENDIF
+!
+!	NOW FIGURE OUT THE ELEMENT TYPE TO MODIFY ONLY
+!	 THE APPROPRIATE REAL CONSTANTS
+!
+!	DO STIF 42 CHECK
+!
+*IF,ENAM,EQ,42,THEN
+*GET,KEY3,ETYP,ETYP,ATTR,KOP3
+	*IF,KEY3,EQ,3,THEN
+	RMOD,R,1,R1*PI2
+	*MSG,INFO,ETYP,ENAM,R,
+	FOR ELEM TYPE  %I = STIF  %I CHANGED REAL  %I (CONSTANT #1) %/
+	*MSG,INFO,R,R1O
+	FROM --> R, %I, %G ...  
+	*MSG,INFO,R,R1*PI2
+	TO ----> R, %I, %G ... %/
+	*ELSE
+	RLIST,R
+	*MSG,NOTE,ETYP,ENAM,R
+	ELEMENT TYPE %I STIF= %I ARE AXISYMMETRIC - NO REAL CONSTANT CHANGES &
+	FOR REAL= %I - CHECK IF THIS REAL CONSTANT IS USED FOR MORE THAN ONE &
+	ELEMENT TYPE! %/ 
+	*ENDIF
+!
+*ELSEIF,ENAM,EQ,21,THEN
+RMOD,R,1,R1*PI2,R2*PI2,R3*PI2,R4*PI2,R5*PI2,R6*PI2
+	*MSG,INFO,ETYP,ENAM,R,
+	FOR ELEM TYPE  %I = STIF  %I CHANGED REAL  %I (CONSTANTS #1,2,3,4,5,6) %/
+	*MSG,INFO,R,R1O,R2O,R3O,R4O,R5O,R6O
+	FROM --> R, %I, %G, %G, %G, %G, %G, %G  
+	*MSG,INFO,R,R1*PI2,R2*PI2,R3*PI2,R4*PI2,R5*PI2,R6*PI2 
+	TO ----> R, %I, %G, %G, %G, %G, %G, %G %/
+*ELSEIF,ENAM,EQ,40,THEN
+RMOD,R,1,R1*PI2,R2*PI2,R3*PI2,
+RMOD,R,5,R5*PI2,R6*PI2
+	*MSG,INFO,ETYP,ENAM,R,
+	FOR ELEM TYPE  %I = STIF  %I CHANGED REAL  %I (CONSTANTS  #1,2,3,5,6) %/
+	*MSG,INFO,R,R1O,R2O,R3O,R5O,R6O
+	FROM --> R, %I, %G, %G, %G, ..., %G, %G  
+	*MSG,INFO,R,R1*PI2,R2*PI2,R3*PI2,R4O,R5*PI2,R6*PI2
+	TO ----> R, %I, %G, %G, %G, ..., %G, %G
+*ELSEIF,ENAM,EQ,3,THEN
+RMOD,R,1,R1*PI2,R2*PI2
+	*MSG,INFO,ETYP,ENAM,R,
+	FOR ELEM TYPE  %I = STIF  %I CHANGED REAL  %I (CONSTANTS  #1,2) %/
+	*MSG,INFO,R,R1O,R2O,R3O,R4O,R5O,R6O
+	FROM --> R, %I, %G, %G, ...  
+	*MSG,INFO,R,R1*PI2,R2*PI2,R3O,R4O,R5O,R6O
+	TO ----> R, %I, %G, %G, ...
+*ELSEIF,ENAM,EQ,12,THEN
+RMOD,R,2,R2*PI2
+	*MSG,INFO,ETYP,ENAM,R,
+	FOR ELEM TYPE  %I = STIF  %I CHANGED REAL  %I (CONSTANTS  #2) %/
+	*MSG,INFO,R,R2O,
+	FROM --> R, %I, ..., %G, ...  
+	*MSG,INFO,R,R2*PI2
+	TO ----> R, %I, ..., %G, ...
+*ELSE
+*MSG,WARN,ETYP,ENAM,R
+NO REALS CHANGED FOR TYPE  %I = STIF  %I, REAL  %I %/ &
+MACRO CHANGES REALS FOR STIF=3,12,21,40,42 ONLY! %/
+*ENDIF
+*ENDDO
+!
+!	OK, LET'S DO FORCES AND MOMENTS!
+!
+!
+!	SELECT NODE WITH FORCES, CYCLE THRU NODES AND CYCLE THRU F COMPONENTS
+!
+*MSG,INFO,
+_______________________________________________________________ %/ &
+%/ FORCE AND MOMENT CONVERSIONS... %/&
+_______________________________________________________________ %/
+NSEL,S,F,F,0,1E10,,1
+NSEL,A,F,M,0,1E10,,1
+*GET,NNDS,NODE,,COUNT
+*IF,NNDS,LT,1,THEN
+*MSG,INFO,
+NO FORCES TO SCALE BY 2 PI %/ &
+DONE
+!*GO,:DONE
+*ELSE
+!*ENDIF
+ND=0
+*DO,NDS,1,NNDS
+	ND=NDNEXT(ND)
+*DO,COMP,1,6
+NF=FGET(ND,COMP,0)
+*IF,NF,ABGT,1E28,*CYCLE
+*IF,COMP,EQ,1,THEN
+F,ND,FX,NF*PI2
+*MSG,INFO,ND,NF,ND,NF*PI2
+Changed --> F, %I,FX, %G to --> F, %I,FX, %G
+*ELSEIF,COMP,EQ,2
+F,ND,FY,NF*PI2
+*MSG,INFO,ND,NF,ND,NF*PI2
+Changed --> F, %I,FY, %G to --> F, %I,FY, %G
+*ELSEIF,COMP,EQ,3
+F,ND,FZ,NF*PI2
+*MSG,INFO,ND,NF,ND,NF*PI2
+Changed --> F, %I,FZ, %G to --> F, %I,FZ, %G
+*ELSEIF,COMP,EQ,4
+F,ND,MX,NF*PI2
+*MSG,INFO,ND,NF,ND,NF*PI2
+Changed --> F, %I,MX, %G to --> F, %I,MX, %G
+*ELSEIF,COMP,EQ,5
+F,ND,MY,NF*PI2
+*MSG,INFO,ND,NF,ND,NF*PI2
+Changed --> F, %I,MY, %G to --> F, %I,MY, %G
+*ELSEIF,COMP,EQ,6
+	F,ND,MZ,NF*PI2
+*MSG,INFO,ND,NF,ND,NF*PI2
+Changed --> F, %I,MZ, %G to --> F, %I,MZ, %G
+	*ELSE
+*MSG,ERROR,ND
+FOR NODE  %I I DIDN'T CHANGE A FORCE ???!? &
+CONTACT DAN BOHLEN 
+	*ENDIF	
+	*ENDDO
+*ENDDO
+!:DONE
+*ENDIF
+*MSG,NOTE
+YOU MAY CONSIDER DECREASING GAP STIFFENESSES TO SPEED SOLUTION CONVERGENCE
+/NOPR
+ETYP=
+ENAM=
+KEY3=
+PI2=
+NDS=
+ND=
+NF=
+NNDS=
+R=
+R1=
+R2=
+R3=
+R4=
+R5=
+R6=
+R1O=
+R2O=
+R3O=
+R4O=
+R5O=
+R6O=
+RMAX=
+NUME=
+!USAGE: FUL360,# of real contants  (or larger)
+/com,If you are converting a 44A model to 52 here are some commands that the
+/com,AMTO ANSYS run analysis team suggest will help de-bug your database
+/com,and speed the solution run. For more details see the homepage:
+/com,http://www.ae.ge.com/sections/AMTO/bestpract.dir/lifemgtbp.dir/stress_analysis.dir/
+/com,
+/com,Step 1: cdwrit out your db and read it back in.
+/com,iter,0   #removes 44A command that WILL override later 52 settings
+/com,cnvtol,u,,.0001,0  #44a convergence settings - if you want to check your 
+/com,conversion only!  The default force and moment should be used to final run.
+/com,nlgeom,on    # large displacement on
+/com,sstif,on 	#stress stiffening on
+/com,nropt,full   # full Newton-Rapson solution
+/com,eqslv,front  # frontal solver - unless your model has a huge wavefront.
+/com,nsubst,1,1,1 # Puts loads on in one step, also activates auto time stepping
+/com,kbc,1 	#step loading
+/com,lnsrch,on	#can help with gaps convergence
+/com,pred,off	#Probably the default, turn it off to be sure
+/com,modlist	# macro to list file data on output file
+/com,outpr,basic,last	#if you want solution data written to your output file
+/com,NOTE:  the ktemp command is gone. Temperatures on model will be used!
+/com,
+/GOPR

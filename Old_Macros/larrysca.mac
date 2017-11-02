@@ -1,0 +1,10 @@
+*ask,dsval,DISPLACEMENT SCALE FACTOR(-1 AUTOSCALE),1
+*if,dsval,eq,0,then
+/dscale,1,off
+*endif
+*if,dsval,ne,0,then
+/dscale,1,dsval
+*endif
+*if,dsval,eq,-1,then
+/dscale,1,auto
+*endif

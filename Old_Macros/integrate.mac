@@ -1,0 +1,11 @@
+/pmacro
+/nopr
+*ask,variable,Input varible to integrate,'name'
+*get,length,path,0,last,s
+!*cfopen,crap
+!*cfwrite,pcalc,intg,average,%variable%,s,1/length,
+pcalc,intg,average,%variable%,s,1/length,
+!*cfclos
+!/inp,crap 
+/gopr
+

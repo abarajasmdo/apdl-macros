@@ -1,0 +1,78 @@
+! mpscal.mac scales structural matl prop - useful to make 1/160 of an 
+!	axisymetric model
+!
+NM=mpinqr(,,14)  !  Find max matl number
+*ASK,SF,MATL PROP SCALE FACTOR MP*(SF),0
+*CFOPEN,scaled,matl
+TITLE
+*VWRITE,SF
+('/COM,MATL @ 70 deg F PROPERTIES SCALED BY ',F10.5)
+*DO,I,1,NM
+CHK=MPINQR(I,1,1)   !  CHECK IF EX FOR MATL IS DEFINED  0=UNDEFINED
+*IF,CHK,GT,.5,THEN
+!
+*GET,EXi,EX,I,temp,70
+*IF,EXi,GT,1E-9,THEN
+*CFWRIT,MPDELE,EX,I
+*CFWRIT,MP,EX,i,EXi*SF
+*ENDIF
+!
+!
+*GET,EYi,EY,I,temp,70
+*IF,EYi,GT,1E-9,THEN
+*CFWRIT,MPDELE,EY,I
+*CFWRIT,MP,EY,i,EYi*SF
+*ENDIF
+!
+!
+*GET,EZi,EZ,I,temp,70
+*IF,EZi,GT,1E-9,THEN
+*CFWRIT,MPDELE,EZ,I
+*CFWRIT,MP,EZ,i,EZi*SF
+*ENDIF
+!!
+*GET,GXYi,GXY,I,temp,70
+*IF,GXYi,GT,1E-9,THEN
+*CFWRIT,MPDELE,GXY,I
+*CFWRIT,MP,GXY,i,GXYi*SF
+*ENDIF
+!!
+*GET,GYZi,GYZ,I,temp,70
+*IF,GYZi,GT,1E-9,THEN
+*CFWRIT,MPDELE,GYZ,I
+*CFWRIT,MP,GYZ,i,GYZi*SF
+*ENDIF
+!!
+*GET,GXZi,GXZ,I,temp,70
+*IF,GXZi,GT,1E-9,THEN
+*CFWRIT,MPDELE,GXZ,I
+*CFWRIT,MP,GXZ,i,GXZi*SF
+*ENDIF
+!!
+*GET,DENSi,DENS,I,temp,70
+*IF,DENSi,GT,1E-9,THEN
+*CFWRIT,MPDELE,DENS,I
+*CFWRIT,MP,DENS,i,DENSi*SF
+*ENDIF
+!
+*else
+!*MSG,NOTE,I
+!MATL %I NOT DEFINED
+*ENDIF
+*ENDDO
+NM=
+CHK=
+EXI=
+EYI=
+EZI=
+GXYI=
+GYZI=
+GXZI=
+DENSI=
+SF=
+I=
+/sys,more scaled.matl
+*msg,info,
+Scaled matl properties on input file "scaled.matl"
+
+

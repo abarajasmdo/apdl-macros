@@ -1,0 +1,16 @@
+!flattens model for cut bcs from 2D
+/prep7
+parsav
+nwrit,backUP,node
+*msg,note
+Current node definitions backed up on backUP.node
+modmsh,noch
+zero=0
+shpp,off
+csys,11
+imme
+nmod,all,,zero
+imme,1
+csys,0
+nrot,all
+nplot

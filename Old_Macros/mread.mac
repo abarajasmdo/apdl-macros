@@ -1,0 +1,27 @@
+!/NOPR
+! arg1 number of rows
+! arg2 number of columns (default is 1)
+! arg3 fname of data file
+! arg4 array name for matrix to be created (*DIM issued
+!       inside the macro for this array)
+!_arg1=VALCHR(arg1)
+!_arg2=VALCHR(arg2)
+_arg1=arg1
+_arg2=arg2
+_arg2=_arg2>1
+_arg4=arg4        ! needed
+*del,vect
+*dim,vect,array,_arg1*_arg2
+*dim,%_arg4%,array,_arg1,_arg2
+*vread,vect(1),arg3
+(3G10.5)
+*do,ar10,1,_arg2
+*do,ar11,1,_arg1
+%_arg4%(ar11,ar10)=vect((ar11-1)*_arg2+ar10)
+*enddo
+*enddo
+*status,%_arg4%
+_arg1=
+_arg2=
+_arg4=
+/GO

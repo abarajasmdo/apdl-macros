@@ -1,0 +1,18 @@
+!
+! tmnmx finds min and max temps
+!
+temp=0
+:lp1
+nsel,t,0,temp
+*get,nds,nsel
+*if,nds,eq,0,:skip
+*msg,note,temp
+('The minimum temperature is=',f6.0)
+*go,:end
+:skip
+temp=temp+10
+*go,:lp1
+:end
+temp=
+
+

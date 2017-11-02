@@ -1,0 +1,72 @@
+/nopr
+parsav
+!
+!      ndup5.mac  A macro to create duplicate nodes
+!                (great for coupling) in ANSYS 5.0.
+!
+!         usage:  ndup5,node,newn
+!
+!            where   node=node number to be duplicated
+!                    newn=new node number (optional)
+!
+!                if newn is not given, the highest
+!                available node number will be used.
+!
+/pmacro
+cm,_temp_,node
+*msg,note
+Select node you want to move
+nsel,r,p
+*GET,NNDS,NODE,,COUNT
+*IF,NNDS,NE,1,THEN
+*stop
+*ELSE
+n2mv=ndnext(0)
+arg2=n2mv
+cmsel,,_temp_
+*msg,note
+Select node that is the target location
+nsel,r,p
+target=ndnext(0)
+arg1=target
+cmsel,,_temp_
+nx=nx(arg1)
+ny=ny(arg1)
+nz=nz(arg1)
+*get,rxy,node,(arg1),ang,xy
+*get,ryz,node,(arg1),ang,yz
+*get,rzx,node,(arg1),ang,zx
+*get,mxnd,mxnd
+!
+!  check if arg2 is provided
+!
+*if,arg2,gt,0,then
+newn=arg2
+*else
+*get,mxnd,mxnd
+newn=mxnd+1
+*endif
+!*if,arg2,gt,mxnd,then
+!
+!  create the node
+!
+n,newn,nx,ny,nz,rxy,ryz,rzx
+!*msg,info,newn,nx,ny,nz
+!Node %i created at x= %g y= %g z= %g
+!*ask,enter,Hit the enter key to clear screen
+!*else
+!*MSG,WARN,NEWN,MXND
+!NODE %I YOU WANT IS LESS THAN THE MAX NODE # %I
+!*ENDIF
+*ENDIF
+nx=
+ny=
+nz=
+ntxy=
+ntyz=
+ntxz=
+mxnd=
+newn=
+parres
+/gopr
+

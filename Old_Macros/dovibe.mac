@@ -1,0 +1,20 @@
+!  helps in doing 2d modal analysis
+/prep7
+/solu
+antype,2
+xMODE=arg1
+MODOPT,LANB,20  
+EQSLV,SPAR  
+MXPAND,20, , ,0 
+LUMPM,0 
+PSTRES,1
+!*  
+MODOPT,LANB,20,0,44000, ,OFF, ,0
+/TITLE,CF34-8E OBP PRESTR MODAL ANALYSIS M=%xMODE%
+/ASSIGN,RST,mode%xMODE%,rst
+mode,xMODE
+/sys,cp /tmp/ansys/backup/*.* /tmp/ansys/	! prestress files
+solve
+fini
+/post1
+set,list

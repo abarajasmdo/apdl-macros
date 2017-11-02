@@ -1,0 +1,13 @@
+/nopr
+!
+!      cson.mac                Coordinate System ON.MAC
+!
+!                           Usage: cson        (no arguments)
+!
+!                                       This macro turns coordinate system symbols on.
+!
+/psym,csys,1                                                                      
+/gopr
+
+
+

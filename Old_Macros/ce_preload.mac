@@ -1,0 +1,114 @@
+!
+! ce_UX macro makes averaging constraint equation between two sets of
+!		nodes defined by components
+!
+!               allows any number of nodes on either side and offset
+!
+!	DETERMINES THE AVERAGE RADIAL DISPLACMENT IN /POST1 
+!	USES ONLY GAPS IN CONTACT AT PRELOAD.
+!
+!	By:  Dan Bohlen 
+!/NOPR
+/post1
+rsys,0 ! get gap nodal results in rotated (global cylindrical) csys
+PARSAV
+CM,USERNODE,NODE
+*ask,q,Did you rotate nodes into Csys=11?,'yes'
+!*ASK,EREAL,GAP SET REAL CONSTANT NUMBER,
+*ASK,ICOMP,FIRST NODE COMP NAME,'COMP_NAME'
+*ASK,JCOMP,SECOND NODE COMP NAME,'COMP_NAME'
+*ASK,CEDOF,CE DOF (ONLY ONE),'UX'
+!CEDOF='UX'
+!*ASK,OFFSET,OFFSET VALUE (offset=AVG(%ICOMP%)-avg(%JCOMP%)),0.0
+!
+!	MAKE COMPONENTS OF NODES
+!
+!ESEL,REAL,EREAL
+!ETAB,NF,SMISC,1		! normal forces
+!ESEL,U,ETAB,NF,0,0	! UNSELECT OPEN GAPS
+!CM,CLOSED,ELEM
+!NELEM
+!CMSEL,R,ICOMP
+!CM,ITEMP,NODE
+!*GET,INNDS,NODE,,COUNT
+!CMSEL,,CLOSED
+!NELEM
+!CMSEL,,JCOMP
+!CM,JTEMP,NODE
+!*GET,JNNDS,NODE,,COUNT
+*ASK,FLAG,USE PRELOAD RESULTS (0) OR INPUT OFFSET (1),0
+!
+!	GET AVG DISPLACEMENTS
+!
+	*IF,FLAG,EQ,0,THEN
+/POST1
+nod=0
+totx=0
+CMSEL,,ICOMP
+cm,itemp,node
+*GET,INNDS,NODE,,COUNT
+*DO,I,1,INNDS
+nod=ndnext(nod)
+totx=totx+uY(nod)
+*enddo
+/GOPR
+IUX=totx/INNDS
+/NOPR
+!
+nod=0
+totx=0
+CMSEL,,JCOMP
+cm,jtemp,node
+*GET,JNNDS,NODE,,COUNT
+*DO,I,1,JNNDS
+nod=ndnext(nod)
+totx=totx+uY(nod)
+*enddo
+/GOPR
+JUX=totx/JNNDS
+
+!
+OFFSET=IUX-JUX
+	*ELSE
+*ASK,OFFSET,OFFSET VALUE (offset=AVG(%ICOMP%)-avg(%JCOMP%)),0.0
+	*ENDIF	
+/NOPR
+!
+! GET STARTING CE NUMBER
+!
+/PREP7
+/GOPR
+CENUM=CEINQR(,14)+1
+/NOPR
+!
+!	DO POSITIVE COEFF
+!
+CMSEL,,ITEMP
+N=0
+*DO,I,1,INNDS
+N=NDNEXT(N)
+CE,CENUM,0,N,CEDOF,1/INNDS,
+*ENDDO
+!
+!	NOW DO NEGATIVE COEFF
+!
+CMSEL,,JTEMP
+N=0
+*DO,I,1,JNNDS
+N=NDNEXT(N)
+CE,CENUM,0,N,CEDOF,-1/JNNDS,
+*ENDDO
+!
+!       SET OFFSET VALUE
+!
+CECMOD,CENUM,OFFSET
+!
+!	CLEAN UP
+!
+!CELIST,CENUM
+CMSEL,,USERNODE
+CMDE,USERNODE
+CMDEL,ITEMP
+,JTEMP
+PARRES
+

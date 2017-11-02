@@ -1,0 +1,9 @@
+/nopr 
+!
+!             setup.mac           A macro to setup pipe stresses.                           
+!                                                                                           
+stress,sigi,16,27
+,sigi,18,27
+,sigj,16,31
+,sigj,18,31        
+/gopr                                                                           

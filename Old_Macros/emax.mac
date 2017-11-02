@@ -1,0 +1,17 @@
+/nopr
+!
+!          enmax.mac      
+!
+!                     This macro finds the maximum node and
+!                     element numbers in the model and displays them.
+!                 
+!
+*get,ar11,mxnd
+*get,ar12,mxel
+*msg,note,ar12,ar11
+Max elem number is %I Max node number is %I                                             
+!
+/gopr
+
+
+

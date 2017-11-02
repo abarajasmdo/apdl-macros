@@ -1,0 +1,1354 @@
+/nopr
+
+/uis,msgpop,3
+shpp,off
+*go,:start
+:start
+/uis,msgpop,2
+
+/com
+/com
+/com
+/com
+/com
+/com
+/com
+/com
+/com, ---------------------------------------------------------
+/com, ---------------------------------------------------------
+/com
+/com,                         EZ_Gap
+/com,                  Version 1.00 03/26/99
+/com
+/com, Macro for Point-to-Point Contact Elements (esp Contac52s)
+/com,            Creation/Verification/Modification
+/com
+/com,            Created by Dan Weisbrod (243-6891)
+/com
+/com,                          *****
+/com,            Contact if any comments/questions!
+/com,                          *****
+/com
+/com, ---------------------------------------------------------
+/com, ---------------------------------------------------------
+
+
+
+
+
+!
+! ****************************
+! LISTING OF PROGRAM VARIABLES
+! ****************************
+!
+! Initial Status of Model
+!   dtw1_81: Initial Set of Nodes
+!   dtw1_82: Initial Set of Elements
+!   dtw1_91: Initial CSYS
+!   dtw1_92: Initial DSYS
+!   dtw1_93: Initial Element Type
+!   dtw1_94: Initial Element Mat
+!   dtw1_95: Initial Element Real
+!   dtw1_96: Max Element Number
+!   dtw1_97: Max Node Number
+!
+! Contact Element Creation
+!   dtw1_00 - dtw1_40: Parameters
+!   dtw_eij: Matrix for Element Information
+!
+! Contact Element Verification
+!   dtw2_00 - dtw2_22: Parameters
+!
+! Contact Element Modification
+!   dtw3_00 - dtw3_69: Parameters
+!
+
+
+
+
+
+!
+! Initial Status of Model
+!
+cm,dtw1_81,node
+cm,dtw1_82,elem
+*get,dtw1_91,active,,csys
+*get,dtw1_92,active,,dsys
+*get,dtw1_93,active,,type
+*get,dtw1_94,active,,mat
+*get,dtw1_95,active,,real
+
+esel,all
+*get,dtw1_96,elem,,num,max
+cmse,s,dtw1_82
+nsel,all
+*get,dtw1_97,node,,num,max
+cmse,s,dtw1_81
+
+
+
+
+
+
+
+!
+! EZ_Gap Option Choice
+!
+*ask,dtw1_00,Option (1-Create, 2-Verify, 3-Modify),
+
+
+
+
+
+
+
+!
+! -------------------------------
+!
+! EZ_Gap Option - CREATE
+!
+! -------------------------------
+!
+*if,dtw1_00,eq,1,then
+/com
+/com, Point-to-Point Contact Element CREATION
+/com
+/com, Required Inputs:
+/com,  Component w/ I-Nodes (Only)
+/com,  Component w/ J-Nodes (Only)
+/com,  CSYS to Determine I-J Pair
+/com,  Defined Element Type
+/com,  Element Attributes: Type,Mat,Real
+/com
+/com, Optional Input:
+/com,  I-Node Offset to Determine I-J Pair
+/com
+
+
+
+!
+! I-J Node Component Names
+!
+*ask,dtw1_01,I-Node Component Name,''
+*ask,dtw1_02,J-Node Component Name,''
+
+
+
+!
+! I-J Node Component Checks
+!
+*get,dtw1_03,comp,dtw1_01,type
+*get,dtw1_04,comp,dtw1_02,type
+
+*if,dtw1_03,ne,1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ No Nodes in I-Node Component Set %/
+/com
+*go,:error2
+*endif
+
+*if,dtw1_04,ne,1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ No Nodes in J-Node Component Set %/
+/com
+*go,:error2
+*endif
+
+nsel,none
+cmse,s,dtw1_01
+*get,dtw1_05,node,,count
+nsel,none
+cmse,s,dtw1_02
+*get,dtw1_06,node,,count
+
+*if,dtw1_05,ne,dtw1_06,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Number of Nodes in I-J Sets Differ %/
+/com
+*go,:error2
+*endif
+
+
+
+!
+! CSYS to Determine I-J Pair
+!
+*ask,dtw1_07,CSYS to Determine I-J Pair,%dtw1_91%
+/uis,msgpop,3
+*get,dtw1_08,cdsy,dtw1_07,attr,kcs
+/uis,msgpop,2
+*if,dtw1_08,eq,-1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Coordinate System is NOT Defined %/
+/com
+*go,:error2
+*endif
+csys,dtw1_07
+
+
+
+!
+! Calculate Average I-J Coordinates and Delta
+!
+cmse,s,dtw1_01
+dtw1_08=0.00
+dtw1_09=0.00
+dtw1_10=0.00
+dtw1_11=0.00
+
+*do,dtw1_12,1,dtw1_05
+dtw1_08=ndnext(dtw1_08)
+dtw1_09=dtw1_09+nx(dtw1_08)
+dtw1_10=dtw1_10+ny(dtw1_08)
+dtw1_11=dtw1_11+nz(dtw1_08)
+*enddo
+
+dtw1_09=dtw1_09/dtw1_05
+dtw1_10=dtw1_10/dtw1_05
+dtw1_11=dtw1_11/dtw1_05
+
+cmse,s,dtw1_02
+dtw1_13=0.00
+dtw1_14=0.00
+dtw1_15=0.00
+dtw1_16=0.00
+
+*do,dtw1_17,1,dtw1_06,1
+dtw1_13=ndnext(dtw1_13)
+dtw1_14=dtw1_14+nx(dtw1_13)
+dtw1_15=dtw1_15+ny(dtw1_13)
+dtw1_16=dtw1_16+nz(dtw1_13)
+*enddo
+
+dtw1_14=dtw1_14/dtw1_06
+dtw1_15=dtw1_15/dtw1_06
+dtw1_16=dtw1_16/dtw1_06
+
+dtw1_18=dtw1_14-dtw1_09
+dtw1_19=dtw1_15-dtw1_10
+dtw1_20=dtw1_16-dtw1_11
+
+/com
+/com
+/com, NOTE!!!
+/com, The "I-Node Offset" is an amount used to
+/com, maximize proper definition of I-J Pairs.
+/com, These node pairs will be determined as if
+/com, the I-Nodes were located at their present
+/com, locations plus the offset. This is useful
+/com, for conditions where the I's and J's are
+/com, separated by a large amount (interference)
+/com
+/com, NOTE!!!
+/com, No actual translation or modification of
+/com, the nodes is performed.
+/com
+/com
+/com
+/com, --------------------------------
+/com, I-J Node Coordinate Calculations
+/com, --------------------------------
+/com
+*vwr,dtw1_01
+("  I-Node Cmpnt: ",a8)
+*vwr,dtw1_02
+("  J-Node Cmpnt: ",a8)
+/com
+*vwr,dtw1_07
+("  Active CSYS:  ",i3)
+/com
+/com,                       X         Y         Z
+/com,                      ---       ---       ---
+*vwr,dtw1_09,dtw1_10,dtw1_11
+("  I-Nodes (Avg)   ",3(f10.5))
+*vwr,dtw1_14,dtw1_15,dtw1_16
+("  J-Nodes (Avg)   ",3(f10.5))
+*vwr,dtw1_18,dtw1_19,dtw1_20
+("  Delta (Avg J-I) ",3(f10.5))
+
+
+
+!
+! Add I-Node Offset for Temporary I-Node Coordinates
+!
+*ask,dtw1_21,I-Node Offset (1:X, 2:Y, 3:Z),1
+
+*if,dtw1_21,eq,1,then
+dtw1_22=1.00
+dtw1_23=0.00
+dtw1_24=0.00
+*endif
+
+*if,dtw1_21,eq,2,then
+dtw1_22=0.00
+dtw1_23=1.00
+dtw1_24=0.00
+*endif
+
+*if,dtw1_21,eq,3,then
+dtw1_22=0.00
+dtw1_23=0.00
+dtw1_24=1.00
+*endif
+
+*ask,dtw1_25,I-Node Offset Amount,%dtw1_22*dtw1_18+dtw1_23*dtw1_19+dtw1_24*dtw1_20%
+
+
+
+!
+! Determine I-J Pairs
+!
+*del,dtw_eij
+*dim,dtw_eij,array,dtw1_05,3
+
+cmse,s,dtw1_01
+dtw1_26=0.00
+
+*do,dtw1_27,1,dtw1_05,1
+cmse,s,dtw1_01
+dtw1_26=ndnext(dtw1_26)
+dtw1_28=dtw1_22*dtw1_25+nx(dtw1_26)
+dtw1_29=dtw1_23*dtw1_25+ny(dtw1_26)
+dtw1_30=dtw1_24*dtw1_25+nz(dtw1_26)
+cmsel,s,dtw1_02
+dtw1_31=node(dtw1_28,dtw1_29,dtw1_30)
+dtw_eij(dtw1_27,1)=dtw1_27
+dtw_eij(dtw1_27,2)=dtw1_26
+dtw_eij(dtw1_27,3)=dtw1_31
+*enddo
+
+
+
+!
+! Define and Create Contact Elements
+!
+*ask,dtw1_32,Contact Element Type (ET #),%dtw1_93%
+*get,dtw1_33,etyp,dtw1_32,attr,enam
+dtw1_34=0.00
+
+*if,dtw1_33,eq,52,then
+dtw1_34=1.00
+*endif
+
+*if,dtw1_33,eq,12,then
+dtw1_34=1.00
+*endif
+
+*if,dtw1_33,eq,40,then
+dtw1_34=1.00
+*endif
+
+*if,dtw1_34,eq,1,then
+type,dtw1_32
+*else
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Element Type is NOT Contac52, 12 or 40 %/
+/com
+*go,:error2
+*endif
+
+*ask,dtw1_35,Contact Element Matl (MAT #),%dtw1_94%
+*ask,dtw1_36,Contact Element Real (REAL #),%dtw1_95%
+mat, dtw1_35
+real,dtw1_36
+*ask,dtw1_37,Element Starting Number,%dtw1_96+1%
+esel,none
+
+*do,dtw1_38,1,dtw1_05
+en,dtw1_37+dtw1_38-1,dtw_eij(dtw1_38,2),dtw_eij(dtw1_38,3)
+*enddo
+
+nele
+*get,dtw1_39,node,,count
+*get,dtw1_40,elem,,count
+
+cm,dtw1_81,node
+cm,dtw1_82,elem
+
+/com
+/com
+/com
+/com
+/com, ------------------------
+/com, Contact Element Creation
+/com, ------------------------
+/com
+*vwr,dtw1_33
+("  Element: Contac",i2)
+*vwr,dtw1_37,dtw1_37+dtw1_05-1
+("  Numbers: ",i6," - ",i6)
+/com
+*vwr,dtw1_40
+("  Elements Created: ",i4)
+*vwr,dtw1_39
+("  Attached Nodes:   ",i4)
+/com
+*vwr,dtw1_32
+("  Type: ",i3)
+*vwr,dtw1_35
+("  Mat:  ",i3)
+*vwr,dtw1_36
+("  Real: ",i3)
+
+*if,dtw1_39,ne,dtw1_40*2,then
+/com
+/com
+*msg,warn
+I-J Nodes Do NOT Match Initial Set %/ J-Node Shared by Common Elements %/
+/com
+*endif
+
+*endif
+
+
+
+
+
+
+
+
+!
+! -------------------------------
+!
+! EZ_Gap Option - VERIFY
+!
+! -------------------------------
+!
+*if,dtw1_00,eq,2,then
+/com
+/com, Point-to-Point Contact Element VERIFICATION
+/com
+/com, Required Inputs:
+/com,  Contact Elements Selected (Only)
+/com,  CSYS for Nodal Coordinate Listing
+/com
+
+
+!
+! Ensure Only Point-to-Point Elements Selected
+!
+*get,dtw2_01,elem,,count
+dtw2_02=0.00
+
+cmse,s,dtw1_82
+esel,r,stif,,52
+*get,dtw2_03,elem,,count
+*if,dtw2_03,eq,dtw2_01,then
+dtw2_02=1.00
+*endif
+
+cmse,s,dtw1_82
+esel,r,stif,,12
+*get,dtw2_04,elem,,count
+*if,dtw2_04,eq,dtw2_01,then
+dtw2_02=1.00
+*endif
+
+cmse,s,dtw1_82
+esel,r,stif,,40
+*get,dtw2_05,elem,,count
+*if,dtw2_05,eq,dtw2_01,then
+dtw2_02=1.00
+*endif
+
+cmse,s,dtw1_82
+
+*if,dtw2_02,ne,1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ All Elements Selected MUST be Contac52, 12 or 40 %/
+/com
+*go,:error2
+*endif
+
+
+!
+! Summarize I-J Coordinates and Delta
+!
+*ask,dtw2_06,CSYS for Nodal Distances,%dtw1_91%
+/uis,msgpop,3
+*get,dtw2_07,cdsy,dtw2_06,attr,kcs
+/uis,msgpop,2
+*if,dtw2_07,eq,-1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Coordinate System is NOT Defined %/
+/com
+*go,:error2
+*endif
+csys,dtw2_06
+
+/com
+/com
+/com, -------------------------------
+/com, Summary of I-J Node Coordinates
+/com, -------------------------------
+/com
+*vwr,dtw2_06
+("  Active CSYS: ",i3)
+
+dtw2_07=0.00
+dtw2_08=0.00
+dtw2_09=1000.
+dtw2_10=-1000.
+dtw2_11=0.00
+dtw2_12=1000.
+dtw2_13=-1000.
+dtw2_14=0.00
+dtw2_15=1000.
+dtw2_16=-1000.
+*do,dtw2_17,1,dtw2_01
+dtw2_07=elnext(dtw2_07)
+*get,dtw2_18,elem,dtw2_07,node,1)
+dtw2_08=dtw2_08+nx(dtw2_18)
+*if,nx(dtw2_18),le,dtw2_09,then
+dtw2_09=nx(dtw2_18)
+*endif
+*if,nx(dtw2_18),ge,dtw2_10,then
+dtw2_10=nx(dtw2_18)
+*endif
+dtw2_11=dtw2_11+ny(dtw2_18)
+*if,ny(dtw2_18),le,dtw2_12,then
+dtw2_12=ny(dtw2_18)
+*endif
+*if,ny(dtw2_18),ge,dtw2_13,then
+dtw2_13=ny(dtw2_18)
+*endif
+dtw2_14=dtw2_14+nz(dtw2_18)
+*if,nz(dtw2_18),le,dtw2_15,then
+dtw2_15=nz(dtw2_18)
+*endif
+*if,nz(dtw2_18),ge,dtw2_16,then
+dtw2_16=nz(dtw2_18)
+*endif
+*enddo
+dtw2_08=dtw2_08/dtw2_01
+dtw2_11=dtw2_11/dtw2_01
+dtw2_14=dtw2_14/dtw2_01
+/com
+/com, I-Node         X         Y         Z
+/com, ------        ---       ---       ---
+*vwr,dtw2_08,dtw2_11,dtw2_14
+("  Average  ",3(f10.5))
+*vwr,dtw2_10,dtw2_13,dtw2_16
+("  Maximum  ",3(f10.5))
+*vwr,dtw2_09,dtw2_12,dtw2_15
+("  Minimum  ",3(f10.5))
+
+dtw2_07=0.00
+dtw2_08=0.00
+dtw2_09=1000.
+dtw2_10=-1000.
+dtw2_11=0.00
+dtw2_12=1000.
+dtw2_13=-1000.
+dtw2_14=0.00
+dtw2_15=1000.
+dtw2_16=-1000.
+*do,dtw2_17,1,dtw2_01
+dtw2_07=elnext(dtw2_07)
+*get,dtw2_18,elem,dtw2_07,node,2)
+dtw2_08=dtw2_08+nx(dtw2_18)
+*if,nx(dtw2_18),le,dtw2_09,then
+dtw2_09=nx(dtw2_18)
+*endif
+*if,nx(dtw2_18),ge,dtw2_10,then
+dtw2_10=nx(dtw2_18)
+*endif
+dtw2_11=dtw2_11+ny(dtw2_18)
+*if,ny(dtw2_18),le,dtw2_12,then
+dtw2_12=ny(dtw2_18)
+*endif
+*if,ny(dtw2_18),ge,dtw2_13,then
+dtw2_13=ny(dtw2_18)
+*endif
+dtw2_14=dtw2_14+nz(dtw2_18)
+*if,nz(dtw2_18),le,dtw2_15,then
+dtw2_15=nz(dtw2_18)
+*endif
+*if,nz(dtw2_18),ge,dtw2_16,then
+dtw2_16=nz(dtw2_18)
+*endif
+*enddo
+dtw2_08=dtw2_08/dtw2_01
+dtw2_11=dtw2_11/dtw2_01
+dtw2_14=dtw2_14/dtw2_01
+/com
+/com, J-Node         X         Y         Z
+/com, ------        ---       ---       ---
+*vwr,dtw2_08,dtw2_11,dtw2_14
+("  Average  ",3(f10.5))
+*vwr,dtw2_10,dtw2_13,dtw2_16
+("  Maximum  ",3(f10.5))
+*vwr,dtw2_09,dtw2_12,dtw2_15
+("  Minimum  ",3(f10.5))
+
+dtw2_07=0.00
+dtw2_08=0.00
+dtw2_09=1000.
+dtw2_10=-1000.
+dtw2_11=0.00
+dtw2_12=1000.
+dtw2_13=-1000.
+dtw2_14=0.00
+dtw2_15=1000.
+dtw2_16=-1000.
+
+*do,dtw2_17,1,dtw2_01
+dtw2_07=elnext(dtw2_07)
+*get,dtw2_18,elem,dtw2_07,node,1)
+*get,dtw2_19,elem,dtw2_07,node,2)
+
+dtw2_08=dtw2_08+(nx(dtw2_19)-nx(dtw2_18))
+*if,nx(dtw2_19)-nx(dtw2_18),le,dtw2_09,then
+dtw2_09=nx(dtw2_19)-nx(dtw2_18)
+*endif
+*if,nx(dtw2_19)-nx(dtw2_18),ge,dtw2_10,then
+dtw2_10=nx(dtw2_19)-nx(dtw2_18)
+*endif
+
+dtw2_11=dtw2_11+(ny(dtw2_19)-ny(dtw2_18))
+*if,ny(dtw2_19)-ny(dtw2_18),le,dtw2_12,then
+dtw2_12=ny(dtw2_19)-ny(dtw2_18)
+*endif
+*if,ny(dtw2_19)-ny(dtw2_18),ge,dtw2_13,then
+dtw2_13=ny(dtw2_19)-ny(dtw2_18)
+*endif
+
+dtw2_14=dtw2_14+(nz(dtw2_19)-nz(dtw2_18))
+*if,nz(dtw2_19)-nz(dtw2_18),le,dtw2_15,then
+dtw2_15=nz(dtw2_19)-nz(dtw2_18)
+*endif
+*if,nz(dtw2_19)-nz(dtw2_18),ge,dtw2_16,then
+dtw2_16=nz(dtw2_19)-nz(dtw2_18)
+*endif
+
+*enddo
+
+dtw2_08=dtw2_08/dtw2_01
+dtw2_11=dtw2_11/dtw2_01
+dtw2_14=dtw2_14/dtw2_01
+
+dtw2_20=(dtw2_08**2+dtw2_11**2+dtw2_14**2)**0.5
+dtw2_21=(dtw2_09**2+dtw2_12**2+dtw2_15**2)**0.5
+dtw2_22=(dtw2_10**2+dtw2_13**2+dtw2_16**2)**0.5
+
+/com
+/com, Delta(J-I)    DX        DY        DZ       TOTAL
+/com, ----------   ----      ----      ----      -----
+*vwr,dtw2_08,dtw2_11,dtw2_14,dtw2_20
+("  Average  ",4(f10.5))
+*vwr,dtw2_10,dtw2_13,dtw2_16,dtw2_22
+("  Maximum  ",4(f10.5))
+*vwr,dtw2_09,dtw2_12,dtw2_15,dtw2_21
+("  Minimum  ",4(f10.5))
+/com
+*if,dtw2_20,le,1e-6,then
+dtw2_20=1e-8
+*vwr,dtw2_08/dtw2_20,dtw2_11/dtw2_20,dtw2_14/dtw2_20,0.00
+("  Avg Unit ",4(f10.5))
+*else
+*vwr,dtw2_08/dtw2_20,dtw2_11/dtw2_20,dtw2_14/dtw2_20,dtw2_20/dtw2_20
+("  Avg Unit ",4(f10.5))
+*endif
+
+
+*endif
+
+
+
+
+
+!
+! -------------------------------
+!
+! EZ_Gap Option - MODIFY
+!
+! -------------------------------
+!
+*if,dtw1_00,eq,3,then
+
+
+!
+! Ensure Only Point-to-Point Elements Selected
+!
+*get,dtw3_01,elem,,count
+dtw3_02=0.00
+
+cmse,s,dtw1_82
+esel,r,stif,,52
+*get,dtw3_03,elem,,count
+*if,dtw3_03,eq,dtw3_01,then
+dtw3_02=1.00
+*endif
+
+cmse,s,dtw1_82
+esel,r,stif,,12
+*get,dtw3_04,elem,,count
+*if,dtw3_04,eq,dtw3_01,then
+dtw3_02=1.00
+*endif
+
+cmse,s,dtw1_82
+esel,r,stif,,40
+*get,dtw3_05,elem,,count
+*if,dtw3_05,eq,dtw3_01,then
+dtw3_02=1.00
+*endif
+
+cmse,s,dtw1_82
+
+*if,dtw3_02,ne,1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ All Elements Selected MUST be Contac52, 12 or 40 %/
+/com
+*go,:error2
+*endif
+
+
+/com
+/com, Point-to-Point Contact Element MODIFICATION
+/com
+/com
+/com, Available Options:
+/com            
+/com,   Comb:    Move I or J Node to the Location of
+/com,            the Reference Node (I or J Node).
+/com,            (I-J Pair will have Reference Nodes'
+/com,            Nodal Coordinates and Rotations)
+/com            
+/com,   Delta:   Apply Translation to I or J Nodes
+/com,            (Translate all I-Nodes or J-Nodes
+/com,            by an equal amount)
+/com            
+/com,   Intf52:  Modify Contac52 Element Definition
+/com,            to Account for Geometric Interference
+/com,            (Dummy Nodes Created at J', Elements
+/com,            Modified, and J-J'Couples Created)
+/com
+
+
+!
+! Contact Element Modification Option
+!
+*ask,dtw3_06,Option (1-Comb,2-Delta,3-Intf52),
+
+
+!
+! Modification Option: Combine
+!
+*if,dtw3_06,eq,1,then
+/com
+/com
+/com, -------------------------
+/com, Combine I-J Node Pair
+/com, @ Reference Node Location
+/com, -------------------------
+
+!
+! Choose Reference Node for Combine
+!
+*ask,dtw3_32,I-J Combine Ref Node (1:I, 2:J),1
+*if,dtw3_32,eq,1,then
+/com
+/com,   Moving J-Nodes
+/com
+/com, NOTE: J-Nodes have I-Node Coordinates and Rotations
+*elseif,dtw3_32,eq,2,then
+/com
+/com,   Moving I-Nodes
+/com
+/com, NOTE: I-Nodes have J-Node Coordinates and Rotations
+*else
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Invalid Option! %/
+/com
+*go,:error3
+*endif
+
+
+!
+! Move I-J Node to Reference Node for All Selected Elements
+!
+*get,dtw3_33,elem,,count
+dtw3_34=0.00
+
+/uis,msgpop,3
+*do,dtw3_35,1,dtw3_33
+
+dtw3_34=elnext(dtw3_34)
+*get,dtw3_36,elem,dtw3_34,node,1
+*get,dtw3_37,elem,dtw3_34,node,2
+
+*if,dtw3_32,eq,1,then
+*get,dtw3_38,node,dtw3_36,ang,xy
+*get,dtw3_39,node,dtw3_36,ang,yz
+*get,dtw3_40,node,dtw3_36,ang,zx
+n,dtw3_37,nx(dtw3_36),ny(dtw3_36),nz(dtw3_36),dtw3_38,dtw3_39,dtw3_40
+*endif
+
+*if,dtw3_32,eq,2,then
+*get,dtw3_38,node,dtw3_37,ang,xy
+*get,dtw3_39,node,dtw3_37,ang,yz
+*get,dtw3_40,node,dtw3_37,ang,zx
+n,dtw3_36,nx(dtw3_37),ny(dtw3_37),nz(dtw3_37),dtw3_38,dtw3_39,dtw3_40
+*endif
+
+*enddo
+/uis,msgpop,2
+
+*endif
+
+
+
+
+
+
+
+!
+! Modification Option: Delta
+!
+*if,dtw3_06,eq,2,then
+
+!
+! CSYS for Node Translation
+!
+*ask,dtw3_41,CSYS for Node Translation,%dtw1_91%
+/uis,msgpop,3
+*get,dtw3_42,cdsy,dtw3_41,attr,kcs
+/uis,msgpop,2
+*if,dtw3_42,eq,-1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Coordinate System is NOT Defined %/
+/com
+*go,:error3
+*endif
+csys,dtw3_41
+
+
+!
+! CSYS Component for Nodal Translation
+!
+*ask,dtw3_43,Translation Cmpnt (1:X, 2:Y, 3:Z),1
+dtw3_44=0.00
+
+*if,dtw3_43,eq,1,then
+dtw3_44=1.00
+dtw3_45=1.00
+dtw3_46=0.00
+dtw3_47=0.00
+*endif
+
+*if,dtw3_43,eq,2,then
+dtw3_44=1.00
+dtw3_45=0.00
+dtw3_46=1.00
+dtw3_47=0.00
+*endif
+
+*if,dtw3_43,eq,3,then
+dtw3_44=1.00
+dtw3_45=0.00
+dtw3_46=0.00
+dtw3_47=1.00
+*endif
+
+*if,dtw3_44,ne,1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Invalid Direction Option %/
+/com
+*go,:error3
+*endif
+
+
+!
+! Translation Node
+!
+*ask,dtw3_48,Translation Node (1:I, 2:J)
+
+*if,dtw3_48,eq,1,then
+/com
+/com
+/com, -------------------
+/com, Translating I-Nodes
+/com, -------------------
+*elseif,dtw3_48,eq,2,then
+/com
+/com
+/com, -------------------
+/com, Translating J-Nodes
+/com, -------------------
+*else
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Invalid Option! %/
+/com
+*go,:error3
+*endif
+
+
+!
+! Translation Amount
+!
+*ask,dtw3_49,Translation Amount, 1e-5
+
+
+!
+! Add Translation Amount to Specified I-J Node
+!
+dtw3_50=0.00
+*get,dtw3_51,elem,,count
+
+/uis,msgpop,3
+*do,dtw3_52,1,dtw3_51
+dtw3_50=elnext(dtw3_50)
+*get,dtw3_53,elem,dtw3_50,node,1
+*get,dtw3_54,elem,dtw3_50,node,2
+
+*if,dtw3_48,eq,1,then
+dtw3_55=nx(dtw3_53)+dtw3_45*dtw3_49
+dtw3_56=ny(dtw3_53)+dtw3_46*dtw3_49
+dtw3_57=nz(dtw3_53)+dtw3_47*dtw3_49
+*get,dtw3_58,node,dtw3_53,ang,xy
+*get,dtw3_59,node,dtw3_53,ang,yz
+*get,dtw3_60,node,dtw3_53,ang,zx
+n,dtw3_53,dtw3_55,dtw3_56,dtw3_57,dtw3_58,dtw3_59,dtw3_60
+
+*else
+dtw3_55=nx(dtw3_54)+dtw3_45*dtw3_49
+dtw3_56=ny(dtw3_54)+dtw3_46*dtw3_49
+dtw3_57=nz(dtw3_54)+dtw3_47*dtw3_49
+*get,dtw3_58,node,dtw3_54,ang,xy
+*get,dtw3_59,node,dtw3_54,ang,yz
+*get,dtw3_60,node,dtw3_54,ang,zx
+n,dtw3_54,dtw3_55,dtw3_56,dtw3_57,dtw3_58,dtw3_59,dtw3_60
+*endif
+
+*enddo
+/uis,msgpop,2
+
+/com
+*vwr,dtw3_41
+("    Active CSYS: ",i3)
+/com
+*vwr,dtw3_45*dtw3_49
+("    Delta X: ",f10.5)
+*vwr,dtw3_46*dtw3_49
+("    Delta Y: ",f10.5)
+*vwr,dtw3_47*dtw3_49
+("    Delta Z: ",f10.5)
+/com
+/com, NOTE: Nodal Rotations have NOT been modified
+
+*endif
+
+
+!
+! Modification Option: Intf52
+!
+*if,dtw3_06,eq,3,then
+
+
+!
+! CSYS for Dummy Node Placement
+!
+*ask,dtw3_07,CSYS for Element Orientations,%dtw1_91%
+/uis,msgpop,3
+*get,dtw3_08,cdsy,dtw3_07,attr,kcs
+/uis,msgpop,2
+*if,dtw3_08,eq,-1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Coordinate System is NOT Defined %/
+/com
+*go,:error3
+*endif
+csys,dtw3_07
+
+
+!
+! CSYS Component for Element Normal Direction
+!
+*ask,dtw3_09,Normal Direction (1:X, 2:Y, 3:Z),1
+dtw3_10=0.00
+
+*if,dtw3_09,eq,1,then
+dtw3_10=1.00
+dtw3_11=1.00
+dtw3_12=0.00
+dtw3_13=0.00
+*endif
+
+*if,dtw3_09,eq,2,then
+dtw3_10=1.00
+dtw3_11=0.00
+dtw3_12=1.00
+dtw3_13=0.00
+*endif
+
+*if,dtw3_09,eq,3,then
+dtw3_10=1.00
+dtw3_11=0.00
+dtw3_12=0.00
+dtw3_13=1.00
+*endif
+
+*if,dtw3_10,ne,1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ Invalid Direction Option %/
+/com
+*go,:error3
+*endif
+
+
+!
+! Dummy Node (J') Offset
+!
+*ask,dtw3_14,Dummy Node Offset,0.005
+dtw3_14=abs(dtw3_14)
+
+
+!
+! Create Dummy Nodes (J'), Modify Elements (I-J'), and Create Couples (J-J')
+!
+*get,dtw3_15,elem,,count
+
+*del,dtw_eij
+*dim,dtw_eij,array,dtw3_15,5
+
+dtw3_16=0.00
+dtw3_17=0.00
+
+*do,dtw3_18,1,dtw3_15
+dtw3_17=elnext(dtw3_17)
+*get,dtw3_19,elem,dtw3_17,node,1
+*get,dtw3_20,elem,dtw3_17,node,2
+dtw_eij(dtw3_18,1)=dtw3_17
+dtw_eij(dtw3_18,2)=dtw3_19
+dtw_eij(dtw3_18,3)=dtw3_20
+*if,dtw3_09,eq,1,then
+dtw_eij(dtw3_18,4)=nx(dtw3_19)-nx(dtw3_20)
+*endif
+*if,dtw3_09,eq,2,then
+dtw_eij(dtw3_18,4)=ny(dtw3_19)-ny(dtw3_20)
+*endif
+*if,dtw3_09,eq,3,then
+dtw_eij(dtw3_18,4)=nz(dtw3_19)-nz(dtw3_20)
+*endif
+*if,dtw_eij(dtw3_18,4),eq,0,then
+dtw3_16=1.00
+*endif
+*enddo
+
+
+!
+! Check for Coincident Nodal Coordinate
+!
+*if,dtw3_16,eq,1,then
+/com
+/com
+*msg,warn
+PROGRAM STOPPED!! %/ At Least One I-J Node Pair with Coincident Coordinates %/
+/com
+*go,:error3
+*endif
+
+*do,dtw3_21,1,dtw3_15
+dtw_eij(dtw3_21,5)=dtw1_97+dtw3_21
+dtw3_22=dtw3_14*dtw_eij(dtw3_21,4)/abs(dtw_eij(dtw3_21,4))
+dtw3_23=nx(dtw_eij(dtw3_21,2))+dtw3_11*dtw3_22
+dtw3_24=ny(dtw_eij(dtw3_21,2))+dtw3_12*dtw3_22   
+dtw3_25=nz(dtw_eij(dtw3_21,2))+dtw3_13*dtw3_22
+*get,dtw3_26,node,dtw_eij(dtw3_21,3),ang,xy
+*get,dtw3_27,node,dtw_eij(dtw3_21,3),ang,yz
+*get,dtw3_28,node,dtw_eij(dtw3_21,3),ang,zx
+*get,dtw3_29,elem,dtw_eij(dtw3_21,1),attr,type
+*get,dtw3_30,elem,dtw_eij(dtw3_21,1),attr,mat
+*get,dtw3_31,elem,dtw_eij(dtw3_21,1),attr,real
+
+type,dtw3_29
+mat,dtw3_30
+real,dtw3_31
+
+n,dtw_eij(dtw3_21,5),dtw3_23,dtw3_24,dtw3_25,dtw3_26,dtw3_27,dtw3_28
+en,dtw_eij(dtw3_21,1),dtw_eij(dtw3_21,2),dtw_eij(dtw3_21,5)
+cp,next,ux,dtw_eij(dtw3_21,3),dtw_eij(dtw3_21,5)
+cp,next,uy,dtw_eij(dtw3_21,3),dtw_eij(dtw3_21,5)
+cp,next,uz,dtw_eij(dtw3_21,3),dtw_eij(dtw3_21,5)
+*enddo
+
+/com
+/com
+/com, -----------------------------
+/com, Modifying Contact52 Interface
+/com, with Geometric Interference
+/com, -----------------------------
+/com
+/com,   Create Dummy Nodes (J')
+/com,   Modify Element Definition (I-J')
+/com,   Define Couples (J-J')
+/com
+*vwr,dtw3_07
+("    Active CSYS: ",i3)
+/com
+*vwr,dtw3_11*dtw3_22
+("    J'-Node DX: ",f10.5)
+*vwr,dtw3_12*dtw3_22
+("    J'-Node DY: ",f10.5)
+*vwr,dtw3_13*dtw3_22
+("    J'-Node DZ: ",f10.5)
+
+/com
+/com, NOTE: J'-Node Created with J-Node Rotations
+
+
+*endif
+
+
+*endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*go,:end
+
+
+
+
+
+
+
+!
+! File Ending for Error GOTO Statements
+!
+:error5
+*endif
+:error4
+*endif
+:error3
+*endif
+:error2
+*endif
+:error1
+*endif
+
+
+
+
+
+
+!
+! Program End with Final Command Executions
+!
+:end
+
+shpp,defa
+
+/com
+/com, ---------------------------------------------------------
+/com, ---------------------------------------------------------
+
+
+!
+! Return Model to Initial Status
+!
+cmse,s,dtw1_81
+cmse,s,dtw1_82
+csys,dtw1_91
+dsys,dtw1_92
+type,dtw1_93
+mat, dtw1_94
+real,dtw1_95
+
+
+!
+! Remove All Program Specific Parameters
+!
+*del,dtw_eij
+cmde,dtw1_81
+cmde,dtw1_82
+
+dtw1_00=
+dtw1_01=
+dtw1_02=
+dtw1_03=
+dtw1_04=
+dtw1_05=
+dtw1_06=
+dtw1_07=
+dtw1_08=
+dtw1_09=
+dtw1_10=
+dtw1_11=
+dtw1_12=
+dtw1_13=
+dtw1_14=
+dtw1_15=
+dtw1_16=
+dtw1_17=
+dtw1_18=
+dtw1_19=
+dtw1_20=
+dtw1_21=
+dtw1_22=
+dtw1_23=
+dtw1_24=
+dtw1_25=
+dtw1_26=
+dtw1_27=
+dtw1_28=
+dtw1_29=
+dtw1_30=
+dtw1_31=
+dtw1_32=
+dtw1_33=
+dtw1_34=
+dtw1_35=
+dtw1_36=
+dtw1_37=
+dtw1_38=
+dtw1_39=
+dtw1_40=
+
+dtw1_91=
+dtw1_92=
+dtw1_93=
+dtw1_94=
+dtw1_95=
+dtw1_96=
+dtw1_97=
+
+dtw2_00=
+dtw2_01=
+dtw2_02=
+dtw2_03=
+dtw2_04=
+dtw2_05=
+dtw2_06=
+dtw2_07=
+dtw2_08=
+dtw2_09=
+dtw2_10=
+dtw2_11=
+dtw2_12=
+dtw2_13=
+dtw2_14=
+dtw2_15=
+dtw2_16=
+dtw2_17=
+dtw2_18=
+dtw2_19=
+dtw2_20=
+dtw2_21=
+dtw2_22=
+
+dtw3_00=
+dtw3_01=
+dtw3_02=
+dtw3_03=
+dtw3_04=
+dtw3_05=
+dtw3_06=
+dtw3_07=
+dtw3_08=
+dtw3_09=
+dtw3_10=
+dtw3_11=
+dtw3_12=
+dtw3_13=
+dtw3_14=
+dtw3_15=
+dtw3_16=
+dtw3_17=
+dtw3_18=
+dtw3_19=
+dtw3_20=
+dtw3_21=
+dtw3_22=
+dtw3_23=
+dtw3_24=
+dtw3_25=
+dtw3_26=
+dtw3_27=
+dtw3_28=
+dtw3_29=
+dtw3_30=
+dtw3_31=
+dtw3_32=
+dtw3_33=
+dtw3_34=
+dtw3_35=
+dtw3_36=
+dtw3_37=
+dtw3_38=
+dtw3_39=
+dtw3_40=
+dtw3_41=
+dtw3_42=
+dtw3_43=
+dtw3_44=
+dtw3_45=
+dtw3_46=
+dtw3_47=
+dtw3_48=
+dtw3_49=
+dtw3_50=
+dtw3_51=
+dtw3_52=
+dtw3_53=
+dtw3_54=
+dtw3_55=
+dtw3_56=
+dtw3_57=
+dtw3_58=
+dtw3_59=
+dtw3_60=
+dtw3_61=
+dtw3_62=
+dtw3_63=
+dtw3_64=
+dtw3_65=
+dtw3_66=
+dtw3_67=
+dtw3_68=
+dtw3_69=
+
+/gopr

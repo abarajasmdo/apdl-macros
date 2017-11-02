@@ -1,0 +1,16 @@
+/nopr
+! does a weighted average hoop stresses 
+*get,numele,elem,,count
+etab,csz,s,z
+etab,volume,volu
+smult,cszxvol,csz,volume
+ssum
+*get,tot_vol,ssum,volume,
+*get,txvolsum,ssum,cszxvol
+sz_avg=txvolsum/tot_vol/1000
+/gopr
+*msg,warn,sz_avg
+The avg. rad stress of the selected elements is %G  ksi
+)t_avg=
+)etab,temps,erase
+etab,eras

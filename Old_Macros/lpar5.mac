@@ -1,0 +1,57 @@
+/nopr
+
+!    LINEPAR5.MAC :  A MACRO TO GENERATE A LINE 
+
+!                            PARALLEL TO ANOTHER
+
+!    SYNTAX     LINEPAR,L,KL,KS
+
+!       where,
+
+!               L = Line number.
+
+!               KL = Keypoint on end of line to be
+
+!                    copied.
+
+!               KS = Keypoint in space which the 
+
+!                    parallel line will be attached to.
+
+*get,lkp1,line,arg1,kp,1                                                             
+*get,lkp2,line,arg1,kp,2                                                    
+*if,arg2,eq,lkp1,:checkloop
+*if,arg2,eq,lkp2,:checkloop
+/gopr
+/COM,  **** KEYPOINT "KL" IS NOT ON LINE "L"  ****
+/nopr
+*go,:end
+:checkloop
+*get,kp1x,kp,lkp1,loc,x                                               
+*get,kp1y,kp,lkp1,loc,y 
+*get,kp1z,kp,lkp1,loc,z
+*get,kp2x,kp,lkp2,loc,x 
+*get,kp2y,kp,lkp2,loc,y 
+*get,kp2z,kp,lkp2,loc,z 
+*set,dx,(kp2x-kp1x)
+*set,dy,(kp2y-kp1y)
+*set,dz,(kp2z-kp1z)
+*if,arg2,eq,lkp1,:lgen
+*set,dx,dx*(-1)
+*set,dy,dy*(-1)
+*set,dz,dz*(-1)
+:lgen
+*get,kmax,kp,,num,max
+kpg=kmax+1
+*get,kp3x,kp,arg3,loc,x
+*get,kp3y,kp,arg3,loc,y 
+*get,kp3z,kp,arg3,loc,z
+kpgx=kp3x+dx
+kpgy=kp3y+dy
+kpgz=kp3z+dz
+k,kpg,kpgx,kpgy,kpgz
+l,arg3,kpg
+:end
+/gopr
+
+

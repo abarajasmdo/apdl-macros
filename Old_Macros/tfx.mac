@@ -1,0 +1,46 @@
+/nopr
+!
+!     tfx.mac        A macro to apply temps to selected
+!                            nodes as a function of X.
+!
+!      Usage:    tfx,txmn,txmx
+!
+!                    where     txmn= temperature for the group
+!                                                 at the minimum X coordinate for any
+!                                                 node in the selected set when macro started.
+!
+!                                    txmx= temperature for the group
+!                                                 at the maximum X coordinate for any
+!                                                 node in the selected set when macro started.
+!
+!
+txmn=arg1
+txmx=arg2
+!         get min and max X values of any node in the starting set
+*get,nxmn,nx,min
+*get,nxmx,nx,max
+!         enter loop which will calculate and asssign the node temperature
+:loop
+!         get the number of nodes left in the currently selected set
+*get,nnod,nsel
+!          print node counter message
+*msg,info,nnod
+('  ',f6.0,'   nodes left to do....')
+!         get the value of the highest node number in the selected set
+*get,ndmx,ndmx
+!         check to see if the node number is greater than zero.  If not, then end.
+*if,ndmx,eq,0,:end
+!         get the X coordinate for node ndmx.
+*get,nx,nx,ndmx
+!         calculate the temperature using linear interpolation
+temp=((nx-nxmn)/(nxmx-nxmn))*(txmx-txmn)+txmn
+!        assign the temperature to node ndmx
+t,ndmx,temp
+!         remove node ndmx from the currently selected set
+nuse,,ndmx
+!         go back to the top and get the now highest node number
+*go,:loop
+!         end the macro
+:end
+/gopr
+

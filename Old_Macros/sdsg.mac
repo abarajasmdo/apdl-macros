@@ -1,0 +1,4 @@
+!   turn on keys for sdsg plotting
+!
+/graphics,full
+ERNORM,ON   

@@ -1,0 +1,28 @@
+/nopr
+!
+!     lhorz.mac   A macro to create a angled line
+!                 from a keypoint.
+!
+!     Usage:  lxy,keypoint,X,Y direction length
+!
+!          where,     keypoint=starting point for the line
+!                     X(Y) direction length= length of line in the
+!                                         X direction.  Note
+!                                         that this can be either
+!                                         positive or negative.
+!
+*get,kx,kx,arg1
+*get,ky,ky,arg1
+*get,kz,kz,arg1
+*get,knum,mxkp
+knum=knum+1
+kx=kx+arg2
+ky=ky+arg3
+k,knum,kx,ky,kz
+l,arg1,knum
+kx=
+ky=
+kz=
+knum=
+/gopr
+

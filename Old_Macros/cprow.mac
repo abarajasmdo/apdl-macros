@@ -1,0 +1,35 @@
+! macro cprow.mac  Couples a "row" (r=constant) set of nodes 
+!  for coupling an axissymttric row of nodes to the end master node
+!
+!  Usage cprow,node  where node is going to be the independent DOF
+!                 	(the first node in the coupled set --> where DOF
+! 			should be placed) This node also gives the radius
+!			+/- .001". Couples in ux
+!
+!  Author: D BOHLEN  LAST UPDATED 6/10/96
+!
+/nopr
+parsav,all
+csys,11
+cm,XXXX,node
+*get,mxcp,mxcp
+rad=nx(arg1)
+nsel,r,loc,x,rad-.001,rad+.001
+*get,nds,node,,count
+cp,mxcp+1,ux,arg1,ndnext(arg1)
+nxtnd=ndnext(arg1)
+*do,i,1,nds-2
+nxtnd=ndnext(nxtnd)
+cpngen,mxcp+1,ux,nxtnd
+*enddo
+cmsel,,XXXX
+cmdele,XXXX
+i=
+rad=
+nxtnd=
+nds=
+mxcp=
+parres
+/gopr
+
+

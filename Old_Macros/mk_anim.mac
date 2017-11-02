@@ -1,0 +1,84 @@
+!
+! xanimate : creates jpeg files and java script to display jpeg
+!		files as an animation on a web browser
+!
+!    current limit is 49 plots by /ui command
+!
+!	usage:  xanimate,/dscale factor,# of plots (49) max
+!		Defaults to your current dscale and 10 plots
+!		(Do after you have set the view etc.)
+!
+! NOTE: THIS PROGRAM DELETES ALL JPEG FILES IN YOUR CURRENT DIRECTORY!
+!
+*if,arg2,gt,49,then
+!*msg,warn,arg2
+!Macro max is 49, your asked for %i , setting to 49.....
+*ask,arg2,Macro max is 49 plots; you asked for %arg2% ; Enter lower number,49
+!arg2=4
+*endif
+*ask,remove,OK if I delete all jpeg files in current working directory?,'OK'
+*if,remove,eq,'OK',then
+/sys,rm *.jpg
+/ui,copy,save,jpeg,grap,colo,norm,port,,100
+*get,rev_,active,,rev
+*if,arg1,ne,0,then
+dmax_=arg1 	! dscale max
+*else,
+*get,dmax_,graph,1,dscale,dmult
+*endif
+*get,jbname1_,active,,jobnam          ! dscale max
+*if,arg2,gt,1,then   ! set nplots_ if arg2 supplied
+nplots_=arg2
+*else
+nplots_=10
+*endif
+*do,is_,1,nplots_
+/gopr
+/dsca,1,dmax_*(is_-1)/(nplots_-1)+1e-7
+pldi
+*if,is_,eq,1,then
+/user
+*endif
+!*if,rev_,lt,5.6,then
+!jpeg
+/title,plot %is_%
+/ui,copy,save,jpeg,grap,colo,norm,port,,100
+!*else
+!jpeg
+!/ui,copy,save,jpeg,grap,colo,norm,port,,100
+!*endif
+*msg,info,is_
+Plot # %I done
+*enddo
+!*if,rev_,lt,5.6,then
+type_='jpg'
+!*else
+!type_='jpg'
+!*endif
+*stat,type_
+/out,animrun_.in
+*vwrite,jbname1_
+(a,a)
+*vwrite,type_
+(a)
+*vwrite,nplots_
+(f5.0)
+/out
+/auto
+/syp,fix,%jbname1_%
+/sys,sed 's/  *//' animrun_.in > animrun__.in
+/sys, anim.run<animrun__.in
+/sys,rm -f animrun_.in
+/sys,rm -f animrun__.in
+*stat,rev_
+*stat,type_
+jbname1_=
+jbname2_=
+dmax_=
+nplots_=
+/eof
+*else
+*msg,info, 49 max
+*endif
+*else
+*endif

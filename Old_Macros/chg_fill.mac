@@ -1,0 +1,85 @@
+/PMACRO
+parsav
+/nopr
+! changes a fillet size of an arc on an area
+/com
+/com
+/com ONLY WORKS ON THIS GEOMETRY
+/com
+/com                                    ---
+/com          #                            |
+/com       #      <--- STRAIGHT LINE       |
+/com    #                                  |
+/com  #                                    |
+/com #                                     |
+/com #    <---- CIRCULAR FILLET            |--  <--- ONE AREA
+/com #                                     |
+/com  #                                    |
+/com   #                                   |
+/com    #     <--- STRAIGHT LINE           |
+/com     #                                 |
+/com      #                                |
+/com                                    ---
+/com
+/com
+!
+!            \
+*msg,info,
+pick fillet to change
+LSEL,R,PICK
+*ASK,NEWRAD,NEW RADIUS,.01
+LS_FILL=LSNEXT(0)
+*GET,NUMDIV,LINE,LS_FILL,ATTR,NDIV
+*GET,SPACER,LINE,LS_FILL,ATTR,SPAC
+ARLS
+AREA_=ARNEXT(0)
+*GET,AR_REAL,AREA,AREA_,ATTR,REAL
+*GET,AR_TYP,AREA,AREA_,ATTR,TYPE
+*GET,AR_MAT,AREA,AREA_,ATTR,MAT
+KPLS
+LSKP
+LSEL,U,,,LS_FILL
+CM,_TEMP1_,LINE
+LSAR
+CM,_TEMP2_,LINE
+ACLEAR,AREA_
+ADELE,AREA_
+LDELE,LS_FILL
+CMSEL,,_TEMP1_
+L1=LSNEXT(0)
+L2=LSNEXT(L1)
+/UIS,MSGPOP,3
+CORNER2,L1,L2
+/UIS,MSGPOP,2
+L1=LSNEXT(0)
+L2=LSNEXT(L1)
+LFILLT,L1,L2,NEWRAD
+CM,NEWLINES,LINE
+!llist
+!  find which one is arc tp applied line diviiosn
+L_CHK=LSNEXT(0)
+*DO,LL,1,3
+!/gopr
+LSEL,,,,L_CHK
+/GOPR
+KPLS
+*GET,K1,LINE,L_CHK,KP,1
+*GET,K2,LINE,L_CHK,KP,2
+DISKP=DISTKP(K1,K2)
+LSUM
+*GET,LENG,LINE,L_CHK,LENG
+*IF,LENG,GT,DISKP,THEN
+LESIZE,L_CHK,,,NUMDIV,SPACER
+*ENDIF
+CMSEL,,NEWLINES
+L_CHK=LSNEXT(L_CHK)
+*ENDDO
+
+CMSEL,A,_TEMP2_
+AL,ALL
+AATT,AR_MAT,AR_REAL,AR_TYP,0
+CMDELE,NEWLINES
+,_TEMP1_
+,_TEMP2_
+LPLO
+PARRES

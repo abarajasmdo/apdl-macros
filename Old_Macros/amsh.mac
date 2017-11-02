@@ -1,0 +1,19 @@
+!
+!  amsh - meshes area w/o solid model connectivity
+!
+/nop
+cm,xxx,area
+amesh,arg1
+nall
+*get,ninc,node,,num,max
+asel,s,,,arg1
+earea
+nelem
+ngen,2,ninc,all,,,
+egen,2,ninc,all,,,
+aclear,arg1
+eplo
+cmsel,a,xxx
+cmdele,xxx
+/gopr
+

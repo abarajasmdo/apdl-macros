@@ -1,0 +1,10 @@
+/pbc,u,,1
+/pbc,rot,,1
+/pbc,f,,1
+/pbc,m,,1
+/pbc,acel,,1
+/pbc,omeg,,1
+/pbc,cp,,1
+/pbc,ce,,1
+/pbf,temp,,1
+/psf,pres,norm,2

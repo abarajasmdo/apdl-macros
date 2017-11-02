@@ -1,0 +1,95 @@
+/nopr
+!
+!   cpdelta.mac   A macro to check the relative distance
+!                           between coupled nodes.  This macro
+!                           creates the file "cpcheck", which has a
+!                           listing of coupled node sets and distances.
+!
+!                          Written for ANSYS 5.3
+!
+!  By: Dan Bohlen  Updated:  3/1/96
+!
+!   create components for the currently selected nodes so 
+!   they can be retrieved when the macro is finished running.
+cm,dummyn,node
+!
+*cfopen,cpcheck
+*get,cpmax,active,,cp
+*vwrite
+( ' CP Set  Node 1   Node 2      DX              DY            DZ  ')
+!
+!   set initial value for coupled set number to 1
+cp=1
+dxmax=
+dymax=
+dzmax=
+!  
+!	cycle through coupled sets
+!
+*DO,CP,1,8701,3
+!*DO,CP,8467,8467
+!
+!	CHECK TO SEE IF COUPLED SET IS SELECTED
+!
+*IF,CPINQR(CP,1),LT,1,*CYCLE
+!
+!   get the nodes which make up coupled set cp
+!
+nsel,,cp,,cp
+!
+!   get the node number for the two nodes
+!
+cmsel,r,dummyn
+*get,n1,node,,num,min
+*get,n2,node,,num,max
+dx=abs(nx(n1)-nx(n2))
+dy=abs(abs(ny(n1)-ny(n2))-360/44)
+dz=abs(nz(n1)-nz(n2))
+*IF,DX,GT,DXMAX,THEN
+DXMAX=DX
+*ENDIF
+*IF,DY,GT,DYMAX,THEN
+DYMAX=DY
+*ENDIF
+*IF,DZ,GT,DZMAX,THEN
+DZMAX=DZ
+*ENDIF
+!
+!   if the distance is greater than .001, jump down to the 
+!   message that flags this line of output
+!
+*if,d,ge,.001,then
+!
+!   write the line of output with out the flag
+!
+*vwrite,cp,n1,n2,dX,DY,DZ
+(2x,f5.0,2x,f6.0,3x,f6.0,3(2x,f13.11),'  <-----')
+*ELSE
+*vwrite,cp,n1,n2,dX,DY,DZ
+(2x,f5.0,2x,f6.0,3x,f6.0,3(2x,f13.11))
+*ENDIF
+*ENDDO
+*vwrite,
+('  MAXIMUMS       DX               DY             DZ ')
+*VWRITE,DXMAX,DYMAX,DZMAX
+(10X,3(2X,F13.11))
+
+!   now that we're finished, close the file cpcheck
+*cfclos
+!   restore nodal data which existed when the macro began
+cmse,s,dummyn
+!   delete this components from the database
+cmde,dummyn
+!   clear this stuff from the database
+*msg,note
+/////////////////////////////////////////////////////////////////// &
+---> THE NODE PAIRS AND DISTANCES BETWEEN AR ON FILE "cpcheck" &
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+cp=
+cpmax=
+n1=
+n2=
+DIST=
+!  all done
+*uilist,cpcheck
+/gopr

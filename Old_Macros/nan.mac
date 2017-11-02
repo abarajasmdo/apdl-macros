@@ -1,0 +1,24 @@
+/nopr
+!      Macro nan.mac
+!       
+!      Usage:      nan,node1,node2
+!
+!      This macro changes the rotation angles of 
+!      node2 to be the same as the rotation angles
+!      of node1.  Handy for displacements on mounting
+!      pads and similar things.
+!
+!
+!
+
+*get,ar15,ntxy,arg1
+,ar16,ntyz,arg1
+,ar17,ntxz,arg1                                                       
+nmod,arg2,,,,ar15,ar16,ar17
+*msg,NOTE,arg2,arg1,ar15,ar16,ar17
+(' Angles of Node ',f5.0,' Are Now The Same As ',f5.0,/,' Angles Are',3f14.7)                                        
+/gopr                     
+
+
+
+

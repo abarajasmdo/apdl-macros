@@ -1,0 +1,10 @@
+/nopr
+!
+!           Macro  bigwin.mac
+!
+!           Description 
+!
+!                This macro changes window1 to almost copletely
+!                fill the available screen.
+!
+/win,1,-1,1.67,-1,1                                                             /gopr

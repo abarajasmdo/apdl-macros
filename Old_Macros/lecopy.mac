@@ -1,0 +1,13 @@
+/pmacro
+parsav
+cm,_duh,line
+lsel,r,p
+*get,lnum,line,0,nxth
+*get,lspace,line,lnum,attr,ndiv,
+*get,ratio,line,lnum,attr,spac,
+cmsel,a,_duh
+lsel,u,,,lnum
+lsel,r,p
+lesize,all,,,lspace,ratio,1
+cmsel,,_duh
+parres

@@ -1,0 +1,158 @@
+From dan.bohlen@ae.ge.com Wed Feb 18 12:21:23 EST 1998
+Received: from gemb2.ae.ge.com (gemb2.ae.ge.com [129.202.7.247])
+	by c0112.ae.ge.com (8.8.6/8.8.6) with SMTP id MAA02448
+	for <bohlen@c0112.ae.ge.com>; Wed, 18 Feb 1998 12:21:23 -0500 (EST)
+Received: from ev001msxaege.ae.ge.com by gemb2.ae.ge.com; (5.65/1.1.8.2/04Nov94-0203PM)
+	id AA30506; Wed, 18 Feb 1998 12:31:46 -0500
+Received: by ev001msxaege.ae.ge.com with Internet Mail Service (5.5.1960.3)
+	id <FG2XK8RD>; Wed, 18 Feb 1998 12:21:21 -0500
+Message-Id: <0302875C631AD11198DE00600806C637719D26@ev009msxaege.ae.ge.com>
+From: "Bohlen, Dan (GEAE)" <dan.bohlen@ae.ge.com>
+To: "'bohlen@c0112'" <bohlen@c0112.ae.ge.com>
+Subject: FW: XANS: Macro Stuff
+Date: Wed, 18 Feb 1998 12:19:55 -0500
+X-Mailer: Internet Mail Service (5.5.1960.3)
+Status: R
+
+
+
+Dan Bohlen    
+Stress Analyst, RPCoE   GE Aircraft Engines
+Phone: (513) 243-4645 / Dial Comm [8*332-4645]
+Email: dan.bohlen@ae.ge.com M/D K-105
+Fax: (513) 243-4888
+
+
+> ----------
+> From: 	Bohlen, Dan (GEAE)
+> Sent: 	Wednesday, February 18, 1998 12:06 PM
+> To: 	'bohlen@c0112.ae.ge.com'
+> Subject: 	FW: XANS: Macro Stuff
+> 
+> 
+> Dan Bohlen    
+> Stress Analyst, RPCoE   GE Aircraft Engines
+> Phone: (513) 243-4645 / Dial Comm [8*332-4645]
+> Email: dan.bohlen@ae.ge.com M/D K-105
+> Fax: (513) 243-4888
+> 
+> 
+> ----------
+> From: 	Crawford, John[SMTP:John.Crawford@alliedsignal.com]
+> Sent: 	Wednesday, February 18, 1998 9:16 AM
+> To: 	ANSYS Users List
+> Subject: 	XANS: Macro Stuff
+> 
+> In correspondence with ANSYS Inc. I heard that they will develop a
+> command which will remove the parameters in a model.  There are times
+> when I have needed this, and wrote a macro to do it.  I thought I'd post
+> it in case anyone else has needed this capability and hasn't gotten
+> around to writing their own macro.
+> 
+> /nopr
+> !
+> !  remparm.mac  a macro to remove all the parameters in the current
+> !               database file
+> !
+> !  written by: John Crawford    date: 1-2-97
+> !
+> !  get the number of currently defined parameters
+> *get,_numpar,parm,,max
+> !
+> !  remove the parameters
+> *do,_i,1,_numpar
+> *del,,1
+> *enddo
+> !
+> !  remove the parameters _numpar and i
+> _numpar=
+> _i=
+> !
+> !  finished with the macro
+> /gopr
+> 
+> I also wanted to share the way I was able to extract the node-line
+> associativity that was the subject of a posting I made a few days ago.
+> The problem I was asking about was the *VWRITE of blank character
+> parameters which were obtained from a CDWRITE file.  I was writing and
+> reading the CDWRITE file because I needed the associativity between
+> nodes and lines for a translator I was writing which passes ANSYS model
+> data to an in-house program we have.  So, I basically had three
+> problems.
+> 
+> 1.)  No way to extract the associativity between nodes and lines using
+> *GET.
+> 2.)  CDWRITE doesn't write trailing zero value coordinates to the .cdb
+> file.
+> 3.)  *VWRITE goofs up the writing of character parameters when some of
+> them are blank.
+> 
+> Item 2 will be resolved in ANSYS 5.5.  The status if item 3 is still
+> unknown.  The resolution of item 1 follows.
+> 
+> You can extract the associativity between nodes and lines using the
+> NDINQR functionality I discussed in this forum a while back.  John
+> Swanson provided this information.
+> 
+>     a = ndinqr(node,-5) gives the value which is in the second field
+>                         of a node line on the CDWRITE file.
+> 
+>     b = ndinqr(node,-6) gives the value which is in the third field
+>                         of a node line on the CDWRITE file.
+> 
+>      The ndinqr(node,-5) is entityNumber*10 + entity type
+>                           where entity type = 1, Keypoint
+>                                               2, Line
+>                                               3, Area
+>                                               4, Volume
+>                           A zero means the node is not attached to a
+> solid
+>                           model entity.
+> 
+>      ndinqr(node,-6) seems to be the position on the line, which
+>      is an integer between 0 and 100000, representing an s value of
+>      0.0 to 1.0
+> 
+> Here's an example.  A CDWRITE file will list nodal information in the
+> following way.
+> 
+> N,R5.3,LOC,    283,    452,  87500,  3.98990000    , 9.750000000E-02,
+> 
+> In this case, node 283 is associated to line 45 at a position .875 from
+> the starting end of the line.  The number "452" means that the geometry
+> entitiy number is 45, and the type of geometry entity is a line (see
+> ndinqr(node,-5) above).  In the following case, node 335 is associated
+> to area 23.  In this case the node location value is zero.
+> 
+> N,R5.3,LOC,    335,    233,      0,  4.05158333    , 9.750000000E-02,
+> 
+> Here's how I used this in a macro to extract the node-line
+> associativity.  (_nn is the node number.)
+> !
+> !  get the solid model entity ID number
+> _smid=nint(ndinqr(_nn,-5)/10)
+> !  calculate the entity type
+> _smtyp=((ndinqr(_nn,-5)/10)-nint(ndinqr(_nn,-5)/10))*10
+> !  check to see if _smtype is a line, if so then assign the nodal
+> !  position ratio to the parameter
+> *if,_smtyp,eq,2,then
+> _nrat=ndinqr(_nn,-6)
+> *else
+> _nrat=0
+> *endif
+> !
+> 
+> Maybe this will be helpful to others who have needed this information.
+> 
+> John Crawford
+> AlliedSignal Engines
+> Phoenix, AZ
+> john.crawford@alliedsignal.com
+> 
+> 
+
+
+
+
+
+

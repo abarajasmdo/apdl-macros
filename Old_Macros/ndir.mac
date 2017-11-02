@@ -1,0 +1,8 @@
+/nopr
+*IF,ARG1,gt,.5,THEN
+/PSYBM,NDIR,1
+*ELSE
+/PSYBM,NDIR,
+*endif
+/gopr
+

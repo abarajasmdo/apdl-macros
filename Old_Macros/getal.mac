@@ -1,0 +1,10 @@
+cnt=arg1+1                                                                      
+:loop                                                                           
+cnt=cnt-1                                                                       
+*if,cnt,le,0,:end                                                               
+arls                                                                            
+lsar                                                                            
+*go,:loop                                                                       
+kpls                                                                            
+:end                                                                            
+kpls                                                                            

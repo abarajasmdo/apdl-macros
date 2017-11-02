@@ -1,0 +1,9 @@
+/encrypt,bohlen,unsub,mac
+/nopr
+!/sys,purge katie
+a='$ADDRES'
+b='| mailx'
+/syp,echo,a
+!/sys,echo "approve katie unsubscribe xansys"  | mailx majordomo@im.ge.com
+/gopr
+/encrypt

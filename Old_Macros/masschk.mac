@@ -1,0 +1,16 @@
+/nopr
+fini
+/prep7
+/solu
+! got to dump the ce's for psolve
+cewrit,junk,ce
+cedele,all,all
+/gopr
+PSOLVE,ELFORM,,,,noch
+weight
+/nopr
+/inp,junk,ce
+/sys,rm junk.ce
+/prep7
+/gopr
+  

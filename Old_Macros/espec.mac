@@ -1,0 +1,108 @@
+!  counter 
+!/NOPR
+!/SYS,/afs/.ae.ge.com/dev/ansys/data/COUNTER.SCRIPT espec.mac &
+!
+/nopr
+!	espec.mac  macro launchs SIESTA espec_gui for creating
+!	temperture dependent physical material properties
+!	
+!  ...........add counter 
+/prep7
+PARSAV,ALL
+WRITE=		! dump arrays (if they exist)
+EMATS=
+*GET,NELEM,ELEM,,COUNT
+*IF,NELEM,GT,0,THEN
+cm,_TEMP_,ELEM
+*ENDIF
+eall
+MPMAX=MPINQR(,,14)
+*DIM,WRITE,,500
+!
+*MSG,INFO
+.CHECKING FOR DEFINED MATERIAL PROPERTIES............
+!  do defined materials
+*IF,MPMAX,GT,500,THEN
+*MSG,WARN
+SIESTA ESPEC can handle only material numbers up to 500!
+*ENDIF
+*DO,LOOP2,1,MPMAX
+DEF=MPINQR(LOOP2,,1)	! RETURNS A 1 FOR DEFINED MATS
+*IF,DEF,EQ,1,THEN
+WRITE(LOOP2)=2
+ESEL,U,MAT,,LOOP2
+*ENDIF
+*ENDDO
+
+!
+*MSG,INFO
+..CHECKING FOR MATERIALS ASSIGNED TO EXISTING ELEMENTS.......
+*GET,NELES,ELEM,,COUNT
+EMATS=
+*DIM,EMATS,,NELES
+*DO,LOOP,1,NELES
+*GET,NELES,ELEM,,COUNT
+!/GOPR
+COUNT=LOOP
+*IF,NELES,EQ,0,*EXIT
+EMATS=
+*DIM,EMATS,,NELES
+*GET,ELMIN,ELEM,,NUM,MIN
+*VGET,EMATS(1),ELEM,ELMIN,ATTR,MAT
+*VSCFUN,MATMAX,MAX,EMATS(1)	! maximum mat used for defined elements
+*VSCFUN,MATMIN,MIN,EMATS(1)
+WRITE(MATMIN)=1
+WRITE(MATMAX)=1
+ESEL,U,MAT,,MATMIN,MATMAX,MATMAX-MATMIN
+*ENDDO
+!  NOW WRITE OUT  SIESTA_GUI.INP
+*MSG,INFO
+...CREATING ESPEC GUI INPUT FILE....
+*CFOPEN,espec_gui,inp
+*VWRITE
+("ANSYS")
+*VWRITE
+("STRUCTURAL")
+*DO,LOOP3,1,500
+*IF,WRITE(LOOP3),EQ,0,*CYCLE
+*IF,WRITE(LOOP3),EQ,1,THEN
+*VWRITE,LOOP3
+(I5," :need_2b_defined")
+*ELSE
+!  checking logic for mat#
+!/gopr
+check='matl%loop3%_'
+*get,exist,parm,%check%,type
+*if,exist,eq,-1,then
+matl%loop3%_='NAME=???'
+*endif
+*VWRITE,LOOP3,MATL%LOOP3%_,HCUT%LOOP3%_,DOW%LOOP3%_
+(I5," :defined_",A," : ",F12.8," : ",F12.8)
+*ENDIF
+*ENDDO
+*CFCLOS
+WRITE=
+EMATS=
+*MSG,INFO
+RUN SIESTA ESPEC GUI
+PARRES
+*IF,NELEM,GT,0,THEN
+CMSEL,,_TEMP_
+CMDELE,_TEMP_
+*ENDIF
+!xtime
+!/sys,/afs/.ae.ge.com/siestai/bin/espec.exp
+/sys,siesta egui
+/gopr
+*MSG,INFO
+Reading in f35.dat - Material Data
+/gopr
+/INP,f35.dat
+
+
+
+
+
+
+
+

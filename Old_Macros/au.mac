@@ -1,0 +1,12 @@
+!                             
+!            Macro   au.mac
+!
+!            Description
+!
+!            This macro automatically scales and redraws
+!            the screen.
+
+/auto,arg1,
+/repl                                                             
+
+

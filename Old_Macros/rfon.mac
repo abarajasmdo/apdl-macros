@@ -1,0 +1,11 @@
+/nopr
+!
+!          rfon.mac
+!
+!          a macro to turn forces and moments on
+!
+/pbc,force,1                                                                    
+,mome,1                                                                         
+/gopr
+
+

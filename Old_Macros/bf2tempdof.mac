@@ -1,0 +1,11 @@
+parsav
+*get,nnds,node,,count
+nd=ndnext(0)
+*do,loop,1,nnds
+ndtemp=0
+*get,ndtemp,node,nd,ntemp
+*if,ndtemp,gt,0,then
+d,nd,temp,ndtemp	! write HT dof
+*endif
+nd=ndnext(nd)
+*enddo

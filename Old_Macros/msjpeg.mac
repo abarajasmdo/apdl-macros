@@ -1,0 +1,11 @@
+NAME=
+*DIM,NAME,CHAR,4
+*get,name(1),active,,jobnam,,start,1
+!*ask,fname,filename for MS epsi file,'%name(1)%'
+fname=arg1
+/ui,copy,save,jpeg,graph,color,reverse,portrait
+/syp,rename_jpeg,fname
+/sys,cp *.jpg ~/temp
+/sys,mv *.jpg ~/"my pictures"
+!/sys,alldone
+

@@ -1,0 +1,35 @@
+/nopr
+!
+!   klpz.mac  A macro to create a keypoint where a line
+!                    intersects the Z plane at a given Z value.
+!
+!   usage:   kplz,line number,Z plane coordinate
+!
+!
+*get,kp1,line,arg1,kp,1
+*get,kp2,line,arg1,kp,2
+!
+*get,kp1x,kp,kp1,loc,x
+*get,kp1y,kp,kp1,loc,y
+*get,kp1z,kp,kp1,loc,z
+
+
+*get,kp2x,kp,kp2,loc,x
+*get,kp2y,kp,kp2,loc,y
+*get,kp2z,kp,kp2,loc,z
+
+y=kp1y+((kp2y-kp1y)*(arg2-kp1z))/(kp2z-kp1z)
+x=kp1x+((kp2x-kp1x)*(arg2-kp1z))/(kp2z-kp1z)
+
+*get,kmax,mxkp
+
+kpid=kmax+1
+
+k,kpid,x,y,arg2
+
+*msg,info,kpid,x,y,arg2
+Keypoint %i created at x= %g y= %g z= %g
+*ask,enter,key to clear screen
+
+
+

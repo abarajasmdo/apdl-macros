@@ -1,0 +1,40 @@
+!
+! calculates distance between two kps, returns _dist
+! Dan Bohlen  4/1/96
+/nopr
+parsav,all
+*get,acoord,active,,csys
+!csys,0
+_dx=kx(arg2)-kx(arg1)
+_dy=ky(arg2)-ky(arg1)
+_dz=kz(arg2)-kz(arg1)
+_dist=distkp(arg2,arg1)
+_coord=
+/output,KEYPOINT_DISTANCES
+*msg,info,_dist, arg1,arg2
+%/ &
+ _________________________________________________________________ %/ &
+%/ &
+DISTANCE=  %g        Between KPs %I and %I %/ &
+%/&
+_________________________________________________________________ %/  
+*msg,info,acoord,_dx,_dy,_dz
+In Coordinate System %I , the relative distance between KPs is... %/ &
+%/ &
+DX= %G %/ &
+%/ &
+DY= %G %/ &
+%/ &
+DZ= %G  %/ &
+%/ &
+_________________________________________________________________
+/output,term
+*uilist,KEYPOINT_DISTANCES
+/SYS,rm -f KEYPOINT_DISTANCES
+_dx=
+_dy=
+_dz=
+_dist=
+acoord=
+parres
+/gopr

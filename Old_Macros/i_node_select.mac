@@ -1,0 +1,19 @@
+! Of selected gaps this macro creates component of the I and j nodes
+!
+esel,real,arg1
+!cm,_elem_,elem
+*get,elnum,elem,,count
+el=ELnext(0)
+nsel,s,,,nelem(el,1)
+*do,loop,1,elnum-1
+el=ELnext(el)
+nsel,a,,,nelem(el,1)
+*ENDDO
+
+CM,R%ARG1%I,NODE
+NELEM
+CMSEL,U,R%ARG1%I
+CM,R%ARG1%J,NODE
+
+EL=
+

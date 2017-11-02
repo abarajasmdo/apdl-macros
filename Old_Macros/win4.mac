@@ -1,0 +1,25 @@
+!
+!    creates a 4-window layout and sets the views as
+!        left top(1) = top view, looking down y-axis
+!       right top(3) = isometric view
+!     bottom left(2) = front view, looking down z-axis
+!    bottom right(4) = right side view, looking down x-axis
+!
+/wind,1,ltop
+/wind,2,lbot
+/wind,3,rtop
+/wind,4,rbot
+/view,1,0,1,0
+/view,2,0,0,1
+/view,3,1,1,1
+/view,4,1,0,0
+/angle,1
+/angle,2
+/angle,3
+/angle,4
+/PLOPTS,INFO,0  
+/PLOPTS,LEG1,0  
+/PLOPTS,LEG2,0  
+/PLOPTS,LEG3,0  
+/PLOPTS,WINS,1  
+/PLOPTS,WP,0

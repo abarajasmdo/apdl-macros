@@ -1,0 +1,40 @@
+/nopr
+!
+!
+!                    NTK,Node,Keypoint, Ratio
+!
+!                    This macro moves a Node towards a keypoint by a distance
+!                     of Ratio*Original Distance.
+!
+*get,x1,nx,arg1
+*get,y1,ny,arg1
+*get,z1,nz,arg1
+*get,x2,kx,arg2
+*get,y2,ky,arg2
+*get,z2,kz,arg2
+dx=x2-x1
+dy=y2-y1
+dz=z2-z1
+newx=x1+arg3*dx
+newy=y1+arg3*dy
+newz=z1+arg3*dz
+n,arg1,newx,newy,newz
+*msg,note,arg1,arg3,arg2
+(' Node ',f5.0,' has been moved ',f6.2,' towards keypoint ',f5.0)
+x1=
+x2=
+y1=
+y2=
+z1=
+z2=
+dx=
+dy=
+dz=
+newx=
+newy=
+newz=
+/gopr
+
+
+
+

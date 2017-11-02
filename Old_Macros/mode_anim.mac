@@ -1,0 +1,28 @@
+!/PLOPTS,INFO,0  
+!/PLOPTS,LEG1,0  
+!/PLOPTS,LEG2,0  
+!/PLOPTS,LEG3,0  
+!/PLOPTS,FRAME,0 
+!/PLOPTS,TITLE,1 
+!/PLOPTS,MINM,1  
+!/PLOPTS,VERS,0  
+!/PLOPTS,WINS,1  
+!/PLOPTS,WP,0
+!winfull
+!/dscal,1,
+!/edge,all,0 
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.1,.95,MODE= %MODE% , FREQ= %FREQ%
+getname
+/show,junk
+pldi
+/show,animate,temp,1
+!/show,%name(1)%,%mode%ami,1 
+!/show,junk
+!/show,term
+!gpwr 
+ANMODE,5,0.1, ,0
+/syp,f33-animate animate.temp,%name(1)%,%mode%
+/syp,move animate.temp,%name(1)%,ani%mode%
+

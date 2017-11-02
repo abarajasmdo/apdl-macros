@@ -1,0 +1,31 @@
+! ms_area.mac
+! determine mass of all areas in an axisymmetric model
+!
+! Based on Guldino's theorem.
+! Vol=2*pi*radius_center_of_section*area_of_section and
+! Mass=dens*Vol.
+! Use ASUM to *get material attribute number, radius_center_of_section
+! and area_of_section.
+
+asel,all                   ! make sure all areas are active
+totvol  = 0                ! initialize volume
+totmass = 0                ! initialize mass
+
+pi2 = 2*3.14159
+
+*get,AMAX,area,,count           ! determine the number of areas
+
+*do,I,1,AMAX
+ asel,s,area,,i
+ asum                           ! have ANSYS calculate area data
+ *get,att,area,i,attr,mat       ! get material attribute number
+ *get,x_area,area,i,area        ! get x-sectional area
+ *get,cent_x,area,i,cent,x      ! get radius of center of section
+ *get,m_dens,dens,att,temp,20   ! get material density at 20C
+ vol = pi2*cent_x*x_area        ! determine volume
+ totvol  = totvol + vol         ! running total of volume
+ totmass = totmass + m_dens*vol ! running total of mass
+*enddo
+
+asel,all
+

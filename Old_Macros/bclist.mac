@@ -1,0 +1,6 @@
+! list models bcs
+lsfile,39,39
+lwrit
+lsfile,
+/sys,more file39.dat
+!/sys,rm file39.dat

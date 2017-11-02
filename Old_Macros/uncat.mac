@@ -1,0 +1,5 @@
+!
+!  macro uncat unselects concatented lines for eaier viewing
+!
+lsel,u,space,,
+

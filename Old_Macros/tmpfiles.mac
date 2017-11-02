@@ -1,0 +1,6 @@
+getname
+/assign,tri,name(1),tri,/tmp/ansys/
+/assign,emat,name(1),emat,/tmp/ansys/
+/assign,esav,name(1),esav,/tmp/ansys/
+/assign,erot,name(1),erot,/tmp/ansys/
+/assign,osav,name(1),osav,/tmp/ansys/

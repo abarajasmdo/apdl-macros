@@ -1,0 +1,34 @@
+! plots an "i" if the node selected is the i node of a stif 40
+!/nopr
+parsav
+*GET,ACSYS,ACTIVE,,CSYS
+csys,0
+/anno,dele
+*cfopen,adfkj
+!enode
+!*ask,et_,Enter element ename of interest
+!ersel,stif,et_
+*GET,NNODES,NODE,,COUNT
+ND=NDNEXT(0)
+*DO,LOOP,1,NNODES
+elem=enextn(nd,1)
+inode=nelem(elem,1)
+*if,inode,eq,nd,then
+*cfwrit,/tspec,8,
+*cfwrit,/AN3D,TEXT,nx(nd),ny(nd),nz(nd),'I'
+*else
+*cfwrit,/tspec,12
+*cfwrit,/AN3D,TEXT,nx(nd),ny(nd),nz(nd),'O'
+*endif
+ND=NDNEXT(nd)
+*enddo
+*cfwrit,/tspec
+*cfclos
+/inp,adfkj
+/tspec
+)/gopr
+csys,acsys
+parres
+
+
+

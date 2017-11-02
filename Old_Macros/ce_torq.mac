@@ -1,0 +1,16 @@
+! makes CE s between pairs of nodes at different radial heights
+!
+*GET,ENUM,ELEM,,COUNT
+EL=ELNEXT(0)
+nelem
+csys,0
+*DO,LOOP,1,ENUM
+R12=(nx(NELEM(EL,1))/nx(NELEM(EL,2)))
+ce,next,0,NELEM(EL,1),uz,-1,NELEM(EL,2),uz,R12
+nsel,u,,,NELEM(EL,1)
+nsel,u,,,NELEM(EL,2)
+enode,1
+*GET,check,ELEM,,COUNT
+*if,check,eq,0,*exit
+EL=ELNEXT(El)
+*enddo

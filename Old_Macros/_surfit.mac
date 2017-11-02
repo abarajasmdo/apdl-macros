@@ -1,0 +1,683 @@
+/pmacro
+/nopr
+!!! GETSURF !!!
+!!! Version 1.5
+!!! Mark Mueller 513-243-4786
+!!! August 25, 1999
+!!!
+!!! Dimension arrays
+maxrow_=150
+maxcol_=40
+*dim,adjface_,,maxrow_,maxcol_,4
+*dim,ofnodes_,,maxrow_,maxcol_,4
+*dim,regel_,,maxrow_,maxcol_
+*dim,aface_,,6,4,2
+*dim,lface_,,6,4,2
+*dim,centrd_,,3
+*dim,csize_,,3,2
+*dim,diagpos_,,2
+*dim,dir_,,2
+*dim,edge_,,2
+*dim,fedge_,,2
+*dim,elnpos_,,2
+*dim,elcon_,,8
+*dim,fang_,,1,3
+*dim,ic1_,,3
+*dim,ic2_,,1,3
+*dim,ncrnr_,,3
+*dim,ndiag_,,2
+*dim,node1_,,3
+*dim,norm1_,,3
+*dim,norm2_,,1,3
+*dim,loc_,char,4
+*dim,dirs_,char,4
+*dim,titl_,char,9
+*afun,deg                            !Degree mode
+
+!!! Arrays for left-handed elements (plane=1)
+lface_(1,1,1)=1
+lface_(1,2,1)=2
+lface_(1,3,1)=3
+lface_(1,4,1)=4
+lface_(2,1,1)=1
+lface_(2,2,1)=5
+lface_(2,3,1)=6
+lface_(2,4,1)=2
+lface_(3,1,1)=2
+lface_(3,2,1)=6
+lface_(3,3,1)=7
+lface_(3,4,1)=3
+lface_(4,1,1)=3
+lface_(4,2,1)=7
+lface_(4,3,1)=8
+lface_(4,4,1)=4
+lface_(5,1,1)=1
+lface_(5,2,1)=4
+lface_(5,3,1)=8
+lface_(5,4,1)=5
+lface_(6,1,1)=5
+lface_(6,2,1)=8
+lface_(6,3,1)=7
+lface_(6,4,1)=6
+
+aface_(1,1,1)=2
+aface_(1,2,1)=3
+aface_(1,3,1)=4
+aface_(1,4,1)=5
+aface_(2,1,1)=5
+aface_(2,2,1)=6
+aface_(2,3,1)=3
+aface_(2,4,1)=1
+aface_(3,1,1)=2
+aface_(3,2,1)=6
+aface_(3,3,1)=4
+aface_(3,4,1)=1
+aface_(4,1,1)=3
+aface_(4,2,1)=6
+aface_(4,3,1)=5
+aface_(4,4,1)=1
+aface_(5,1,1)=1
+aface_(5,2,1)=4
+aface_(5,3,1)=6
+aface_(5,4,1)=2
+aface_(6,1,1)=5
+aface_(6,2,1)=4
+aface_(6,3,1)=3
+aface_(6,4,1)=2
+
+!!! Postscript character size data
+csize_(1,1)=76                     !# lines/page -- Landscape
+csize_(2,1)=157                    !# chars/line -- Landscape
+csize_(3,1)=32                     !Char. size   -- Landscape
+csize_(1,2)=75                     !# lines/page -- Portrait
+csize_(2,2)=86                     !# chars/line -- Portrait
+csize_(3,2)=44                     !Char. size   -- Portrait
+
+!!! Reverse arrays for right-handed elements (plane=2)
+*do,i_,1,6
+	*do,j_,1,4
+		jj_=5-j_
+		lface_(i_,jj_,2)=lface_(i_,j_,1)
+		jjj_=4-j_
+		*if,jjj_,eq,0,then
+			jjj_=4
+		*endif
+		aface_(i_,jjj_,2)=aface_(i_,j_,1)
+	*enddo
+*enddo
+
+loc_(1)='TL'
+loc_(2)='BL'
+loc_(3)='BR'
+loc_(4)='TR'
+dirs_(1)='left'
+dirs_(2)='bott'
+dirs_(3)='right'
+dirs_(4)='top'
+part_=''
+xdir_=1
+ptype_=1
+start_=1
+pfile_='surfit'
+
+!!! Save current nodes/elems in component restore_
+cm,nodesav_,node
+cm,elemsav_,elem
+cmgrp,restore_,nodesav_,elemsav_
+/gsav,restore,gsav                  !Save graphics settings
+
+/uis,msgpop,0
+csys,0
+
+!!! Get Title of job and store in file 'titl'
+*do,i_,1,9
+	*get,titl_(i_),active,,title,,start,8*(i_-1)+1
+	/syp,echo,titl_(i_),> titl%i_%
+*enddo
+/sys,awk '{printf "%-8s",$0}' titl[1-9] > titl0
+/sys,awk '{gsub(/ +$/,"");printf "%s",$0}' titl0 > titl
+/sys,rm -f titl[0-9]
+
+:start
+!!! Select all external nodes and related elements
+/edge                  !Plot element edges
+/annot,dele            !Delete all annotation
+nsel,ext
+cm,next_,node
+esln,r,0,all
+!!! esel,r,ename,,45       !Reselect Solid45 elements
+cm,eext_,elem
+eplo
+
+!!! Beginning of User Input !!!
+*ask,nreg_,'Region ID (max. 7 chars. --- 0=STOP):','0'
+*if,nreg_,eq,'0',:cleanup
+*ask,regtitl_,'Title for Region (max. 8 chars.):','Loc %nreg_%'
+*ask,part_,'Optional Part Name (max. 8 chars.):','%part_%'
+*ask,ptype_,'Auto Size <PRTR> -- (0=NONE, 1=Landscape, 2=Portrait):',%ptype_%
+*ask,xdir_,'X-Direction Edge <XDIR> -- (0=AUTO, 1=L, 2=B, 3=R, 4=T):',%xdir_%
+*ask,start_,'Start corner location (1=TL,2=BL,3=BR,4=TR):',%start_%
+*if,start_,lt,0,:start
+*if,start_,gt,4,:start
+
+crnr2_=loc_(5-start_)
+k_=start_+2
+*if,k_,gt,4,then
+	k_=k_-4
+*endif
+crnr3_=loc_(k_)
+
+*msg,ui,loc_(start_)
+Pick Start corner node ( %c ) of region (no pick==>STOP):
+nsel,r,p
+*get,npick_,node,,count
+*if,npick_,ne,1,:cleanup
+ndiag_(1)=ndnext(0)
+cmsel,,next_
+nx_=nx(ndiag_(1))
+ny_=ny(ndiag_(1))
+nz_=nz(ndiag_(1))
+/an3d,symb,3,nx_,ny_,nz_,1
+*msg,ui,crnr3_
+Pick Start element diagonal face node ( %c ):
+nsel,r,p
+*get,npick_,node,,count
+*if,npick_,ne,1,:cleanup
+ndiag_(2)=ndnext(0)
+nx_=nx(ndiag_(2))
+ny_=ny(ndiag_(2))
+nz_=nz(ndiag_(2))
+/an3d,symb,3,nx_,ny_,nz_,1
+cmsel,,next_
+*msg,ui,crnr2_
+Pick %c corner node of region (no pick==>Find Free Face):
+nsel,r,p
+*get,npick_,node,,count
+*if,npick_,eq,1,then
+	ncrnr_(2)=ndnext(0)
+	nx_=nx(ncrnr_(2))
+	ny_=ny(ncrnr_(2))
+	nz_=nz(ncrnr_(2))
+	/an3d,symb,3,nx_,ny_,nz_,1
+	cmsel,,next_
+*else
+	ncrnr_(2)=0
+*endif
+*msg,ui,crnr3_
+Pick %c corner node of region (no pick==>Find Free Face OR Circular region):
+nsel,r,p
+*get,npick_,node,,count
+*if,npick_,eq,1,then
+	ncrnr_(3)=ndnext(0)
+	nx_=nx(ncrnr_(3))
+	ny_=ny(ncrnr_(3))
+	nz_=nz(ncrnr_(3))
+	/an3d,symb,3,nx_,ny_,nz_,1
+*else
+	ncrnr_(3)=0
+*endif
+!!! End of User Input !!!
+
+!!! Loop Initialization !!!
+ncrnr_(1)=ndiag_(1)
+
+diagpos_(1)=start_
+diagpos_(2)=start_+2
+*if,diagpos_(2),gt,4,then
+	diagpos_(2)=diagpos_(2)-4
+*endif
+
+*if,start_,lt,3,then
+	dir_(1)=3
+*else
+	dir_(1)=1
+*endif
+	
+*if,start_,eq,1,then
+	dir_(2)=2
+*elseif,start_,eq,2
+	dir_(2)=4
+*elseif,start_,eq,3
+	dir_(2)=4
+*elseif,start_,eq,4
+	dir_(2)=2
+*endif
+
+klook1_=5-start_                 !Setup index # to check for end corner node of row (Loop 1)
+klook2_=start_+2                 !Setup index # to check for end corner node of column (Loop 2)
+*if,klook2_,gt,4,then
+	klook2_=klook2_-4
+*endif
+
+stop1_=0                                                          !Set stop flag for Loop 2
+nxtrcol_=2                                                        !Number of extrapolated columns
+nxtrrow_=2                                                        !Number of extrapolated rows
+
+!!! Get anchor element
+
+nsel,,node,,ndiag_(1)       !Select 1st diagonal node
+esln,r,0,all                !Select all elements attached to 1st diagonal node
+*get,nelem_,elem,,count     !Get # elements selected that are attached to ndiag(1)
+nextel_=elnext(0)           !Get first element in set that are attached to ndiag(1)
+*do,i_,1,nelem_
+	match_=0
+	*vget,elcon_(1),elem,nextel_,node,1,,,4    !Store connectivity of element
+	*do,j_,1,8                                 !Loop through element connectivity vector
+		*if,elcon_(j_),eq,ndiag_(2),then         !Match 2nd diagonal node?
+			match_=1
+		*endif
+	*enddo
+	*if,match_,eq,1,then    !Found anchor element
+		*exit                 !Break out of do-loop
+	*endif
+	nextel_=elnext(nextel_)   !Get next element
+*enddo
+*if,match_,ne,1,then        !Did not find anchor element
+	*msg,warn,ndiag_(1),ndiag_(2)
+	No element found in set containing both %i and %i -- Exiting macro
+	*go,:cleanup
+*endif
+
+fedge_(2)=dir_(1)               !Face node # for next element edge for (Loop 1)
+fedge_(1)=dir_(1)+1
+*if,fedge_(1),gt,4,then
+	fedge_(1)=fedge_(1)-4
+*endif
+
+ncol_=maxcol_
+
+!!! Main Loop !!!
+
+*do,nrow_,1,maxrow_
+	*if,nrow_,ne,1,then                                              !All BUT 1st row (Loop 2)
+		prow_=nrow_-1                                                     !Previous row #
+		*if,stop1_,eq,1,then                                              !Found free-face on last row
+			nrow_=prow_-1                                                 !Previous row #
+			*exit                                                         !Exit row do-loop if at last corner for Loop 2
+		*endif
+		*if,ofnodes_(prow_,ncol_,klook2_),eq,ncrnr_(3),then               !Exit row do-loop if at last corner for Loop 2
+			nrow_=prow_
+			*exit
+		*endif
+		*if,ofnodes_(prow_,ncol_,klook2_),eq,ncrnr_(2),then               !Exit row do-loop if at FIRST corner for Loop 2 (hole)
+			*msg,ui,prow_
+			Circular Region Found at Row %i
+			nrow_=prow_
+			*exit
+		*endif
+		fedge_(2)=dir_(2)                !Face node # for next element edge
+		fedge_(1)=dir_(2)+1
+		*if,fedge_(1),gt,4,then
+			fedge_(1)=fedge_(1)-4
+		*endif
+	*endif
+	*msg,info,nrow_
+	Processing Row %i ...
+	*do,icol_,1,ncol_                                                   !Loop through each column
+		*if,nrow_,eq,1,then                                                 !Process if 1st row (Loop 1)
+			*if,icol_,eq,1,then                                               !Process if anchor element (nextel_ predefined)
+				edge_(1)=ndiag_(1)
+				edge_(2)=ndiag_(2)
+				kadj_=2                                                         !Delta of face node index in tables
+				mstart_=start_                                                  !Starting position for ofnodes_ and adjface_
+			*else                                                             !1st row but not 1st column (Loop 1)
+				pcol_=icol_-1                                                     !Previous col #
+				*if,ofnodes_(nrow_,pcol_,klook1_),eq,ncrnr_(2),then               !Process if at last corner of row 1
+					ncol_=pcol_                                                     !Set ncol_ to pcol_
+					*exit                                                           !Exit col do-loop
+				*endif
+				*msg,info,icol_
+				Processing Column %i ...
+				nextel_=eladj(regel_(nrow_,pcol_),adjface_(nrow_,pcol_,dir_(1)))
+				*if,nextel_,eq,0,then                                               !NO adjacent element--Exit col do-loop
+					*msg,ui,regel_(nrow_,pcol_),nrow_,pcol_
+					Free Face Found at Element %i (Row %i, Column %i)
+					ncrnr_(2)=ofnodes_(nrow_,pcol_,klook1_)                         !Set 2nd corner node for circular check
+					ncol_=pcol_
+					*exit
+				*endif
+				edge_(1)=ofnodes_(nrow_,pcol_,fedge_(1))            !1st Node # of adjacent edge
+				edge_(2)=ofnodes_(nrow_,pcol_,fedge_(2))            !2nd Node # of adjacent edge
+				kadj_=1                                             !Delta of face node index in tables
+				mstart_=fedge_(2)+2                                 !Starting position (plane #) for ofnodes_ and adjface_
+				*if,mstart_,gt,4,then
+					mstart_=mstart_-4
+				*endif
+			*endif
+		*else                                                           !All BUT 1st row (Loop 2)
+			nextel_=eladj(regel_(prow_,icol_),adjface_(prow_,icol_,dir_(2)))
+			*if,nextel_,eq,0,then                                               !NO adjacent element--skip processing this row
+				*msg,ui,regel_(prow_,icol_),prow_,icol_
+				Free Face Found at Element %i (Row %i, Col %i)
+				stop1_=1                                                          !Set stop flag for Loop 2
+				*exit                                                             !Exit col do-loop
+			*endif
+			edge_(1)=ofnodes_(prow_,icol_,fedge_(1))            !1st Node # of adjacent edge
+			edge_(2)=ofnodes_(prow_,icol_,fedge_(2))            !2nd Node # of adjacent edge
+			kadj_=1                                             !Delta of face node index in tables
+			mstart_=fedge_(2)+2                                 !Starting position (plane #) for ofnodes_ and adjface_
+			*if,mstart_,gt,4,then
+				mstart_=mstart_-4
+			*endif
+		*endif
+		regel_(nrow_,icol_)=nextel_                         !Store next element
+		*vget,elcon_(1),elem,nextel_,node,1,,,4             !Get next element connectivity
+
+!!! Get Element Hand: Returns hand_ for use in lface(,,x) and aface(,,x)
+		norm1_(1)=normnx(elcon_(1),elcon_(2),elcon_(3))        !X-direction cosine of normal to Face #1
+		norm1_(2)=normny(elcon_(1),elcon_(2),elcon_(3))        !Y-direction cosine of normal to Face #1
+		norm1_(3)=normnz(elcon_(1),elcon_(2),elcon_(3))        !Z-direction cosine of normal to Face #1
+		*vget,node1_(1),node,elcon_(1),loc,x,,,4               !Coordinates for 1st node
+		*vget,centrd_(1),elem,regel_(nrow_,icol_),cent,x,,,4   !Coordinates of element centroid
+		*voper,ic1_(1),centrd_(1),sub,node1_(1)                !Vector from Node 1 to centroid (ic1_)
+		icmag_=sqrt(ic1_(1)**2+ic1_(2)**2+ic1_(3)**2)          !Magnitude of IC
+		*mfun,ic2_(1,1),tran,ic1_(1)                           !Transpose ic1_ to ic2_ for use in dot product
+		*mfun,norm2_(1,1),tran,norm1_(1)                       !Transpose norm1_ to norm2_ for use in dot product
+		*voper,fang_(1,1),norm2_(1,1),dot,ic2_(1,1)            !Dot product of norm2_ and ic2_
+		fangl_=acos(fang_(1,1)/icmag_)                         !Angle between face normal and ic_
+		*if,fangl_,gt,90,then
+			hand_=1                                              !Left-handed element
+		*else
+			hand_=2                                              !Right-handed element
+		*endif
+!!! Get element connectivity position indices that match edge_
+		nmatch_=0
+		*do,i_,1,8
+			*if,elcon_(i_),eq,edge_(1),then
+				nmatch_=nmatch_+1
+				elnpos_(1)=i_
+			*elseif,elcon_(i_),eq,edge_(2),then
+				nmatch_=nmatch_+1
+				elnpos_(2)=i_
+			*endif
+			*if,nmatch_,eq,2,exit                               !Found both indices;exit do-loop
+		*enddo
+!!! Get face number containing edge_
+		match_=0
+		*do,i_,1,6                                              !Loop through each lface_ row (i_ ==> face number)
+			*do,j_,0,3                                            !Shift value for vector--need to search all 4 possibilites
+				k1_=j_+1
+				*if,k1_,gt,4,then
+					k1_=k1_-4                                        !Keep index < 4
+				*endif
+				*if,lface_(i_,k1_,hand_),eq,elnpos_(1),then                     !Match 1st node position?
+					k2_=k1_+kadj_                                             !Adjacent node position
+					*if,k2_,gt,4,then
+						k2_=k2_-4                                        !Keep index < 4
+					*endif
+					*if,lface_(i_,k2_,hand_),eq,elnpos_(2),then             !Match 2nd node position?
+						match_=1
+					*endif
+				*endif
+				*if,match_,eq,1,exit                          !Exit loop if match found
+			*enddo
+			*if,match_,eq,1,exit                          !Exit loop if match found
+		*enddo
+		*do,n_,1,4                         !Store results of new element;loop by face node number
+			m_=n_+j_                           !Position in lface vector
+			*if,m_,gt,4,then
+				m_=m_-4                          !Keep index < 4
+			*endif
+			mm_=mstart_+n_-1                     !Position in face node vector
+			*if,mm_,gt,4,then
+				mm_=mm_-4                          !Keep index < 4
+			*endif
+			ofnodes_(nrow_,icol_,mm_)=elcon_(lface_(i_,m_,hand_))             !Ordered Face Nodes
+			adjface_(nrow_,icol_,mm_)=aface_(i_,m_,hand_)                     !Adjacent Faces
+		*enddo
+	*enddo                                                         !End of column do-loop
+*enddo                                                        !End of row do-loop
+
+*if,ncol_,ge,maxcol_,then
+	*msg,warn,maxcol_
+	Region exceeds %i Cols -- Exiting macro
+	*go,:cleanup
+*elseif,nrow_,ge,maxrow_
+	*msg,warn,maxrow_
+	Region exceeds %i Rows -- Exiting macro
+	*go,:cleanup
+*endif
+
+!!! Write out nodes as component (.cdb) file in block format
+!!! Header
+nnodes_=(nrow_+1)*(ncol_+1)
+*cfopen,r,cdb
+*cfwrite,/nopr
+compnam_='r%nreg_%'
+*cfwrite,cmblock,compnam_,node,nnodes_
+*cfwrite,'(8i10)'
+*cfclos
+
+nodes_=                      !Delete nodes_
+*dim,nodes_,,nnodes_         !Dimension nodes_
+
+!!! Indices for filling in nodes_
+l1_=start_
+l2_=5-start_
+l4_=start_+2
+*if,l4_,gt,4,then
+	l4_=l4_-4
+*endif
+l3_=start_+l2_-l4_
+
+*do,i_,1,nrow_
+	*do,j_,1,ncol_
+		k_=(i_-1)*(ncol_+1)+j_
+		nodes_(k_)=ofnodes_(i_,j_,l1_)         !TL corner node of each column in each row (start_=1)
+	*enddo
+	nodes_(i_*(ncol_+1))=ofnodes_(i_,j_,l2_)   !TR corner node of last column of each row (start_=1)
+*enddo
+*do,j_,1,ncol_
+	k_=nrow_*(ncol_+1)+j_
+	nodes_(k_)=ofnodes_(i_,j_,l3_)             !BL corner node of each column in last row (start_=1)
+*enddo
+nodes_(nnodes_)=ofnodes_(i_,j_,l4_)            !BR corner node of last column in last row (start_=1)
+
+!!! Write nodes_ to file r.n
+*cfopen,r,n
+*vwrite,nodes_(1)
+(f9.0)
+*cfclos
+
+!!! Put nodes in cmblock format and append to r.cdb
+!!! Note:  command using /sys cannot exceed 75 characters!
+/sys,awk '{i=NR%8;if(i==0)printf"%10i\n",$1;else printf"%10i",$1}' r.n >> r.cdb
+cdread,db,r,cdb                                !Read in RXXXXXXX component
+cmsel,,restore_                                !Restore elements and nodes
+/anno,dele                                     !Delete annotation
+*if,xdir_,ne,0,then                            !Add xdir arrow annotation
+	*if,xdir_,ne,2,then
+		*if,xdir_,ne,4,then                    !Left/Right XDIR
+			*if,nrow_,lt,5,then
+				i_=nrow_
+			*else
+				i_=5
+			*endif
+			p1arwx_=nx(ofnodes_(1,1,l1_))*2-nx(ofnodes_(1,1,l2_))
+			p1arwy_=ny(ofnodes_(1,1,l1_))*2-ny(ofnodes_(1,1,l2_))
+			p1arwz_=nz(ofnodes_(1,1,l1_))*2-nz(ofnodes_(1,1,l2_))
+			p2arwx_=nx(ofnodes_(i_,1,l3_))*2-nx(ofnodes_(i_,1,l4_))
+			p2arwy_=ny(ofnodes_(i_,1,l3_))*2-ny(ofnodes_(i_,1,l4_))
+			p2arwz_=nz(ofnodes_(i_,1,l3_))*2-nz(ofnodes_(i_,1,l4_))
+		*endif
+	*endif
+	*if,xdir_,ne,1,then
+		*if,xdir_,ne,3,then                    !Top,Bottom XDIR
+			*if,ncol_,lt,5,then
+				j_=ncol_
+			*else
+				j_=5
+			*endif
+			p1arwx_=nx(ofnodes_(1,1,l1_))*2-nx(ofnodes_(1,1,l3_))
+			p1arwy_=ny(ofnodes_(1,1,l1_))*2-ny(ofnodes_(1,1,l3_))
+			p1arwz_=nz(ofnodes_(1,1,l1_))*2-nz(ofnodes_(1,1,l3_))
+			p2arwx_=nx(ofnodes_(1,j_,l2_))*2-nx(ofnodes_(1,j_,l4_))
+			p2arwy_=ny(ofnodes_(1,j_,l2_))*2-ny(ofnodes_(1,j_,l4_))
+			p2arwz_=nz(ofnodes_(1,j_,l2_))*2-nz(ofnodes_(1,j_,l4_))
+		*endif
+	*endif
+	/an3d,arro,1,p1arwx_,p1arwy_,p1arwz_,p2arwx_,p2arwy_,p2arwz_
+	/an3d,text,p2arwx_+(p2arwx_-p1arwx_)/i_*.7,p2arwy_+(p2arwy_-p1arwy_)/i_*.7,p2arwz_+(p2arwz_-p1arwz_)/i_*.7,X
+*endif
+nx_=nx(ndiag_(1))                              !Put star annotation on starting node
+ny_=ny(ndiag_(1))
+nz_=nz(ndiag_(1))
+/an3d,symb,5,nx_,ny_,nz_,1
+surfplot,nreg_                                !Plot region
+*msg,ui
+Check region and then click <<<MIDDLE>>> Mouse Button
+nlis,p
+*msg,ui,compnam_
+Component %c created
+*ask,ans_,'OK to append region to surfseal.inp (0=NO, 1=YES)?',1
+*if,ans_,eq,1,then
+!!! Append to Surfseal input file (surfseal.inp)
+!!! Find edges to be excluded (Loop 1)
+	*cfopen,excl,out
+	s1_=dir_(1)
+	s2_=dir_(1)+2
+	*if,s2_,gt,4,then
+		s2_=s2_-4
+	*endif
+	*do,i_,1,nrow_
+		*if,eladj(regel_(i_,ncol_),adjface_(i_,ncol_,s1_)),ne,0,then
+			*cfwrite,dirs_(s1_)
+			nxtrcol_=nxtrcol_-1                              !Decrement # extrapolated columns
+			*exit
+		*endif
+	*enddo
+	*do,i_,1,nrow_
+		*if,eladj(regel_(i_,1),adjface_(i_,1,s2_)),ne,0,then
+			*cfwrite,dirs_(s2_)
+			nxtrcol_=nxtrcol_-1                              !Decrement # extrapolated columns
+			*exit
+		*endif
+	*enddo
+!!! Find edges to be excluded (Loop 2)
+	s1_=dir_(2)
+	s2_=dir_(2)+2
+	*if,s2_,gt,4,then
+		s2_=s2_-4
+	*endif
+	*do,j_,1,ncol_
+		*if,eladj(regel_(nrow_,j_),adjface_(nrow_,j_,s1_)),ne,0,then
+			*cfwrite,dirs_(s1_)
+			nxtrrow_=nxtrrow_-1                              !Decrement # extrapolated rows
+			*exit
+		*endif
+	*enddo
+	*do,j_,1,ncol_
+		*if,eladj(regel_(1,j_),adjface_(1,j_,s2_)),ne,0,then
+			*cfwrite,dirs_(s2_)
+			nxtrrow_=nxtrrow_-1                              !Decrement # extrapolated rows
+			*exit
+		*endif
+	*enddo
+	*cfclos
+!!! Auto Sizing for PRTR command
+	*if,ptype_,ne,0,then
+		ncpl_=6*ncol_+6*nxtrcol_                                 !# chars/line
+		nlpp_=nrow_+2*nxtrrow_+9                                 !# lines/page
+		c1_=csize_(3,ptype_)*csize_(2,ptype_)/ncpl_              !Based on ncpl_
+		c1nint_=nint(c1_)
+		*if,c1nint_,gt,c1_,then
+			c1_=c1nint_-1
+		*else
+			c1_=c1nint_
+		*endif
+		c2_=csize_(3,ptype_)*csize_(1,ptype_)/nlpp_              !Based on nlpp_
+		c2nint_=nint(c2_)
+		*if,c2nint_,gt,c2_,then
+			c2_=c2nint_-1
+		*else
+			c2_=c2nint_
+		*endif
+		*if,c1_,lt,c2_,then                                      !Get smallest char. size
+			chrsiz_=c1_
+		*else
+			chrsiz_=c2_
+		*endif
+		*if,chrsiz_,gt,60,then
+			chrsiz_=60
+		*endif
+		*if,chrsiz_,lt,21,then
+			chrsiz_=21
+		*endif
+	*endif
+!!! k1_ and k2_:  1=left,2=bott,3=right,4=top
+	*if,start_,eq,1,then
+		k1_=4
+		k2_=1
+	*elseif,start_,eq,2
+		k1_=2
+		k2_=1
+	*elseif,start_,eq,3
+		k1_=2
+		k2_=3
+	*elseif,start_,eq,4
+		k1_=4
+		k2_=3
+	*endif
+	*cfopen,surfseal,inp,,append
+	*cfwrite,rese
+	*cfclos
+	/sys,rm -f part
+	/sys,rm -f title
+	/syp,echo,part_,> part
+	/syp,echo,regtitl_,> title
+	/sys,printf "titl," >> surfseal.inp
+	/sys,awk '{printf "%s:  ",$0}' titl >> surfseal.inp
+	/sys,awk '{printf "%s -- ",$0}' part >> surfseal.inp
+	/sys,awk '{print $0}' title >> surfseal.inp
+	*if,ptype_,ne,0,then
+		*cfopen,surfseal,inp,,append
+		*cfwrite,prtr,ptype_-1,chrsiz_
+		*cfclos
+	*endif
+	*if,xdir_,ne,0,then
+		*cfopen,surfseal,inp,,append
+		*cfwrite,xdir,%dirs_(xdir_)%
+		*cfclos
+	*endif
+	/sys,printf "excl" >> surfseal.inp
+	/sys,awk '{printf ",%s",$1}END{printf "\n"}' excl.out >> surfseal.inp
+	*cfopen,surfseal,inp,,append
+	*cfwrite,roll,ncol_,nrow_,ndiag_(1),ndiag_(2),,%dirs_(k1_)%,%dirs_(k2_)%
+	*cfclos
+	*msg,ui,regtitl_
+	Region %c appended to surfseal.inp
+	*ask,pfile_,'Plot file prefix (max. 8 chars ==> 0=NONE):','%pfile_%'
+	*if,pfile_,ne,'0',then
+		*msg,ui
+		Orient and then click <<<MIDDLE>>> Mouse Button
+		nlis,p
+		*get,gset_,graph,,display                      !Get raster/vector setting
+		/show,%pfile_%,grph,gset_
+		surfplot,nreg_
+		/show,term,,gset_
+		*msg,ui,pfile_
+		ANSYS plot file %c .grph created
+	*endif
+*else
+	cmdel,compnam_
+	*msg,ui,regtitl_
+	Region %c NOT written to surfseal.inp
+*endif
+
+*go,:start
+
+!!! Cleanup !!!
+:cleanup
+/sys,rm -f part titl title r.cdb r.n excl.out
+*del,,prm_
+!!! Restore original environment !!!
+cmsel,,restore_
+cmdel,restore_
+cmdel,nodesav_
+cmdel,elemsav_
+cmdel,next_
+cmdel,eext_
+/gresu,restore,gsav
+/sys,rm -f restore.gsav
+/gopr
+/eof

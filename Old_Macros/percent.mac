@@ -1,0 +1,4 @@
+! calculates % delta
+*ask,base,enter base value,1
+*ask,new,enter other value,1
+delta=(base-new)/base*100

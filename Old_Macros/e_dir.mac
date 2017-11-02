@@ -1,0 +1,59 @@
+!
+!  e_dir.mac   shows stif 40 orientations with lines and fk
+!		for vertical and horizontal flanges
+!
+!    (i)  .------.  (j)    makes line ------>
+!
+/pmacro
+LNUM=10000
+PARSAV
+CM,_LS_,LINE
+LSAL
+LSINV
+*GET,NELS,ELEM,,COUNT
+ELE=ELNEXT(0)
+NELEM
+*DO,W,1,NELS
+KNODE,,NELEM(ELE,1)
+K1=_RETURN
+KNODE,,NELEM(ELE,2)
+K2=_RETURN
+!  CHECK FOR COINCIDENT NODES
+!*IF,KX(K1),EQ,KX(K2),THEN
+!CHECK FOR VERTICAL OF HORIZONTAL SET
+*IF,NX(NDNEXT(0)),EQ,NX(NDNEXT(NDNEXT(0))),THEN
+K,K2,KX(K2)+.001,KY(K2)
+fk,k2,fx,1e-9
+*ELSE
+K,K2,KX(K2),KY(K2)+.001
+fk,k2,fy,1e-9
+*ENDIF
+!*ENDIF
+!NUMSTR,LINE,10000
+L,K1,K2
+!LEXTND,LNUM,K2,.1
+!LNUM=LNUM+1
+ELE=ELNEXT(ELE)
+*ENDDO
+CM,_TEMP_L,LINE
+PARRES
+*MSG,INFO,THE GRAPHICS LINES ON COMPONENT "_TEMP_L"
+/eras
+pbon
+lplo
+noeras
+enon
+eplo
+/eras
+enof
+Fnc_LDELE_sweep
+/eras
+enof
+/gopr
+
+
+
+
+
+
+

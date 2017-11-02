@@ -1,0 +1,40 @@
+! GetTime.mac
+! 	RETURNS:
+!		zTIME    = 8.9047222 or 32.9047222
+!		zTIMEchr = '09:14:23'
+!		zHOUR    = 1, 2, 3, ..., 23
+!		zMINUTE  = 1, 2, 3, ..., 60
+!		zSECOND  = 1, 2, 3, ..., 60
+!
+!	Notes:
+!		Current wall clock (zTIME) continues to accumulate
+!		during an ANSYS run and is NOT reset to zero at midnight.
+!		As an example, zTIMEnum of 32.9047222 means ANSYS
+!		started at 8.9047222 and has been running for 24 hours.
+!
+!		zTIMEchr is a scalar character parameter.  All other
+!		RETURNS are scalar number parameters.
+!
+!		Times are returned using a 24 hour clock (7:00 PM
+!		returns zHOUR = 19 and zTIMEchr = '19:00:00'.
+!
+*GET, zTIME, ACTIVE, , TIME, WALL
+zHOUR   = MOD(zTIME,24)-MOD(zTIME,1)
+zSECOND = NINT(3600*MOD(zTIME,1))
+zMINUTE = (zSECOND-MOD(zSECOND,60))/60
+zSECOND = zSECOND-60*zMINUTE
+*IF, zHOUR, LT, 10, THEN
+	zTIMEchr = '0%zHOUR%'
+*ELSE
+	zTIMEchr = '%zHOUR%'
+*ENDIF
+*IF, zMINUTE, LT, 10, THEN
+	zTIMEchr = '%zTIMEchr%:0%zMINUTE%'
+*ELSE
+	zTIMEchr = '%zTIMEchr%:%zMINUTE%'
+*ENDIF
+*IF, zSECOND, LT, 10, THEN
+	zTIMEchr = '%zTIMEchr%:0%zSECOND%'
+*ELSE
+	zTIMEchr = '%zTIMEchr%:%zSECOND%'
+*ENDIF

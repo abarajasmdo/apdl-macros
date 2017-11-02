@@ -1,0 +1,230 @@
+From - Fri Oct 27 12:54:17 2000
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2650.21)
+	id VRLY5NWD; Wed, 25 Oct 2000 15:19:05 -0400
+Received: from unknown-24-5.pilot.net by gemb1.ae.ge.com (8.8.8/1.1.22.3/16Sep99-0217PM)
+	id PAA0000019550; Wed, 25 Oct 2000 15:19:39 -0500 (CDT)
+Received: from unknown-147-100.pilot.net (localhost [127.0.0.1]) by unknown-24-5.pilot.net with ESMTP id MAA26961 for <dan.bohlen@ae.ge.com>; Wed, 25 Oct 2000 12:18:59 -0700 (PDT)
+Received: from fj.egroups.com (fj.egroups.com [64.209.169.104]) by unknown-147-100.pilot.net with SMTP id MAA13746 for <dan.bohlen@ae.ge.com>; Wed, 25 Oct 2000 12:18:58 -0700 (PDT)
+Received: from [10.1.10.36] by fj.egroups.com with NNFMP; 25 Oct 2000 19:18:46 -0000
+Received: (EGP: mail-6_2_0); 25 Oct 2000 19:18:37 -0000
+Received: (qmail 531 invoked from network); 25 Oct 2000 19:18:33 -0000
+Received: from unknown (10.1.10.27) by m2.onelist.org with QMQP; 25 Oct 2000 19:18:33 -0000
+Received: from unknown (HELO tmpsmtp705.honeywell.com) (199.64.7.105) by mta2 with SMTP; 25 Oct 2000 19:18:33 -0000
+Received: from 131.127.249.187 by tmpsmtp705.honeywell.com (InterScan E-Mail VirusWall NT); Wed, 25 Oct 2000 12:17:31 -0700
+Received: by TMPCN190 with Internet Mail Service (5.5.2650.21) id <VBNW5SRW>; Wed, 25 Oct 2000 12:17:42 -0700
+X-eGroups-Return: sentto-57960-17105-972501517-dan.bohlen=ae.ge.com@returns.onelist.com
+X-Sender: john.crawford@honeywell.com
+X-Apparently-To: xansys@egroups.com
+Message-ID: <1F56A179617FD411B60000508B0771281E0A32@tmpex176.wins.allied.com>
+To: "'xansys@egroups.com'" <xansys@egroups.com>
+X-Mailer: Internet Mail Service (5.5.2650.21)
+From: "Crawford, John" <john.crawford@honeywell.com>
+MIME-Version: 1.0
+Mailing-List: list xansys@egroups.com; contact xansys-owner@egroups.com
+Delivered-To: mailing list xansys@egroups.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@egroups.com>
+Date: Wed, 25 Oct 2000 12:17:21 -0700
+Reply-To: xansys@egroups.com
+Subject: [xansys] NUMTOG.MAC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mozilla-Status: 8001
+X-Mozilla-Status2: 00000000
+X-UIDL: AAgmeirAAAgm5J5JQCgg3Gx0utjVdfJq
+
+I've received a few emails from people indicating that the macro NUMTOG.MAC
+that I refer to in my column in the latest issue of ANSYS Solutions is not
+yet available on the ANSYS web site.  For my fellow XANSYS readers I thought
+I'd post it here.  I'll contact the appropriate people in Cannonsburg and
+see if we can get them to put it out there for those poor folks who don't
+know that XANSYS exists.
+
+John Crawford
+Honeywell Engines
+Phoenix, AZ
+john.crawford@honeywell.com
+
+
+
+/nopr
+!
+!  numtog.mac  a macro that toggles ID numbers off and on for
+!              keypoints, lines, areas, volumes, nodes, and elements.
+!
+!  usage:  numtog,idnum
+!
+!    where:  idnum=1 for keypoints
+!                  2 for lines
+!                  3 for areas
+!                  4 for volumes
+!                  5 for nodes
+!                  6 for elements
+!                  7 for line direction
+!                  8 for nodal coordinate system
+!                  9 for element coordinate system
+!                 10 for coordinate system
+!                 11 for vector or raster display
+!                  
+!
+*if,arg1,eq,1,then
+!  get the /pnum status for keypoints
+*get,ar20,common,,d3com,,int,104
+*if,ar20,eq,0,then
+/pnum,kpoi,1
+*msg,info
+%/Keypoint numbers are now on
+*else
+/pnum,kpoi,0
+*msg,info
+%/Keypoint numbers are now off
+*endif
+!
+*elseif,arg1,eq,2,then
+!  get the /pnum status for lines
+*get,ar20,common,,d3com,,int,105
+*if,ar20,eq,0,then
+/pnum,line,1
+*msg,info
+%/Line numbers are now on
+*else
+/pnum,line,0
+*msg,info
+%/Line numbers are now off
+*endif
+!
+*elseif,arg1,eq,3,then
+!  get the /pnum status for areas
+*get,ar20,common,,d3com,,int,106
+*if,ar20,eq,0,then
+/pnum,area,1
+*msg,info
+%/Area numbers are now on
+*else
+/pnum,area,0
+*msg,info
+%/Area numbers are now off
+*endif
+!
+*elseif,arg1,eq,4,then
+!  get the /pnum status for volumes
+*get,ar20,common,,d3com,,int,107
+*if,ar20,eq,0,then
+/pnum,volu,1
+*msg,info
+%/Volume numbers are now on
+*else
+/pnum,volu,0
+*msg,info
+%/Volume numbers are now off
+*endif
+!
+*elseif,arg1,eq,5,then
+!  get the /pnum status for nodes
+*get,ar20,common,,d3com,,int,96
+*if,ar20,eq,0,then
+/pnum,node,1
+*msg,info
+%/Node numbers are now on
+*else
+/pnum,node,0
+*msg,info
+%/Node numbers are now off
+*endif
+!
+*elseif,arg1,eq,6,then
+!  get the /pnum status for elems
+*get,ar20,common,,d3com,,int,97
+*if,ar20,eq,0,then
+/pnum,elem,1
+*msg,info
+%/Element numbers are now on
+*else
+/pnum,elem,0
+*msg,info
+%/Element numbers are now off
+*endif
+!
+!
+*elseif,arg1,eq,7,then
+!  get the /psym status for line direction
+*get,ar20,common,,d3com,,int,141
+*if,ar20,eq,0,then
+/psym,ldir,1
+*msg,info
+%/Line direction arrows are now on
+*else
+/psym,ldir,0
+*msg,info
+%/Line direction arrows are now off
+*endif
+!
+!
+*elseif,arg1,eq,8,then
+!  get the /psym status for nodal coordinate system
+*get,ar20,common,,d3com,,int,139
+*if,ar20,eq,0,then
+/psym,ndir,1
+*msg,info
+%/Nodal coordinate system symbols are now on
+*else
+/psym,ndir,0
+*msg,info
+%/Nodal coordinate system symbols are now off
+*endif
+!
+!
+*elseif,arg1,eq,9,then
+!  get the /psym status for elemement coordinate system
+*get,ar20,common,,d3com,,int,143
+*if,ar20,eq,0,then
+/psym,esys,1
+*msg,info
+%/Element coordinate system symbols are now on
+*else
+/psym,esys,0
+*msg,info
+%/Element coordinate system symbols are now off
+*endif
+!
+!
+*elseif,arg1,eq,10,then
+!  get the /psym status for coordinate system symbol
+*get,ar20,common,,d3com,,int,142
+*if,ar20,eq,0,then
+/psym,cs,1
+*msg,info
+%/Coordinate system symbols are now on
+*else
+/psym,cs,0
+*msg,info
+%/Coordinate system symbols are now off
+*endif
+!
+!
+*elseif,arg1,eq,11,then
+!  get the display mode status, either raster or vector
+*get,ar20,graph,,display
+*if,ar20,eq,0,then
+/device,vector,1
+*msg,info
+%/Vector display mode is now active
+*else
+/device,vector
+*msg,info
+%/Raster display mode is now active
+*endif
+!
+*endif
+/gopr
+ 
+
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@eGroups.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@eGroups.com
+
+ARCHIVED on:
+http://www.egroups.com/software/xansys/
+             

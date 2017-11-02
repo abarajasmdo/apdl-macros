@@ -1,0 +1,34 @@
+/PMACRO
+/nopr
+*IF,RLarge,LE,0.0,THEN
+   RLarge = 2.0
+   RSmall = 1.0
+   LLarge = 6.0
+   LSmall = 4.0 
+   RFillet= 0.25  
+   NFillet= 10 
+*ENDIF
+MultiPro='SHFT'
+NumValue=6
+*dim,SHFTTitl,string,64
+SHFTTitl(1,1) = 'Axial Load on Stepped Circular Shaft'
+*dim,SHFTDesc,string,32,NumValue
+SHFTDesc(1,1)='Radius of Large Part of Shaft'
+SHFTDesc(1,2)='Radius of Small Part of Shaft'
+SHFTDesc(1,3)='Length of Large Part of Shaft'
+SHFTDesc(1,4)='Length of Small Part of Shaft'
+SHFTDesc(1,5)='Radius of Shaft Fillet'
+SHFTDesc(1,6)='Number of Elements in Shaft Fillet'
+*dim,SHFTParm,char,NumValue
+SHFTParm(1)='RLARGE','RSMALL','LLARGE','LSMALL'
+SHFTParm(5)='RFILLET','NFILLET'
+
+~eui,'source multipro55.tcl'  ! use multipro.tcl at 5.6
+
+/nopr
+SHFTTitl(1,1)=
+SHFTDesc(1,1)=
+SHFTParm(1)=
+NumValue=
+MultiPro=
+/go

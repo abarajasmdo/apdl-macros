@@ -1,0 +1,26 @@
+/nopr
+!
+!    time.mac   A macro to display clock and cpu times
+!
+mm='AM'
+*get,cltm,active,,time,wall
+*get,cptm,active,,time,cpu
+hour=nint(cltm-.5)
+minu=(cltm-hour)*60
+sec=(minu-nint(minu-.5))*60
+*if,hour,ge,12,then
+mm='PM'
+*ENDIF
+*if,hour,gt,12,then
+hour=hour-12
+*ENDIF
+*msg,info,hour,minu,sec,mm,cptm
+Clock time is %I: %I: %I %C ..... CPU time is %G
+cltm=
+cptm=
+hour=
+minu=
+mm=
+/gopr
+
+

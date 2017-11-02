@@ -1,0 +1,11 @@
+! surfeff claclulates Seff
+!stress,spar,42,5
+!stress,ssz,42,7
+!set,1,20 
+smult,sz2,ssz,ssz
+smult,spr2,spar,spar
+smult,sprz,spar,ssz
+sadd,xx,sz2,spr2
+sadd,sff2,sprz,xx,-1,
+sexp,seff,sff2,,.5
+

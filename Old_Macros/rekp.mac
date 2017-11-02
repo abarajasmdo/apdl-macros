@@ -1,0 +1,20 @@
+/nopr
+!
+!        rekp.mac
+!          
+!        This macro recreates the selected keypoints
+!        and clears the mesh data associated with them.
+!        Good for fixing contaminated meshes.
+!
+:top                                                                            
+*get,n,kpmx                                                                     
+*if,n,le,.5,:end                                                                
+*get,x,kx,n                                                                     
+*get,y,ky,n                                                                     
+*get,z,kz,n                                                                     
+k,n,x,y,z                                                                    
+kpus,,n                                                                         
+*go,:top                                                                        
+:end                                                                            
+/gopr                                                                                
+                                                                                

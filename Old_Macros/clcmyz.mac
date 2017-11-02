@@ -1,0 +1,79 @@
+/nopr
+!
+!   clcmyz.mac     A macro to calculate the moment acting
+!                             on the fuel nozzle plate of the wondeful
+!                             GE90 engine.  Axial moment is not considered.
+!                        
+!                             Calculated moments are dumped to a file
+!                             in the working directory called "moment.lst".
+!
+!              usage:    clcmyz      no arguments
+!                                                use currently selected nodes
+!                                                as the calculated group.
+!
+!   open the file for dumping the moment data into
+*cfopen,moment,lst
+!   print a header on the output file
+*vwrite
+( '     Node Number       My               Mz           Mresultant ')
+!   create a component of the currently selected nodes
+!   so we can retrieve them later
+cm,dummyn,node
+!   create a temporary coordinate system down the
+!   engine axis
+csys
+local,999,1,100,100
+!   set reaction system for FSUM commands to the temporay
+!   system we just created.
+rsys,999
+!   get max node number in selected set to use later
+!   for checking if we're done
+*get,mxnd,node,,num,max
+!   get lowest node number as our starting point
+*get,nnum,node,,num,min
+!   enter the loop which does the selecting and calculating of nodes
+:lp1
+!   select the node of interest
+nsel,s,node,,nnum
+!   sum the forces on the node in the reaction coordinate system
+!   at node 'nnum'.
+spoint,nnum
+fsum
+!   get my and mz for this node
+*get,my,fsum,,item,my
+*get,mz,fsum,,item,mz
+!  calculate the root sum square of these moments
+mtot=((my*my)+(mz*mz))**.5
+!   dump the node ID and moments to the output file moment.lst
+*vwrite,nnum,my,mz,mtot
+(5x,f6.0,8x,f9.3,8x,f9.3,8x,f9.3)
+!   dump this same information to the screen.  This can be
+!   commented out if desired.
+! *msg,info,nnum,my,mz,mtot
+! Node %i  has My= %g Mz= %g with Mresultant= %g
+!   check to see if we're done yet
+*if,nnum,ge,mxnd,:end
+!   get the originally selected nodes by selected the
+!   component we made earlier
+cmse,s,dummyn
+!   get the next higher node number in the selected node set
+*get,nnum,node,nnum,nxth
+!   go to the top of the loop and do it again
+*go,:lp1
+!   begin the end
+:end
+!   close the output file
+*cfclose
+!   delete the temporary node component we made up
+cmde,dummyn
+!   delete the coordinate system we made for the FSUM command
+rsys,0
+csde,999
+!   clean up the variables we used in the macro
+mxnd=
+nnum=
+mx=
+my=
+mtot=
+!  that's all folks
+/gopr

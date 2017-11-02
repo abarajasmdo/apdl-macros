@@ -1,0 +1,17 @@
+!
+! clear.mac  macro deletes unused areas, lines,kpoints
+!
+! select everything you want to delete first!
+vlinv
+arinv
+lsinv
+kpinv
+*ask,do_it,Selected what you want to keep? y/[n],'n'
+*if,do_it,NE,y,:skip
+vdele,all
+adele,all
+ldele,all
+kdele,all
+all
+:skip
+!

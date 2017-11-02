@@ -1,0 +1,38 @@
+!
+!  overplot2  this macro aids in making to overlayed plots from different ansys
+!		runs (ie. 44a --> 53   2D model --> 3D model
+!
+! this macro makes the second plot and  
+! overplot2 for the second plot
+!
+!/SYS, rm OVERPLOT.PLOT2
+/GSAVE
+/GRESUM,OVERPLOT1,gsav,/tmp
+/GLINE,ALL,0		! SOLID LINES FOR PLOT2
+!/PLOPTS,INFO,1		! turn info back on for plot2
+!/PLOPTS,TITLE,1		! TURN TITLE BACK ON FOR PLOT2
+!/PLOPTS,INFO,0  
+!/PLOPTS,LEG1,0  
+!/PLOPTS,LEG2,0 
+!/PLOPTS,LEG3,0  
+*get,r_or_v,graph,,display
+/ERAS
+/NOERAS			! sets (A at beginning of fille33 for overplots
+/COLOR,OUTL,RED
+/show,term,,r_or_v
+/show,shit,,r_or_v
+/INP,PLOT,COMMAND,/tmp
+!/SYS, rm OVERPLOT.PLOT2
+/show,close
+/SHOW,OVERPLOT,PLOT2,r_or_v
+/NOERAS	
+/INP,PLOT,COMMAND,/tmp
+/show,dummy
+/SHOW,TERM
+/sys,cp OVERPLOT.PLOT2 /tmp
+/sys,cat /tmp/OVERPLOT.PLOT1 /tmp/OVERPLOT.PLOT2 > /tmp/OVERPLOT.COMB
+*MSG,NOTE
+YOUR COMBINED OVERLAY PLOT IS ON FILE "OVERPLOT.COMB"
+!/SYS,plot54 OVERPLOT.COMB
+/GRESUM
+r_or_v=

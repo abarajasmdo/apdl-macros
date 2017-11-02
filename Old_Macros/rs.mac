@@ -1,0 +1,21 @@
+/nopr
+!
+!      rs.mac   A macro to rotate about the screen coordinate
+!                   system.  Like RS in IDEAS.
+!
+!        usage:    rs,angx,angy,angz,win
+!             where:   angx=rotation about screen x axis
+!                           angy=rotation about screen y axis
+!                           angz=rotation about screen z axis
+!                           win=window this is done in (defaults to 1)
+!
+!          note:  commands are done sequentially, with x first,
+!                    y second, and z third.  Rotations will be with
+!                    respect to each subsequent screen position.
+!
+/angle,arg4,arg1,xs,1
+/angle,arg4,arg2,ys,1
+/angle,arg4,arg3,zs,1
+/repl
+/gopr
+

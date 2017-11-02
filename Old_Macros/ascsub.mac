@@ -1,0 +1,47 @@
+!  submits current database as saved to ascansys
+!
+! 
+!/NOPR
+PARSAV
+FLAG=0
+/prep7
+!
+!	get current jobname
+!
+NAME=
+*DIM,NAME,CHAR,4
+*get,name(1),active,,jobnam,,start,1
+!
+!  get filesize and time
+!
+/runstat
+/output,STAT,1
+*msg,info
+Doing runstat.....
+rall
+/OUTPUT,TERM
+*GET,SIZE1,RUNST,0,RFILSZ,TOTAL
+SIZE1=NINT(SIZE1)+1
+*GET,TIME1,RUNST,0,RTIMST,TOTAL
+TIME1=NINT(TIME1)
+!
+!  now get memory and -db sizes (trickier)
+!
+!
+/sys,echo "ll \$1*.db | awk '/db/ {printf\"%i\", \$5/1000000+1}' >_dbsize">get_dbsize  !  DATA(1)=DB (IN MB)
+/syp,sh get_dbsize,name(1)	
+!	writes solution memory to file
+/SYS,echo `grep "Max. Solution Memory Space =" STAT.1 | awk '/Max/ {printf"%i", $6 +1}'` >> _dbsize
+*dim,data,array,2,1
+*VREAD,data(1),_dbsize, ,  ! read db size back into ansys
+(I20), , , , ,1,	! data(1)=db size  data(2)=solu memory
+!
+!	use generic lsf submit script
+!
+mem=data(1)+data(2)
+!/SYP,GENERIC.LSF,name(1),mem,data(1),SIZE1
+/syp,echo,name(1),mem,data(1),SIZE1
+!
+!parres
+/gopr
+

@@ -1,0 +1,252 @@
+From - Thu Oct  5 11:25:44 2000
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2650.21)
+	id 4BP40J4A; Wed, 4 Oct 2000 13:04:41 -0400
+Received: from unknown-24-4.pilot.net by gemb1.ae.ge.com (8.8.8/1.1.22.3/16Sep99-0217PM)
+	id NAA0000011580; Wed, 4 Oct 2000 13:04:55 -0500 (CDT)
+Received: from unknown-147-100.pilot.net (localhost [127.0.0.1]) by unknown-24-4.pilot.net with ESMTP id KAA00643 for <dan.bohlen@ae.ge.com>; Wed, 4 Oct 2000 10:04:32 -0700 (PDT)
+Received: from hl.egroups.com (hl.egroups.com [208.50.99.197]) by unknown-147-100.pilot.net with SMTP id KAA04284 for <dan.bohlen@ae.ge.com>; Wed, 4 Oct 2000 10:04:30 -0700 (PDT)
+Received: from [10.1.10.36] by hl.egroups.com with NNFMP; 04 Oct 2000 17:04:22 -0000
+Received: (EGP: mail-6_0_3); 4 Oct 2000 17:04:16 -0000
+Received: (qmail 25246 invoked from network); 4 Oct 2000 17:04:13 -0000
+Received: from unknown (10.1.10.26) by m2.onelist.org with QMQP; 4 Oct 2000 17:04:13 -0000
+Received: from unknown (HELO tmpsmtp102.honeywell.com) (199.64.7.102) by mta1 with SMTP; 4 Oct 2000 17:04:13 -0000
+Received: from 131.127.249.22 by tmpsmtp102.honeywell.com (InterScan E-Mail VirusWall NT); Wed, 04 Oct 2000 09:56:43 -0700
+Received: by TMPCN197 with Internet Mail Service (5.5.2650.21) id <4GKA2BTN>; Wed, 4 Oct 2000 10:04:16 -0700
+X-eGroups-Return: sentto-57960-16289-970679057-dan.bohlen=ae.ge.com@returns.onelist.com
+X-Sender: john.crawford@honeywell.com
+X-Apparently-To: xansys@egroups.com
+Message-ID: <1F56A179617FD411B60000508B0771281E097B@tmpex176.wins.allied.com>
+To: "'xansys@egroups.com'" <xansys@egroups.com>
+X-Mailer: Internet Mail Service (5.5.2650.21)
+From: "Crawford, John" <john.crawford@honeywell.com>
+MIME-Version: 1.0
+Mailing-List: list xansys@egroups.com; contact xansys-owner@egroups.com
+Delivered-To: mailing list xansys@egroups.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@egroups.com>
+Date: Wed, 4 Oct 2000 10:03:40 -0700 
+Reply-To: xansys@egroups.com
+Subject: RE: [xansys] rotate geometry in ANSYS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAQtZirAAAgm5J5JQCgg3Gx0utjVdfJq
+
+Here is a macro that might be helpful.  I'm sure others have written
+similiar programs.  It would be nice if ANSYS had a command that offered
+this functionality.
+
+John Crawford
+Honeywell Engines
+Phoenix, AZ
+john.crawford@honeywell.com
+
+/nopr
+!
+!  rotv.mac   a macro to rotate the currently selected volumes
+!             about an axis.  
+!
+!  usage:  rotv,x1,y1,z1,x2,y2,z2,rotangle,flag,coord,gran
+!
+!  where: x1,y1,z1=the coordinates of a point along the rotation axis
+!         x2,y2,z2=the coordinates of another point along the rotation axis
+!         rotangle=rotation angle in degrees using right hand rule
+!         flag    =0 for move, 1 for copy
+!         coord   =0 for global coordinate system, 1 for local coordinate
+system
+!                 (coordinate system the two points are described in.)
+!         gran    =1 if this macro is called from a granule
+!                 (activates the component commands to retrieve the
+originally
+!                 selected volumes stored in the component _Y1.)
+!
+!         the granule has already stored the originally selected volumes in
+the
+!         component _Y1.  This component is retrieved and added to the set
+of
+!         volumes used in the macro.  The component is then deleted.
+!
+!  written by John Crawford  4-30-96
+!
+!  variable definition
+!  ar20=csid coordinate system ID active in the original model
+!  ar21=kpmax  max keypoint ID in the original model
+!  ar22=lsmax  max line number used in the original model
+!  ar23=csmax  max coordinate system number used in the original model
+!
+!*msg,info,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9
+!rotv.mac %g %g %g %g %g %g %g %i %i %i
+!  check to make sure that the distance between location 1 and location 2 is
+!  nonzero
+*if,((arg1-arg4)**2+(arg2-arg5)**2+(arg3-arg6)**2),gt,0,then
+!
+!  the rotation macro begins here
+!
+!  save the view data
+/gsave,_Y1
+!  set the screen distance, etc., using /user
+/user
+imme,off
+/uis,replot
+!
+!  get the current coordinate system ID number
+*get,ar20,active,,csys
+!
+!  get the highest coordinate system ID in the model
+ar23=csyiqr(0,14)
+!  get the highest keypoint number in the model
+ar21=kpinqr(0,14)
+!
+!  create a local coordinate system at the work plane location, so we can
+!  return the work plane to it's original location when the macro is
+finished
+!  running.  it is given an ID number which is 11 greater than the
+previously
+!  highest ID number.
+cswpla,ar23+11,0
+!
+!  create the local cylindrical coordinate system using coordinates 1 and 2
+!  by creating three temporary keypoints at these locations.
+!  
+!  choose the coordinate system in which keypoints will be generated
+*if,arg9,eq,0,then
+csys
+*else
+csys,ar20
+*endif
+!
+k,ar21+1,arg1,arg2,arg3
+k,ar21+2,arg4,arg5,arg6
+!
+!  return to the temporary local coordinate system
+csys,ar23+11
+!
+!  get the highest line ID which exists, and then set numst,line to this
+plus 1
+ar22=lsinqr(0,14)
+numstr,line,ar22+1
+!
+!  create a line between these two points
+l,ar21+1,ar21+2
+!
+!  align the working plane to this location at point 1
+lwplan,-1,ar22+1
+!
+!  remove the line
+ldel,ar22+1
+!
+!  delete the temporary keypoints we just made
+kdel,ar21+1,ar21+2
+!
+!  reset numstr for lines and keypoints
+numstr,line,ar22+1
+numstr,kp,ar21+1
+!
+!  create local coordinate system which is aligned with the work plane
+cswpla,ar23+12,1
+!
+!imme,on
+!  do an lgen on the selected volumes
+*if,arg8,eq,0,then
+!  if moving, then do this
+vgen,,all,,,,arg7,,,1,1
+*elseif,arg8,eq,1,then
+!  if copying, then do this
+vgen,2,all,,,,arg7,,,,0
+*endif
+!
+!  return the work plane to it's original location
+wpcsys,-1,ar23+11
+!  return to the original coordinate system
+csys,ar20
+!
+! delete the temporary coordinate systems
+csde,ar23+11
+csde,ar23+12
+!
+!  additionally select the originally selected volumes
+*if,ar10,eq,1,then
+cmse,a,_Y1
+*endif
+!
+*else
+*msg,info
+*** Coordinates for rotation axis are coincident ***
+*msg,info
+******** Re-enter coordinates and try again ********
+*endif
+!
+*if,ar10,eq,1,then
+!  additionally select the originally selected volumes
+cmse,a,_Y1
+!
+!  delete the temporary component
+cmde,_Y1
+*endif
+!
+/plopt,wp,off
+/gresume,_Y1
+/sys,rm -f _Y1
+!  turn the working plane display symbol off
+wpstyl,,,,,,,,0
+vplo
+/gopr
+
+-----Original Message-----
+From: Karol Galik [mailto:kagst34@imap.pitt.edu]
+Sent: Wednesday, October 04, 2000 10:03 AM
+To: xansys@egroups.com
+Subject: Re: [xansys] rotate geometry in ANSYS
+
+
+Hi Basil,
+As Dave Johnson said, you can rotate volumes only with VTRAN command (I
+think).
+I find it to be quite akward and I wish we also had an option to do it with
+mouse. If
+you can dynamically move and rotate Work Plane, why cannot we select volumes
+(or other
+entities) and move them or rotate in a similar way. Since I am looking for
+an optomal
+position of an implant in the bone, it would make my life easier.
+
+Anyway, if you use VTRAN, you have to define rotated coordinate system (step
+1 and 2)
+and go back to the global system (step 3) and then use VTRAN (step 4).
+
+1.  xglob=-15.4 $yglob=-14.5 $zglob=104  $ZXglob=0 $XYglob=110 $YZglob=0
+2.  local,29,0,xglob,yglob,zglob,XYglob,YZglob,ZXglob
+3.  csys,0
+4.  vtran,29,all,,,,,1
+
+
+--
+Karol Galik
+PhD student at ME department
+University of Pittsburgh, PA
+412 624 9776 Phone
+kagst34@imap.pitt.edu
+
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@eGroups.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@eGroups.com
+
+ARCHIVED on:
+http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+(New postings not going here anymore - new archive? )
+http://www.eScribe.com/software/xansys/
+             
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@eGroups.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@eGroups.com
+
+ARCHIVED on:
+http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+(New postings not going here anymore - new archive? )
+http://www.eScribe.com/software/xansys/
+             

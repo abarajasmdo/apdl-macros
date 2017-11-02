@@ -1,0 +1,31 @@
+!
+!     macro seiscomb - combines 3 dir seismic exictation results
+!
+/nopr
+cnt=arg1
+store,disp
+lclim,10
+lcabs,1
+lcase,1
+set,1,cnt
+lcase,2
+set,2,cnt
+lcase,3
+set,3,cnt
+lcsrss,4,1,2,3
+lcase,4
+csys,11
+/type,1,4
+/title,lwr lft TCF - 8G seis  w/ new fwd  brkt /bohlen/lltcf/case2s.f16
+plns,disp
+plns,ux
+plns,uy
+plns,uz
+pldisp,1
+reset
+/tlab,delete
+/gopr
+
+
+
+

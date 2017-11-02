@@ -1,0 +1,19 @@
+!
+! lcutl.mac  finds intersection of two lines 
+!
+/nopr
+boptn,keep,on
+lsbl,arg1,arg2
+lsbl,arg2,arg1
+lsel,s,,,arg1
+lsel,a,,,arg2
+kpls
+lskp
+kpls
+numm,kpoi
+ldele,arg1
+ldele,arg2
+lsal
+/replo
+/gopr
+boptn,defa

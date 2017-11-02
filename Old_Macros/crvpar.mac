@@ -1,0 +1,48 @@
+/nopr
+
+!      crvpar.mac      Usage: crvpar,curve,kp1,kp2
+!
+!            where,
+!                  curve=the curve or line to be duplicated
+!                  kp1=reference keypoint on the curve
+!                  kp2=reference keypoint at the destination
+!
+!  calculate dx, dy, dz
+*get,x1,kx,arg2                                 
+*get,y1,ky,arg2                                                                 
+*get,z1,kz,arg2                                                                 
+*get,x2,kx,arg3                                                                 
+*get,y2,ky,arg3                                                                 
+*get,z2,kz,arg3                                                                 
+dx=x2-x1                                                                
+dy=y2-y1                                                                        
+dz=z2-z1 
+ddx=dx*dx
+ddy=dy*dy
+ddz=dz*dz                                                       
+d=(ddx+ddy+ddz)**.5                                                            
+!  generate the line
+lgen,2,arg1,,,dx,dy,dz
+
+*msg,info,arg3,d                
+('Parallel Curve Generated at Keypoint ',f4.0,' Distance =',f12.6)                    
+*msg,info,dx,dy,dz
+('Relative Distance Is...  dx=',f12.6,'   dy=',f12.6,'   dz=',f12.6)        
+*msg,info
+('Remeber to use numm,kpoi to merge the keypoints')
+x1=
+y1=
+z1=
+x2=
+y2=
+z2=
+ddx=
+ddy=
+ddz=
+dx=
+dy=
+dz=
+n1=
+n2=
+d=    
+/gopr

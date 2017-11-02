@@ -1,0 +1,3 @@
+*DO,LOOP,1,arg1
+ndmove
+*enddo

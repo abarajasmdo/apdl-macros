@@ -1,0 +1,10 @@
+/post1
+set,first
+plns,ux
+sets=arg1-1
+*DO,loop,1,sets
+/gopr
+set,next
+plns,ux
+*enddo
+

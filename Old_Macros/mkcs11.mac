@@ -1,0 +1,4 @@
+!
+! does 3d csys 11 to use with 2d bc's
+!
+local,11,1,,,,,-90

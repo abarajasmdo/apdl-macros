@@ -1,0 +1,7 @@
+!
+!  beep.mac   send audio indication
+!
+)/sys,echo '\007'
+/wait,1
+)/sys,echo '\007'
+

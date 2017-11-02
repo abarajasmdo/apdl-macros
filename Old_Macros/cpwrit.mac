@@ -1,0 +1,8 @@
+!
+!  writes out 44 cp commands from 51
+!
+numc,coup
+*get,ncp,active,,cp
+*do,new,1,ncp
+nsel,s,cp,
+

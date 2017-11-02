@@ -1,0 +1,40 @@
+/nopr
+!
+!   elhoop.mac  a macro to calculate the area
+!      total hoop force and 
+!      average hoop stress
+!      of the selected elements
+!    Written by David Michael Schwartz 2-4955
+!    Ansys 5.2  7/11/96
+!
+!  AREA ELEMENTS ONLY (IE. STIF 63's 43's ETC)
+!
+!     arguments are not used.
+!
+!
+etable,szt,s,z
+eatot=0
+ELE=0
+force=0
+*GET,NELES,ELEM,,COUNT
+*DO,LOOP,1,NELES
+ELE=ELNEXT(ELE)
+*get,eare,elem,ele,area
+*get,ehoop,elem,ele,etab,szt
+eatot=eatot+eare
+force=ehoop*eare+force
+*ENDDO
+avhoop=force/eatot
+*msg,info,neles,eatot
+Area of the %I selected elements is %g
+*msg,info,neles,force
+Total Hoop Force of the %I selected elements is %g
+*msg,info,neles,avhoop
+Average Hoop Stress of the %I selected elements is %g
+ELE=
+LOOP=
+EARE=
+EATOT=
+force=
+avhoop=
+/gopr

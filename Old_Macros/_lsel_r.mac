@@ -1,0 +1,3 @@
+/pmacro
+! does lsel,r,p for inside a macro do loop
+lsel,r,p

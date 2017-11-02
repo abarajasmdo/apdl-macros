@@ -1,0 +1,135 @@
+From - Mon Apr 19 11:20:49 1999
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2448.0)
+	id 26M90CP4; Tue, 13 Apr 1999 19:28:25 -0400
+Received: from [3.47.28.17] by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA19660; Tue, 13 Apr 1999 19:23:03 -0400
+Received: from ns.ge.com (ns-i.ge.com [10.35.39.24])
+	by thomas3.ge.com (8.9.3/8.9.3) with ESMTP id TAA28380
+	for <dan.bohlen@ae.ge.com>; Tue, 13 Apr 1999 19:24:44 -0400 (EDT)
+Received: from onelist.com (pop.onelist.com [209.207.164.223])
+	by ns.ge.com (8.9.3/8.9.3) with SMTP id TAA14501
+	for <dan.bohlen@ae.ge.com>; Tue, 13 Apr 1999 19:12:19 -0400 (EDT)
+Received: (qmail 17079 invoked by alias); 13 Apr 1999 14:42:12 -0000
+Received: (qmail 17065 invoked from network); 13 Apr 1999 14:42:09 -0000
+Received: from unknown (HELO gate.joy.com) (160.212.52.254) by pop.onelist.com with SMTP; 13 Apr 1999 14:42:09 -0000
+Received: from JOY.COM (smtp.joy.com [160.212.53.201]) by gate.joy.com (8.8.6/8.8.6) with SMTP id KAA25524 for <xansys@onelist.com>; Tue, 13 Apr 1999 10:09:09 -0400 (EDT)
+Received: from JOY01-Message_Server by JOY.COM with Novell_GroupWise; Tue, 13 Apr 1999 10:11:31 -0500
+Message-Id: <s7131853.052@JOY.COM>
+X-Mailer: Novell GroupWise 4.1
+Date: Tue, 13 Apr 1999 09:11:02 -0500
+From: Jamie Orr <JORR@joy.com>
+To: xansys@onelist.com
+Content-Disposition: inline
+Mailing-List: list xansys@onelist.com; contact xansys-owner@onelist.com
+Delivered-To: mailing list xansys@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@ONElist.com>
+Reply-To: xansys@onelist.com
+Mime-Version: 1.0
+Content-Type: text/plain
+Subject: [xansys] non-unifrom pressure -Reply
+X-Mozilla-Status: 8001
+X-Mozilla-Status2: 00000000
+X-UIDL: AAw4MyiAAAwNGbACgBg3YGR0aMGXHKwA
+
+From: Jamie Orr <JORR@JOY.COM>
+
+Mark,
+
+I wrote a macro for my own use (i.e., documentation is non-existent) that
+may do what you need it to do. This macro was written to apply a
+pressure distribution that varies linearly in theta with a cylindrical
+coordinate system on the solid geometry areas that  define a right
+cylindrical hole.  Maximum pressure occurs at theta (y) = 0, with zero
+pressure occuring at y= + and - 90 degrees.  To set it up, you must have
+an active cylindrical coordinate system with the z axis aligned with the
+axis of the hole, and the x axis (theta=0) aligned with the direction of
+your load.  The areas defining your hole must have edges at theta = -90,
+0 and +90 degrees.  You can have additional area divisions, but these
+three are required.  You must select only the areas defining your hole
+before running the macro.  The model does not have to be meshed to run
+the macro.
+
+EALL
+CM,JUNK,AREA
+*GET,C_SYS,CSYS
+LSAR
+KPLS
+KPSEL,R,LOC,Y,-91,91
+LSKP,1
+ARLS,1
+*ASK,LOAD,THE LOAD
+APLOT
+ASUM
+*GET,A_SUM,AREA,0,AREA
+*GET,X1,KP,0,MXLOC,X
+*GET,X2,KP,0,MXLOC,X
+DIFF=ABS((X1-X2)/X1)
+*GET,RADIUS,KP,0,MXLOC,X
+LENGTH=A_SUM/(3.1416*RADIUS)
+P_MAX=LOAD*3.1416/(4*LENGTH*RADIUS)
+GRADIENT=-P_MAX/90
+SFGRAD,PRES,C_SYS,Y,0,GRADIENT
+SFA,ALL,,PRES,P_MAX
+GRADIENT=P_MAX/90
+SFGRAD,PRES,C_SYS,Y,0,GRADIENT
+KPSEL,R,LOC,Y,-92,2
+LSKP,1
+ARLS,1
+SFA,ALL,,PRES,P_MAX
+CMSEL,S,JUNK
+LSAR
+KPLS
+SFGRAD
+DSYS,0
+APLOT
+
+I hope this helps.
+
+Jamie Orr
+Joy Mining Machinery
+
+
+
+>>> "Mark Weinreuter" <mawei@HRZ3.HRZ.TU-Darmstadt.De> 04/13/99
+06:12am >>>
+From: "Mark Weinreuter" <mawei@HRZ3.HRZ.TU-Darmstadt.De>
+
+Does anybody know how to apply a non-uniform pressure to a hole in 
+Ansys5.5?
+ In fact I do have a 3-d model with a hole in it. Assuming 
+you have a bolt stuck in this hole, it would cause a pressure on the 
+surface which is not constant. Strictly speaking you get some kind of 
+parabolic shape.
+Now, if I try to apply the load you get a window first where you can 
+choose from constant or variable pressure. In case of variable 
+pressure you have to create a table with the number of rows you can 
+determine. So does anybody how to work with that table???
+I don't know which cell decribes a certain direction.
+I had a close look at the online-help as well, but there was no hint 
+about working with tables in that particulae case.
+Thanx in advance.
+
+Mark Weinreuter 
+
+------------------------------------------------------------------------
+Are you hogging all the fun?
+http://www.ONElist.com
+Friends tell friends about ONElist!
+------------------------------------------------------------------------
+To SUBSCRIBE: send blank email to xansys-subscribe@onelist.com
+
+To unsubscribe send blank email to xansys-unsubscribe@onelist.com
+Archived on http://www.onelist.com/archives.cgi/xansys
+Archived on http://www.tu-chemnitz.de/~thieme/ansys/ansys.html
+
+------------------------------------------------------------------------
+You can now easily share photos and documents with your fellow list members
+http://www.ONElist.com
+Check out our homepage for details on how to use our new shared files feature!
+------------------------------------------------------------------------
+To SUBSCRIBE: send blank email to xansys-subscribe@onelist.com
+
+To unsubscribe send blank email to xansys-unsubscribe@onelist.com
+Archived on http://www.onelist.com/archives.cgi/xansys
+Archived on http://www.tu-chemnitz.de/~thieme/ansys/ansys.html

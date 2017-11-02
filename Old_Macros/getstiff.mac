@@ -1,0 +1,1106 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!		getstiff.mac
+!!!		Stuart Hoelle
+!!!		April 2002
+!!!
+!!!	This macro will develop a 2D (4X4) stiffness matrix for a 3D frame ANSYS model.
+!!!	It follows the procedure of TM 96-173 written by Laura Iyler.
+!!!
+!!!!!Needs:
+!!!	-Components defined as	ring1		-nodes which make up ring 1
+!!!				ring112		-nodes which make up ring 1 1/2
+!!!				ring2		-nodes which make up ring 2
+!!!				ring3		-nodes which make up ring 3
+!!!				ring4		-nodes which make up ring 4
+!!!				ring5		-nodes which make up ring 5
+!!!				ringforce	-nodes which make up the ring at which the force is applied
+!!!
+!!!	-Local Coordinate System is a cylindrical system, initially set at #11 (controlled by variable sytemnumber)
+!!!						x - radial
+!!!						y - circumferential
+!!!						z - axial
+!!!
+!!!!!Options
+!!!	-For accurate weight breakdown, no real constant can be used with more than one material.
+!!!		Weight only accounts for elements with real constants less than 101, and with non-zero thickness.
+!!!		Program will default to find the mass of the complete model.
+!!!		If weight of a part of the model is desired,	put that portion in a component called "forvol"
+!!!								and set partialweight=1
+!!!
+!!!	-For a frame with some struts different than others (spacing, thickness, chordlength, etc), an offset angle can be set.
+!!!		This angle will rotate the orientation of the application of the shear and moment loads.
+!!!		The "worst case" position for the Moment and Shear load is initially at 12 o'clock.
+!!!		The postion can be rotated by the variable angoffset.  (A positive value yields a clockwise offset.)
+!!!
+!!!	-The program will automatically clear all created variables from memory.
+!!!		To turn this feature off, set the variable clear ~= 0.
+!!!
+!!!	-The program automatically will exit if some material does not have alpha=0.
+!!!		To turn this feature off, set the variable, bypass ~= 0.
+!!!
+!!!
+!!!!!Gives:
+!!!	output.out	Total weight, stiffnesses, flexibilities
+!!!	variables.out	Lots of output to look closely at ring-wise information
+!!!	masses.out	Masses of the complete frame
+!!!
+!!!
+!!!!!NOTES:
+!!!	-As the program is right now, all 7 rings (1,112,2,3,4,5,ringforce) need to be defined.
+!!!		Even if you don't use them all, they need to be faked in there.
+!!!		If they are faked in, be smart and choose a single node instead of a large number of nodes for time saving.
+!!!
+!!!	-Check temperatures before running.  It is often easy to forget this since alphas are zeroed.
+!!!
+!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+/NOPR
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!
+!!!Run options
+!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+systemnumber=11		!This needs be a cylindrical system
+partialweight=0		!0 finds the weight of the entire structure
+angoffset=0		!0 is the nominal case
+clear=0			!0 clears all the variables
+bypass=1		!0 checks the alphas
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!
+!!!Checking for zero alpha
+!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+elcount=1
+keepgoing=0
+*do,junk,1,100,1
+	*get,elcount,elem,0,count
+	*if,elcount,ne,0,then
+		*get,tt,elem,elnext(0),attr,mat
+		*get,checkalpha,alpx,tt,temp,500
+		*if,checkalpha,ne,0,then
+			*msg,warn,tt
+			Material number %i has non-zero ALPX
+			/sys,echo '\007'
+			keepgoing=1
+		*endif
+	*else
+		*exit
+	*endif
+	*if,junk,eq,100,then
+		*msg,warn
+		You have at least 100 materials in use.  This is absurd.
+		/sys,echo '\007'
+		keepgoing=1
+	*endif
+	esel,u,mat,,tt
+*enddo
+esel,all
+
+*if,bypass,ne,0,then		!if bypass ~=0, then alpha checking does not matter
+keepgoing=0
+*endif
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!Main loop
+*if,keepgoing,eq,0,then
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+*ask,ready,RUN? (temps set & nodes rotated),0
+*if,ready,ne,0,then
+	*exit
+*endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!
+!!!Apply loading
+!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+V0=10000
+M0=10000
+
+/prep7
+fdele,all
+csys,systemnumber
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!Apply moment loading to ringforce!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+cmsel,s,ringforce
+count=0
+*get,nforce,node,,count
+radiusforce=nx(ndnext(0))
+axforce=nz(ndnext(0))
+
+*do,i,0,nforce-1
+	nd=ndnext(count)
+	theta=ny(nd)
+	ang=(theta+angoffset)*pi/180
+
+	*if,ang,le,0,then
+		ang=ang+(2*pi)
+	*endif
+
+	f,nd,fz,(2*M0*cos(ang))/(radiusforce*nforce)
+	count=nd
+*enddo
+
+nsel,all
+nsle,s
+lswrite,1
+fdele,all
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!Apply shear loading to ringforce!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+cmsel,s,ringforce
+count=0
+
+*do,i,0,nforce-1
+	nd=ndnext(count)
+	theta=ny(nd)
+	ang=(theta+angoffset)*pi/180
+
+	*if,ang,le,0,then
+		ang=ang+(2*pi)
+	*endif
+
+	f,nd,fy,(2*V0*sin(ang))/nforce
+
+	count=nd
+*enddo
+
+nsel,all
+nsle
+lswrite,2
+
+fini
+/solu
+lssolve,1,2,1
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!
+!!!Query the results file
+!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!Calculate weights
+/post1
+/output,masses,out
+/com, real#  thkns  matl#  weight(lb)
+/out
+
+etable,framevol,volu
+totalmass=0
+
+*do,i,1,100
+temp1=i
+	*if,partialweight,eq,1,then	!find weight of partial model
+	cmsel,s,forvol
+	esel,r,real,,i
+	*else				!find weight of complete model
+	esel,s,real,,i
+	*endif
+*get,temp2,rcon,i,1			!temp2 is the thickness for real constant i
+*get,elcount,elem,0,count
+*if,elcount,gt,0,then			!elcount>0 means the real constant i is actually used
+*get,matnum,elem,elnext(0),attr,mat	!find material used for group of elements
+*get,matdens,dens,matnum		!get density of given material
+ssum					!calc sum up volumes
+*get,tottem,ssum,0,item,framevol	!get sum of volumes
+MASS=matdens*386*tottem
+temp3=MASS
+totalmass=totalmass+temp3
+/output,masses,out,,append		!put output into masses.out
+*vwrite,temp1,temp2,matnum,temp3
+(2X,I3,4X,F5.3,2X,I3,5X,F5.2)
+/out
+*endif
+*enddo
+
+/output,masses,out,,append
+*vwrite,totalmass
+(6X,'Total mass',7X,F6.2)
+/out
+
+rsys,systemnumber
+
+allsel,all
+subset,1
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 1 Moment Solution
+cmsel,s,ring1				!select applicable ring
+*get,n1,node,,count			!get number of nodes in ring
+count=0
+axsum1=0
+rsum1=0
+sinsum1=0
+cossum1=0
+
+*dim,momring1,,n1,9			!dimension array
+*do,i,1,n1				!do process for each node in the ring
+	nd=ndnext(count)		!choose numerically next node
+	momring1(i,1)=nd		!Node number
+	momring1(i,2)=nx(nd)		!Radial coordinate
+	momring1(i,3)=ny(nd)+angoffset	!Circum coordinate
+	momring1(i,4)=nz(nd)		!Axial coordinate
+	momring1(i,5)=ux(nd)		!Radial Defl
+	momring1(i,6)=uy(nd)		!Circum Defl
+	momring1(i,7)=uz(nd)		!Axial Defl
+
+	*if,momring1(i,3),le,0,then
+		momring1(i,3)=ny(nd)+angoffset+360
+	*elseif,momring1(i,3),gt,360,then
+		momring1(i,3)=ny(nd)+angoffset-360
+	*endif
+
+	momring1(i,8)=-momring1(i,6)*sin(momring1(i,3)*pi/180)	!perform fourier averaging
+	momring1(i,9)=momring1(i,7)*cos(momring1(i,3)*pi/180)	!perform fourier averaging
+	axsum1=axsum1+momring1(i,4)				!summing towards finding the average
+	rsum1=rsum1+momring1(i,2)				!summing towards finding the average
+	sinsum1=sinsum1+momring1(i,8)				!summing towards fourier average
+	cossum1=cossum1+momring1(i,9)				!summing towards fourier average
+
+	count=nd
+*enddo
+
+axial1=axsum1/n1
+radius1=rsum1/n1
+mom_shrdefl1=2*sinsum1/n1
+mom_momdefl1=2*cossum1/(n1*radius1)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 112 Moment Solution
+cmsel,s,ring112
+*get,n112,node,,count
+count=0
+axsum112=0
+rsum112=0
+sinsum112=0
+cossum112=0
+
+*dim,momring112,,n112,9
+
+*do,i,1,n112
+	nd=ndnext(count)
+	momring112(i,1)=nd	!Node number
+	momring112(i,2)=nx(nd)	!Radial coordinate
+	momring112(i,3)=ny(nd)+angoffset	!Circum coordinate
+	momring112(i,4)=nz(nd)	!Axial coordinate
+	momring112(i,5)=ux(nd)	!Radial Defl
+	momring112(i,6)=uy(nd)	!Circum Defl
+	momring112(i,7)=uz(nd)	!Axial Defl
+	
+	*if,momring112(i,3),le,0,then
+		momring112(i,3)=ny(nd)+angoffset+360
+	*elseif,momring112(i,3),gt,360,then
+		momring112(i,3)=ny(nd)+angoffset-360
+	*endif
+
+	momring112(i,8)=-momring112(i,6)*sin(momring112(i,3)*pi/180)
+	momring112(i,9)=momring112(i,7)*cos(momring112(i,3)*pi/180)
+	axsum112=axsum112+momring112(i,4)
+	rsum112=rsum112+momring112(i,2)
+	sinsum112=sinsum112+momring112(i,8)
+	cossum112=cossum112+momring112(i,9)
+
+	count=nd
+*enddo
+
+axial112=axsum112/n112
+radius112=rsum112/n112
+mom_shrdefl112=2*sinsum112/n112
+mom_momdefl112=2*cossum112/(n112*radius112)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 2 Moment Solution
+cmsel,s,ring2
+*get,n2,node,,count
+count=0
+axsum2=0
+rsum2=0
+sinsum2=0
+cossum2=0
+
+*dim,momring2,,n2,9
+*do,i,1,n2
+	nd=ndnext(count)
+	momring2(i,1)=nd	!Node number
+	momring2(i,2)=nx(nd)	!Radial coordinate
+	momring2(i,3)=ny(nd)+angoffset	!Circum coordinate
+	momring2(i,4)=nz(nd)	!Axial coordinate
+	momring2(i,5)=ux(nd)	!Radial Defl
+	momring2(i,6)=uy(nd)	!Circum Defl
+	momring2(i,7)=uz(nd)	!Axial Defl
+
+	*if,momring2(i,3),le,0,then
+		momring2(i,3)=ny(nd)+angoffset+360
+	*elseif,momring2(i,3),gt,360,then
+		momring2(i,3)=ny(nd)+angoffset-360
+	*endif
+
+	momring2(i,8)=-momring2(i,6)*sin(momring2(i,3)*pi/180)
+	momring2(i,9)=momring2(i,7)*cos(momring2(i,3)*pi/180)
+	axsum2=axsum2+momring2(i,4)
+	rsum2=rsum2+momring2(i,2)
+	sinsum2=sinsum2+momring2(i,8)
+	cossum2=cossum2+momring2(i,9)
+
+	count=nd
+*enddo
+
+axial2=axsum2/n2
+radius2=rsum2/n2
+mom_shrdefl2=2*sinsum2/n2
+mom_momdefl2=2*cossum2/(n2*radius2)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 3 Moment Solution
+cmsel,s,ring3
+*get,n3,node,,count
+count=0
+axsum3=0
+rsum3=0
+sinsum3=0
+cossum3=0
+
+*dim,momring3,,n3,9
+*do,i,1,n3
+	nd=ndnext(count)
+	momring3(i,1)=nd	!Node number
+	momring3(i,2)=nx(nd)	!Radial coordinate
+	momring3(i,3)=ny(nd)+angoffset	!Circum coordinate
+	momring3(i,4)=nz(nd)	!Axial coordinate
+	momring3(i,5)=ux(nd)	!Radial Defl
+	momring3(i,6)=uy(nd)	!Circum Defl
+	momring3(i,7)=uz(nd)	!Axial Defl
+
+	*if,momring3(i,3),le,0,then
+		momring3(i,3)=ny(nd)+angoffset+360
+	*elseif,momring3(i,3),gt,360,then
+		momring3(i,3)=ny(nd)+angoffset-360
+	*endif
+
+	momring3(i,8)=-momring3(i,6)*sin(momring3(i,3)*pi/180)
+	momring3(i,9)=momring3(i,7)*cos(momring3(i,3)*pi/180)
+	axsum3=axsum3+momring3(i,4)
+	rsum3=rsum3+momring3(i,2)
+	sinsum3=sinsum3+momring3(i,8)
+	cossum3=cossum3+momring3(i,9)
+
+	count=nd
+*enddo
+
+axial3=axsum3/n3
+radius3=rsum3/n3
+mom_shrdefl3=2*sinsum3/n3
+mom_momdefl3=2*cossum3/(n3*radius3)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 4 Moment Solution
+cmsel,s,ring4
+*get,n4,node,,count
+count=0
+axsum4=0
+rsum4=0
+sinsum4=0
+cossum4=0
+
+*dim,momring4,,n4,9
+*do,i,1,n4
+	nd=ndnext(count)
+	momring4(i,1)=nd	!Node number
+	momring4(i,2)=nx(nd)	!Radial coordinate
+	momring4(i,3)=ny(nd)+angoffset	!Circum coordinate
+	momring4(i,4)=nz(nd)	!Axial coordinate
+	momring4(i,5)=ux(nd)	!Radial Defl
+	momring4(i,6)=uy(nd)	!Circum Defl
+	momring4(i,7)=uz(nd)	!Axial Defl
+
+	*if,momring4(i,3),le,0,then
+		momring4(i,3)=ny(nd)+angoffset+360
+	*elseif,momring4(i,3),gt,360,then
+		momring4(i,3)=ny(nd)+angoffset-360
+	*endif
+
+	momring4(i,8)=-momring4(i,6)*sin(momring4(i,3)*pi/180)
+	momring4(i,9)=momring4(i,7)*cos(momring4(i,3)*pi/180)
+	axsum4=axsum4+momring4(i,4)
+	rsum4=rsum4+momring4(i,2)
+	sinsum4=sinsum4+momring4(i,8)
+	cossum4=cossum4+momring4(i,9)
+
+	count=nd
+*enddo
+
+axial4=axsum4/n4
+radius4=rsum4/n4
+mom_shrdefl4=2*sinsum4/n4
+mom_momdefl4=2*cossum4/(n4*radius4)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 5 Moment Solution
+cmsel,s,ring5
+*get,n5,node,,count
+count=0
+axsum5=0
+rsum5=0
+sinsum5=0
+cossum5=0
+
+*dim,momring5,,n5,9
+*do,i,1,n5
+	nd=ndnext(count)
+	momring5(i,1)=nd	!Node number
+	momring5(i,2)=nx(nd)	!Radial coordinate
+	momring5(i,3)=ny(nd)+angoffset	!Circum coordinate
+	momring5(i,4)=nz(nd)	!Axial coordinate
+	momring5(i,5)=ux(nd)	!Radial Defl
+	momring5(i,6)=uy(nd)	!Circum Defl
+	momring5(i,7)=uz(nd)	!Axial Defl
+
+	*if,momring5(i,3),le,0,then
+		momring5(i,3)=ny(nd)+angoffset+360
+	*elseif,momring5(i,3),gt,360,then
+		momring5(i,3)=ny(nd)+angoffset-360
+	*endif
+
+	momring5(i,8)=-momring5(i,6)*sin(momring5(i,3)*pi/180)
+	momring5(i,9)=momring5(i,7)*cos(momring5(i,3)*pi/180)
+	axsum5=axsum5+momring5(i,4)
+	rsum5=rsum5+momring5(i,2)
+	sinsum5=sinsum5+momring5(i,8)
+	cossum5=cossum5+momring5(i,9)
+
+	count=nd
+*enddo
+
+axial5=axsum5/n5
+radius5=rsum5/n5
+mom_shrdefl5=2*sinsum5/n5
+mom_momdefl5=2*cossum5/(n5*radius5)
+
+allsel,all
+subset,2
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 1 Shear Solution
+cmsel,s,ring1
+count=0
+sinsum1s=0
+cossum1s=0
+
+*dim,shrring1,,n1,9
+*do,i,1,n1
+	nd=ndnext(count)
+	shrring1(i,1)=momring1(i,1)
+	shrring1(i,2)=momring1(i,2)
+	shrring1(i,3)=momring1(i,3)
+	shrring1(i,4)=momring1(i,4)
+	shrring1(i,5)=ux(nd)
+	shrring1(i,6)=uy(nd)
+	shrring1(i,7)=uz(nd)
+
+	shrring1(i,8)=-shrring1(i,6)*sin(shrring1(i,3)*pi/180)
+	shrring1(i,9)=shrring1(i,7)*cos(shrring1(i,3)*pi/180)
+	sinsum1s=sinsum1s+shrring1(i,8)
+	cossum1s=cossum1s+shrring1(i,9)
+
+	count=nd
+*enddo
+
+shr_shrdefl1=2*sinsum1s/n1
+shr_momdefl1=2*cossum1s/(n1*radius1)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 112 Shear Solution
+cmsel,s,ring112
+count=0
+sinsum112s=0
+cossum112s=0
+
+*dim,shrring112,,n112,9
+*do,i,1,n112
+	nd=ndnext(count)
+	shrring112(i,1)=momring112(i,1)
+	shrring112(i,2)=momring112(i,2)
+	shrring112(i,3)=momring112(i,3)
+	shrring112(i,4)=momring112(i,4)
+	shrring112(i,5)=ux(nd)
+	shrring112(i,6)=uy(nd)
+	shrring112(i,7)=uz(nd)
+	
+	shrring112(i,8)=-shrring112(i,6)*sin(shrring112(i,3)*pi/180)
+	shrring112(i,9)=shrring112(i,7)*cos(shrring112(i,3)*pi/180)
+	sinsum112s=sinsum112s+shrring112(i,8)
+	cossum112s=cossum112s+shrring112(i,9)
+
+	count=nd
+*enddo
+
+shr_shrdefl112=2*sinsum112s/n112
+shr_momdefl112=2*cossum112s/(n112*radius112)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 2 Shear Solution
+cmsel,s,ring2
+count=0
+sinsum2s=0
+cossum2s=0
+
+*dim,shrring2,,n2,9
+*do,i,1,n2
+	nd=ndnext(count)
+	shrring2(i,1)=momring2(i,1)
+	shrring2(i,2)=momring2(i,2)
+	shrring2(i,3)=momring2(i,3)
+	shrring2(i,4)=momring2(i,4)
+	shrring2(i,5)=ux(nd)
+	shrring2(i,6)=uy(nd)
+	shrring2(i,7)=uz(nd)
+
+	shrring2(i,8)=-shrring2(i,6)*sin(shrring2(i,3)*pi/180)
+	shrring2(i,9)=shrring2(i,7)*cos(shrring2(i,3)*pi/180)
+	sinsum2s=sinsum2s+shrring2(i,8)
+	cossum2s=cossum2s+shrring2(i,9)
+
+	count=nd
+*enddo
+
+shr_shrdefl2=2*sinsum2s/n2
+shr_momdefl2=2*cossum2s/(n2*radius2)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 3 Shear Solution
+cmsel,s,ring3
+count=0
+sinsum3s=0
+cossum3s=0
+
+*dim,shrring3,,n3,9
+*do,i,1,n3
+	nd=ndnext(count)
+	shrring3(i,1)=momring3(i,1)
+	shrring3(i,2)=momring3(i,2)
+	shrring3(i,3)=momring3(i,3)
+	shrring3(i,4)=momring3(i,4)
+	shrring3(i,5)=ux(nd)
+	shrring3(i,6)=uy(nd)
+	shrring3(i,7)=uz(nd)
+
+	shrring3(i,8)=-shrring3(i,6)*sin(shrring3(i,3)*pi/180)
+	shrring3(i,9)=shrring3(i,7)*cos(shrring3(i,3)*pi/180)
+	sinsum3s=sinsum3s+shrring3(i,8)
+	cossum3s=cossum3s+shrring3(i,9)
+
+	count=nd
+*enddo
+
+shr_shrdefl3=2*sinsum3s/n3
+shr_momdefl3=2*cossum3s/(n3*radius3)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 4 Shear Solution
+cmsel,s,ring4
+count=0
+sinsum4s=0
+cossum4s=0
+
+*dim,shrring4,,n4,9
+*do,i,1,n4
+	nd=ndnext(count)
+	shrring4(i,1)=momring4(i,1)
+	shrring4(i,2)=momring4(i,2)
+	shrring4(i,3)=momring4(i,3)
+	shrring4(i,4)=momring4(i,4)
+	shrring4(i,5)=ux(nd)
+	shrring4(i,6)=uy(nd)
+	shrring4(i,7)=uz(nd)
+
+	shrring4(i,8)=-shrring4(i,6)*sin(shrring4(i,3)*pi/180)
+	shrring4(i,9)=shrring4(i,7)*cos(shrring4(i,3)*pi/180)
+	sinsum4s=sinsum4s+shrring4(i,8)
+	cossum4s=cossum4s+shrring4(i,9)
+
+	count=nd
+*enddo
+
+shr_shrdefl4=2*sinsum4s/n4
+shr_momdefl4=2*cossum4s/(n4*radius4)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!Ring 5 Shear Solution
+cmsel,s,ring5
+count=0
+sinsum5s=0
+cossum5s=0
+
+*dim,shrring5,,n5,9
+*do,i,1,n5
+	nd=ndnext(count)
+	shrring5(i,1)=momring5(i,1)
+	shrring5(i,2)=momring5(i,2)
+	shrring5(i,3)=momring5(i,3)
+	shrring5(i,4)=momring5(i,4)
+	shrring5(i,5)=ux(nd)
+	shrring5(i,6)=uy(nd)
+	shrring5(i,7)=uz(nd)
+
+	shrring5(i,8)=-shrring5(i,6)*sin(shrring5(i,3)*pi/180)
+	shrring5(i,9)=shrring5(i,7)*cos(shrring5(i,3)*pi/180)
+	sinsum5s=sinsum5s+shrring5(i,8)
+	cossum5s=cossum5s+shrring5(i,9)
+
+	count=nd
+*enddo
+
+shr_shrdefl5=2*sinsum5s/n5
+shr_momdefl5=2*cossum5s/(n5*radius5)
+
+nsle
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!
+!!!Calculation portion
+!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!Ring 2 to Ring 3
+!!!
+Yshrprime23=shr_shrdefl2-shr_shrdefl3+shr_momdefl3*(axial3 - axial2)
+Ymomprime23=mom_shrdefl2-mom_shrdefl3+mom_momdefl3*(axial3 - axial2)
+Mshrprime23=shr_momdefl2 - shr_momdefl3
+Mmomprime23=mom_momdefl2 - mom_momdefl3
+
+Nv23=Yshrprime23/V0 +Ymomprime23*(axial2 - axforce)/(-M0)
+Nm23=Ymomprime23/(-M0)
+phiv23=Mshrprime23/V0 + Mmomprime23*(axial2 - axforce)/(-M0)
+phim23=Mmomprime23/(-M0)
+
+FLEX23_1_1=Nv23
+FLEX23_1_2=Nm23
+FLEX23_2_1=phiv23
+FLEX23_2_2=phim23
+flexdet23=FLEX23_1_1*FLEX23_2_2-FLEX23_2_1*FLEX23_1_2
+
+STIFF23_1_1=FLEX23_2_2/flexdet23
+STIFF23_2_2=FLEX23_1_1/flexdet23
+STIFF23_1_2=-FLEX23_1_2/flexdet23
+STIFF23_2_1=-FLEX23_2_1/flexdet23
+stiffdet23=STIFF23_1_1*STIFF23_2_2-STIFF23_2_1*STIFF23_1_2
+
+!!!!!!Ring 1 to Ring 5
+!!!
+Yshrprime15=shr_shrdefl1-shr_shrdefl5+shr_momdefl5*(axial5 - axial1)
+Ymomprime15=mom_shrdefl1-mom_shrdefl5+mom_momdefl5*(axial5 - axial1)
+Mshrprime15=shr_momdefl1 - shr_momdefl5
+Mmomprime15=mom_momdefl1 - mom_momdefl5
+
+Nv15=Yshrprime15/V0 +Ymomprime15*(axial1 - axforce)/(-M0)
+Nm15=Ymomprime15/(-M0)
+phiv15=Mshrprime15/V0 + Mmomprime15*(axial1 - axforce)/(-M0)
+phim15=Mmomprime15/(-M0)
+
+FLEX15_1_1=Nv15
+FLEX15_1_2=Nm15
+FLEX15_2_1=phiv15
+FLEX15_2_2=phim15
+flexdet15=FLEX15_1_1*FLEX15_2_2-FLEX15_2_1*FLEX15_1_2
+
+STIFF15_1_1=FLEX15_2_2/flexdet15
+STIFF15_2_2=FLEX15_1_1/flexdet15
+STIFF15_1_2=-FLEX15_1_2/flexdet15
+STIFF15_2_1=-FLEX15_2_1/flexdet15
+stiffdet15=STIFF15_1_1*STIFF15_2_2-STIFF15_2_1*STIFF15_1_2
+
+!!!!!!Ring 4 to Ring 112
+!!!
+Yshrprime4112=shr_shrdefl4-shr_shrdefl112+shr_momdefl112*(axial112 - axial4)
+Ymomprime4112=mom_shrdefl4-mom_shrdefl112+mom_momdefl112*(axial112 - axial4)
+Mshrprime4112=shr_momdefl4 - shr_momdefl112
+Mmomprime4112=mom_momdefl4 - mom_momdefl112
+
+Nv4112=Yshrprime4112/V0 +Ymomprime4112*(axial4 - axforce)/(-M0)
+Nm4112=Ymomprime4112/(-M0)
+phiv4112=Mshrprime4112/V0 + Mmomprime4112*(axial4 - axforce)/(-M0)
+phim4112=Mmomprime4112/(-M0)
+
+FLEX4112_1_1=Nv4112
+FLEX4112_1_2=Nm4112
+FLEX4112_2_1=phiv4112
+FLEX4112_2_2=phim4112
+flexdet4112=FLEX4112_1_1*FLEX4112_2_2-FLEX4112_2_1*FLEX4112_1_2
+
+STIFF4112_1_1=FLEX4112_2_2/flexdet4112
+STIFF4112_2_2=FLEX4112_1_1/flexdet4112
+STIFF4112_1_2=-FLEX4112_1_2/flexdet4112
+STIFF4112_2_1=-FLEX4112_2_1/flexdet4112
+stiffdet4112=STIFF4112_1_1*STIFF4112_2_2-STIFF4112_2_1*STIFF4112_1_2
+
+!!!!!!Ring 4 to Ring 2
+!!!
+Yshrprime42=shr_shrdefl4-shr_shrdefl2+shr_momdefl2*(axial2 - axial4)
+Ymomprime42=mom_shrdefl4-mom_shrdefl2+mom_momdefl2*(axial2 - axial4)
+Mshrprime42=shr_momdefl4 - shr_momdefl2
+Mmomprime42=mom_momdefl4 - mom_momdefl2
+
+Nv42=Yshrprime42/V0 +Ymomprime42*(axial4 - axforce)/(-M0)
+Nm42=Ymomprime42/(-M0)
+phiv42=Mshrprime42/V0 + Mmomprime42*(axial4 - axforce)/(-M0)
+phim42=Mmomprime42/(-M0)
+
+FLEX42_1_1=Nv42
+FLEX42_1_2=Nm42
+FLEX42_2_1=phiv42
+FLEX42_2_2=phim42
+flexdet42=FLEX42_1_1*FLEX42_2_2-FLEX42_2_1*FLEX42_1_2
+
+STIFF42_1_1=FLEX42_2_2/flexdet42
+STIFF42_2_2=FLEX42_1_1/flexdet42
+STIFF42_1_2=-FLEX42_1_2/flexdet42
+STIFF42_2_1=-FLEX42_2_1/flexdet42
+stiffdet42=STIFF42_1_1*STIFF42_2_2-STIFF42_2_1*STIFF42_1_2
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!
+!!!Output portion
+!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!OUTPUT.OUT
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/out,output,out
+/com
+/com,Total Weight (lb)
+*vwrite,totalmass
+(1X,F4.0)
+
+/com
+/com,2-3   FLEXIBILITY MATRIX                      STIFFNESS MATRIX
+*if,flexdet23,lt,10**(-18),then
+/com, Small or negative flexibility determinant.  Matrices should be evaluated for validity.
+*endif
+*vwrite,FLEX23_1_1,FLEX23_1_2,STIFF23_1_1,STIFF23_1_2
+(4X,E15.7,2X,E15.7,10X,E15.7,2X,E15.7)
+*vwrite,FLEX23_2_1,FLEX23_2_2,STIFF23_2_1,STIFF23_2_2
+(4X,E15.7,2X,E15.7,10X,E15.7,2X,E15.7)
+
+/com
+/com,1-5   FLEXIBILITY MATRIX                       STIFFNESS MATRIX
+*if,flexdet15,lt,10**(-18),then
+/com, Small or negative flexibility determinant.  Matrices should be evaluated for validity.
+*endif
+*vwrite,FLEX15_1_1,FLEX15_1_2,STIFF15_1_1,STIFF15_1_2
+(4X,E15.7,2X,E15.7,10X,E15.7,2X,E15.7)
+*vwrite,FLEX15_2_1,FLEX15_2_2,STIFF15_2_1,STIFF15_2_2
+(4X,E15.7,2X,E15.7,10X,E15.7,2X,E15.7)
+
+/com
+/com,4-112 FLEXIBILITY MATRIX                       STIFFNESS MATRIX
+*if,flexdet4112,lt,10**(-18),then
+/com, Small or negative flexibility determinant.  Matrices should be evaluated for validity.
+*endif
+*vwrite,FLEX4112_1_1,FLEX4112_1_2,STIFF4112_1_1,STIFF4112_1_2
+(4X,E15.7,2X,E15.7,10X,E15.7,2X,E15.7)
+*vwrite,FLEX4112_2_1,FLEX4112_2_2,STIFF4112_2_1,STIFF4112_2_2
+(4X,E15.7,2X,E15.7,10X,E15.7,2X,E15.7)
+
+/com
+/com,4-2 FLEXIBILITY MATRIX                       STIFFNESS MATRIX
+*if,flexdet42,lt,10**(-18),then
+/com, Small or negative flexibility determinant.  Matrices should be evaluated for validity.
+*endif
+*vwrite,FLEX42_1_1,FLEX42_1_2,STIFF42_1_1,STIFF42_1_2
+(4X,E15.7,2X,E15.7,10X,E15.7,2X,E15.7)
+*vwrite,FLEX42_2_1,FLEX42_2_2,STIFF42_2_1,STIFF42_2_2
+(4X,E15.7,2X,E15.7,10X,E15.7,2X,E15.7)
+/out
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!VARIABLES.OUT
+!!!NOTE:  This output file comes out in order of node number, and not necessarily in order around the frame.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/out,variables,out
+
+/com, axial 1 112 2 3 4 5 force
+*vwrite,axial1,axial112,axial2,axial3,axial4,axial5,axforce
+(7(1X,F7.2))
+
+/com, radial 1 112 2 3 4 5 force
+*vwrite,radius1,radius112,radius2,radius3,radius4,radius5,radiusforce
+(7(1X,F7.2))
+
+/com
+/com, Determinants
+/com, FLEX23 FLEX15 FLEX1124 FLEX24
+*vwrite,flexdet23,flexdet15,flexdet4112,flexdet42
+(4(1X,E12.5))
+/com
+/com, STIFF23 STIFF15 STIFF4112 STIFF42
+*vwrite,stiffdet23,stiffdet15,stiffdet4112,stiffdet42
+(4(1X,E12.5))
+
+/com
+/com, Ring-wise deflections
+/com, Ring Y_due_to_Mom  Theta_due_to_Mom  Y_due_to_Shr  Theta_due_to_Shr
+*vwrite,mom_shrdefl1,mom_momdefl1,shr_shrdefl1,shr_momdefl1
+(3X,"1",4(2X,E11.4))
+*vwrite,mom_shrdefl112,mom_momdefl112,shr_shrdefl112,shr_momdefl112
+(1X,"112",4(2X,E11.4))
+*vwrite,mom_shrdefl2,mom_momdefl2,shr_shrdefl2,shr_momdefl2
+(3X,"2",4(2X,E11.4))
+*vwrite,mom_shrdefl3,mom_momdefl3,shr_shrdefl3,shr_momdefl3
+(3X,"3",4(2X,E11.4))
+*vwrite,mom_shrdefl4,mom_momdefl4,shr_shrdefl4,shr_momdefl4
+(3X,"4",4(2X,E11.4))
+*vwrite,mom_shrdefl5,mom_momdefl5,shr_shrdefl5,shr_momdefl5
+(3X,"5",4(2X,E11.4))
+
+/com
+/com, Nodal Position Data
+/com,NODE   RAD   CIRC    AXIAL
+/com,Ring1
+*vwrite,momring1(1,1),momring1(1,2),momring1(1,3),momring1(1,4)
+(1X,I6,1X,F5.2,1X,F7.2,1X,F7.2)
+/com,Ring112
+*vwrite,momring112(1,1),momring112(1,2),momring112(1,3),momring112(1,4)
+(1X,I6,1X,F5.2,1X,F7.2,1X,F7.2)
+/com,Ring2
+*vwrite,momring2(1,1),momring2(1,2),momring2(1,3),momring2(1,4)
+(1X,I6,1X,F5.2,1X,F7.2,1X,F7.2)
+/com,Ring3
+*vwrite,momring3(1,1),momring3(1,2),momring3(1,3),momring3(1,4)
+(1X,I6,1X,F5.2,1X,F7.2,1X,F7.2)
+/com,Ring4
+*vwrite,momring4(1,1),momring4(1,2),momring4(1,3),momring4(1,4)
+(1X,I6,1X,F5.2,1X,F7.2,1X,F7.2)
+/com,Ring5
+*vwrite,momring5(1,1),momring5(1,2),momring5(1,3),momring5(1,4)
+(1X,I6,1X,F5.2,1X,F7.2,1X,F7.2)
+
+/com
+/com,       Deflections from Moment Load           and Shear Load
+/com, Node   RADdefl      CIRCdefl     AXdefl       RADdefl      CIRCdefl     AXdefl
+/com,Ring1
+*vwrite,momring1(1,1),momring1(1,5),momring1(1,6),momring1(1,7),shrring1(1,5),shrring1(1,6),shrring1(1,7)
+(1X,I6,6(1X,E12.5))
+/com,Ring112
+*vwrite,momring112(1,1),momring112(1,5),momring112(1,6),momring112(1,7),shrring112(1,5),shrring112(1,6),shrring112(1,7)
+(1X,I6,6(1X,E12.5))
+/com,Ring2
+*vwrite,momring2(1,1),momring2(1,5),momring2(1,6),momring2(1,7),shrring2(1,5),shrring2(1,6),shrring2(1,7)
+(1X,I6,6(1X,E12.5))
+/com,Ring3
+*vwrite,momring3(1,1),momring3(1,5),momring3(1,6),momring3(1,7),shrring3(1,5),shrring3(1,6),shrring3(1,7)
+(1X,I6,6(1X,E12.5))
+/com,Ring4
+*vwrite,momring4(1,1),momring4(1,5),momring4(1,6),momring4(1,7),shrring4(1,5),shrring4(1,6),shrring4(1,7)
+(1X,I6,6(1X,E12.5))
+/com,Ring5
+*vwrite,momring5(1,1),momring5(1,5),momring5(1,6),momring5(1,7),shrring5(1,5),shrring5(1,6),shrring5(1,7)
+(1X,I6,6(1X,E12.5))
+/out
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!
+!!!Clear out variables
+!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*if,clear,eq,0,then
+*set,   MOMRING1
+*set,   MOMRING112
+*set,   MOMRING2
+*set,   MOMRING3
+*set,   MOMRING4
+*set,   MOMRING5
+*set,   SHRRING1
+*set,   SHRRING112
+*set,   SHRRING2
+*set,   SHRRING3
+*set,   SHRRING4
+*set,   SHRRING5
+*set,   ANG
+*set,   ANGOFFSET
+*set,   AXFORCE
+*set,   AXIAL1
+*set,   AXIAL112
+*set,   AXIAL2
+*set,   AXIAL3
+*set,   AXIAL4
+*set,   AXIAL5
+*set,   AXSUM1
+*set,   AXSUM112
+*set,   AXSUM2
+*set,   AXSUM3
+*set,   AXSUM4
+*set,   AXSUM5
+*set,	BYPASS
+*set,	CHECKALPHA
+*set,   CLEAR
+*set,	COSSUM1
+*set,	COSSUM1s
+*set,	COSSUM112
+*set,	COSSUM112s
+*set,	COSSUM2
+*set,	COSSUM2s
+*set,	COSSUM3
+*set,	COSSUM3s
+*set,	COSSUM4
+*set,	COSSUM4s
+*set,	COSSUM5
+*set,	COSSUM5s
+*set,   COUNT
+*set,   ELCOUNT
+*set,   FLEX15_1_1
+*set,   FLEX15_1_2
+*set,   FLEX15_2_1
+*set,   FLEX15_2_2
+*set,   FLEX23_1_1
+*set,   FLEX23_1_2
+*set,   FLEX23_2_1
+*set,   FLEX23_2_2
+*set,   FLEX4112_1_1
+*set,   FLEX4112_1_2
+*set,   FLEX4112_2_1
+*set,   FLEX4112_2_2
+*set,   FLEX42_1_1
+*set,   FLEX42_1_2
+*set,   FLEX42_2_1
+*set,   FLEX42_2_2
+*set,   FLEXDET15
+*set,   FLEXDET23
+*set,   FLEXDET4112
+*set,   FLEXDET42
+*set,   I
+*set,	JUNK
+*set,	KEEPGOING
+*set,   M0
+*set,   MASS
+*set,   MATDENS
+*set,   MATNUM
+*set,   MMOMPRIME15
+*set,   MMOMPRIME23
+*set,   MMOMPRIME4112
+*set,   MMOMPRIME42
+*set,   MOM_MOMDEFL1
+*set,   MOM_MOMDEFL112
+*set,   MOM_MOMDEFL2
+*set,   MOM_MOMDEFL3
+*set,   MOM_MOMDEFL4
+*set,   MOM_MOMDEFL5
+*set,   MOM_SHRDEFL112
+*set,   MOM_SHRDEFL1
+*set,   MOM_SHRDEFL2
+*set,   MOM_SHRDEFL3
+*set,   MOM_SHRDEFL4
+*set,   MOM_SHRDEFL5
+*set,   MSHRPRIME15
+*set,   MSHRPRIME23
+*set,   MSHRPRIME4112
+*set,   MSHRPRIME42
+*set,   N1
+*set,   N112
+*set,   N2
+*set,   N3
+*set,   N4
+*set,   N5
+*set,   ND
+*set,   NFORCE
+*set,   NM15
+*set,   NM23
+*set,   NM4112
+*set,   NM42
+*set,   NRKEY
+*set,   NV15
+*set,   NV23
+*set,   NV4112
+*set,   NV42
+*set,   PARTIALWEIGHT
+*set,   PHIM15
+*set,   PHIM23
+*set,   PHIM4112
+*set,   PHIM42
+*set,   PHIV15
+*set,   PHIV23
+*set,   PHIV4112
+*set,   PHIV42
+*set,   RADIUS1
+*set,   RADIUS112
+*set,   RADIUS2
+*set,   RADIUS3
+*set,   RADIUS4
+*set,   RADIUS5
+*set,   RADIUSFORCE
+*set,   RSUM1
+*set,   RSUM112
+*set,   RSUM2
+*set,   RSUM3
+*set,   RSUM4
+*set,   RSUM5
+*set,   SHR_MOMDEFL1
+*set,   SHR_MOMDEFL112
+*set,   SHR_MOMDEFL2
+*set,   SHR_MOMDEFL3
+*set,   SHR_MOMDEFL4
+*set,   SHR_MOMDEFL5
+*set,   SHR_SHRDEFL112
+*set,   SHR_SHRDEFL1
+*set,   SHR_SHRDEFL2
+*set,   SHR_SHRDEFL3
+*set,   SHR_SHRDEFL4
+*set,   SHR_SHRDEFL5
+*set,	SINSUM1
+*set,	SINSUM1s
+*set,	SINSUM112
+*set,	SINSUM112s
+*set,	SINSUM2
+*set,	SINSUM2s
+*set,	SINSUM3
+*set,	SINSUM3s
+*set,	SINSUM4
+*set,	SINSUM4s
+*set,	SINSUM5
+*set,	SINSUM5s
+*set,   STIFF15_1_1
+*set,   STIFF15_1_2
+*set,   STIFF15_2_1
+*set,   STIFF15_2_2
+*set,   STIFF23_1_1
+*set,   STIFF23_1_2
+*set,   STIFF23_2_1
+*set,   STIFF23_2_2
+*set,   STIFF4112_1_1
+*set,   STIFF4112_1_2
+*set,   STIFF4112_2_1
+*set,   STIFF4112_2_2
+*set,   STIFF42_1_1
+*set,   STIFF42_1_2
+*set,   STIFF42_2_1
+*set,   STIFF42_2_2
+*set,   STIFFDET15
+*set,   STIFFDET23
+*set,   STIFFDET4112
+*set,   STIFFDET42
+*set,   SYSTEMNUMBER
+*set,   TEMP1
+*set,   TEMP2
+*set,   TEMP3
+*set,   THETA
+*set,   TOTALMASS
+*set,   TOTTEM
+*set,	TT
+*set,   V0
+*set,   YMOMPRIME15
+*set,   YMOMPRIME23
+*set,   YMOMPRIME4112
+*set,   YMOMPRIME42
+*set,   YSHRPRIME15
+*set,   YSHRPRIME23
+*set,   YSHRPRIME4112
+*set,   YSHRPRIME42
+*endif
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!End of main loop
+*endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+/GOPR

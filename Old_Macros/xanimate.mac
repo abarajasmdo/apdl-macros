@@ -1,0 +1,100 @@
+! ANSYS REVISION 5.5, $RCSfile: ANCNTR.MAC $
+! Modified on $Date: 1999/02/12 14:00:16 $ 
+! Source ID = $Revision: 5.2.1.1 $
+!COM *********************************************************
+!COM ANCNTR - ANIMATE STATIC CONTOUR/DISPLACEMENT FROM REST  *
+!COM                                                         *
+!COM PARAMETERS:                                             *
+!COM    ARG1 - NUMBER OF FRAMES (DEFAULT = 5)                *
+!COM    ARG2 - ANIMATION TIME DELAY (DEFAULT = .10)          *
+!COM    ARG3 - NUMBER OF CYCLES (DEFAULT = 5) (NON-UI ONLY)  *
+!COM *********************************************************
+!COM
+/NOPR
+!COM ************************
+!COM SET ANIMATION PARAMETERS
+!COM ************************
+_ABORT = 0
+_PROGRS = 0
+AR99 = 0
+AR11 = 5
+AR12 = .10
+AR13 = 5
+*IF,ARG1,NE,0,THEN
+  AR11 = ARG1
+*ENDIF
+*IF,ARG2,NE,0,THEN
+  AR12 = ARG2
+*ENDIF
+*IF,ARG3,NE,0,THEN
+  AR13 = ARG3
+*ENDIF
+!COM *****************************
+!COM CHECK FOR PROPER ANSYS MODULE
+!COM *****************************
+*GET,_ANDISP1,ACTIVE,,ROUT
+*IF,_ANDISP1,NE,31,THEN
+  *MSG,WARN
+  This command only operates in ANSYS postprocessing (POST1)
+  AR99 = 1
+*ENDIF
+!COM *********************************************
+!COM CHECK FOR ANIMATION-CAPABLE GRAPHICS PLATFORM
+!COM *********************************************
+*IF,AR99,EQ,0,THEN
+  *GET,AR20,GRAPH,,SEG
+  *GET,AR22,common,,d2com,,int,7   ! ngrtyp (1=graph file)
+  *IF,AR22,EQ,1,THEN
+  *ELSEIF,AR20,EQ,0,THEN
+    *MSG,WARN
+    Your graphics display does not support animation - operation terminated.
+    AR99 = 1
+  *ENDIF
+*ENDIF
+!COM *****************
+!COM PERFORM ANIMATION 
+!COM *****************
+*IF,AR99,EQ,0,THEN
+  *GET,_SMIN,COMMON,,D3COM,,REAL,291
+  *GET,_SMAX,COMMON,,D3COM,,REAL,292
+  *GET,_NUM,GRAPH,1,CONTOUR,NCONT          !  Retrieve number of contours
+  _RNG=(_SMAX-_SMIN)                       !  Total stress range
+  _MIN=_SMIN                               !  Maximum value for minimum contour
+  _MAX=_SMAX
+  *GET,AR21,GRAPH,1,DSCALE,DMULT
+  /gsav,xx,gsav,,temp
+  /USER,ALL
+  /CLAB,ALL,-1
+!  /SEG,DELETE
+!  /SEG,MULTI,,AR12
+  _DSC=0.0
+  *IF,AR11,EQ,1,THEN
+    _DDD=0.0
+  *ELSE
+    _DDD=1.0/(AR11-1)
+  *ENDIF
+  *ABSET,'Animating Deformed Results',BOTH
+  *DO,_I,1,AR11
+    _PROGRS = _I*(100/AR11)
+    *ABCHECK,_PROGRS
+    _ABORT = _RETURN
+    *IF,_ABORT,GT,0,EXIT
+    _CMX=_RNG*(AR11)
+    _CMX=(_CMX/_I)+_SMIN
+    /CONT,ALL,_NUM,_MIN,,_CMX
+    /DSCAL,ALL,(AR21*_DSC)+0.0000001
+!    /REPLOT
+    _DSC=_DSC+_DDD
+    /ui,copy,save,jpeg,grap,colo,norm,port,,100
+  *ENDDO
+  *ABFINISH
+!  /SEG,OFF
+!  /SEG,PC
+  *IF,_ABORT,EQ,0,THEN
+    ANIM,AR13,,AR12
+  *ELSE
+     /COM,ANIMATION OF DEFORMED RESULTS WAS ABORTED BY USER.
+  *ENDIF
+/gres,xx,gsav
+*ENDIF
+/GOPR

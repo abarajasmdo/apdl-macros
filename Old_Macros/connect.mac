@@ -1,0 +1,46 @@
+/nopr
+parsav
+toler=1/1000
+cm,start,line
+*get,nls,line,,count
+ls=lsnext(0)
+*do,loop,1,nls
+!/gopr
+_angl=nint(lsx(ls,.5)/toler)	! slope of ls #1
+lsel,r,line,,ls
+kpls
+lskp
+lsel,u,line,,ls
+cm,temp_,line	! cm of the two lines attached
+*get,chk,line,,count
+ls1=lsnext(0)
+*do,o,1,chk
+_angl1=nint(lsx(ls1,.5)/toler)
+*if,_angl1,ne,_angl,then
+lsel,u,line,,ls1
+*endif
+ls1=lsnext(ls1)
+*enddo
+lsel,a,line,,ls
+*get,check,line,,count
+*if,check,gt,1,then
+!lplot
+!llist
+lcomb,all,,0
+*endif
+cmsel,,start
+ls=lsnext(ls)
+*if,ls,eq,0,*exit
+!*ask,read,ready?,
+*enddo
+! cleam up extra kpoi
+lsal
+kpls
+kpinv
+cmsel,u,kstart
+kdele,all
+asel,,,,anew
+lsar
+lplo
+parres
+/gopr

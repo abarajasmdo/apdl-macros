@@ -1,0 +1,77 @@
+!
+!     Macro   getreal.mac
+!
+!      Create Real Constant List putr.mac
+! 
+!      This macro creates a file of real constant commands
+!      called putreal.mac.  This macro can then be used to
+!      recreate the same real constant data in a different model.
+!
+!      To Create The Stored Group:    type "getreal,arg1,arg2"  where
+!                                                                    arg1 and arg2 are the lower
+!                                                                    and upper limits for the real
+!                                                                    constant data to be read.
+!
+!      To Generate The Real Constants:    type "putr"  to put the
+!                                                                 real constants into the model.
+!
+!      
+!
+/nopr
+*if,arg1,le,0,:lp1
+*if,arg2,le,arg1,:lp2
+var=arg1
+*cfopen,putr.mac
+*cfwr,/nopr
+:top
+*msg,info,var
+ Getting data for real constant set %i
+*get,rc1,rcon,var,const,1
+*get,rc2,rcon,var,const,2
+*get,rc3,rcon,var,const,3
+*get,rc4,rcon,var,const,4
+*get,rc5,rcon,var,const,5
+*get,rc6,rcon,var,const,6
+*get,rc7,rcon,var,const,7
+*get,rc8,rcon,var,const,8
+*get,rc9,rcon,var,const,9
+*get,rc10,rcon,var,const,10
+*get,rc11,rcon,var,const,11
+*get,rc12,rcon,var,const,12
+*cfwri,r,var,rc1,rc2,rc3,rc4,rc5,rc6
+*cfwri,rmore,rc7,rc8,rc9,rc10,rc11,rc12
+var=var+1
+*if,var,gt,arg2,:bot
+*go,:top
+:bot
+*cfwri,/gopr
+*cfcl
+*go,:end
+:lp1
+*msg,note
+ Argument 1 must be a positive integer
+*go,:end
+:lp2
+*msg,note
+ Argument 2 must be greater than argument 1
+*go,:end
+:end
+var=
+rc1=
+rc2=
+rc3=
+rc4=
+rc5=
+rc6=
+rc7=
+rc8=
+rc9=
+rc10=
+rc11=
+rc12=
+/gopr
+
+
+
+
+

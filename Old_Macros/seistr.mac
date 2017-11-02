@@ -1,0 +1,185 @@
+!   
+!                            seistr.mac
+! 
+!                           calculate the modal stresses for a response spectrum analysis
+!
+!                   n=arg1=mode number of interest
+!
+!                       the macros mcx, mcy, and mcz have already been run to determine
+!                       the modal coefficients in each direction.
+!
+lclear
+n=arg1
+set,1,n
+esel,s,ename,,16,18
+etab,sigi,nmisc,5         !  stress at i end of element
+,sigj,nmisc,45           !  stress at j end of element
+
+,fxi,smisc,1
+,fyi,smisc,2
+,fzi,smisc,3           !  forces as moments at i and j ends of elements
+,mxi,smisc,4
+,myi,smisc,5
+,mzi,smisc,6
+
+,fxj,smisc,7
+,fyj,smisc,8
+,fzj,smisc,9
+,mxj,smisc,10
+,myj,smisc,11
+,mzj,smisc,12
+
+esel,all
+
+smult,sigix,sigi,,mcx(n)
+smult,sigjx,sigj,,mcx(n)  ! calculate the actual stresses and loads on the pipe elements
+                            !  by multiplying by the mode coefficient factor in the x direction
+
+,fxi,fxi,,mcx(n)
+,fyi,fyi,,mcx(n)
+,fzi,fzi,,mcx(n)
+,mxi,mxi,,mcx(n)
+,myi,myi,,mcx(n)
+,mzi,mzi,,mcx(n)
+
+,fxj,fxj,,mcx(n)
+,fyj,fyj,,mcx(n)
+,fzj,fzj,,mcx(n)
+,mxj,mxj,,mcx(n)
+,myj,myj,,mcx(n)
+,mzj,mzj,,mcx(n)
+
+lcwrite,1   !  write out the x direction data as load case 1
+
+!  repeat this for y direction data, and write it as load case 2
+
+set,1,n
+esel,s,ename,,16,18
+etab,sigi,nmisc,5         !  stress at i end of element
+,sigj,nmisc,45           !  stress at j end of element
+
+,fxi,smisc,1
+,fyi,smisc,2
+,fzi,smisc,3           !  forces as moments at i and j ends of elements
+,mxi,smisc,4
+,myi,smisc,5
+,mzi,smisc,6
+
+,fxj,smisc,7
+,fyj,smisc,8
+,fzj,smisc,9
+,mxj,smisc,10
+,myj,smisc,11
+,mzj,smisc,12
+
+esel,all
+
+smult,sigix,sigi,,mcy(n)
+smult,sigjx,sigj,,mcy(n)  ! calculate the actual stresses and loads on the pipe elements
+                            !  by multiplying by the mode coefficient factor in the x direction
+
+,fxi,fxi,,mcy(n)
+,fyi,fyi,,mcy(n)
+,fzi,fzi,,mcy(n)
+,mxi,mxi,,mcy(n)
+,myi,myi,,mcy(n)
+,mzi,mzi,,mcy(n)
+
+,fxj,fxj,,mcy(n)
+,fyj,fyj,,mcy(n)
+,fzj,fzj,,mcy(n)
+,mxj,mxj,,mcy(n)
+,myj,myj,,mcy(n)
+,mzj,mzj,,mcy(n)
+
+lcwrite,2   !  write out the x direction data as load case 2
+
+!  repeat this for z direction data, and write it as load case 3
+
+set,1,n
+esel,s,ename,,16,18
+etab,sigi,nmisc,5         !  stress at i end of element
+,sigj,nmisc,45           !  stress at j end of element
+
+,fxi,smisc,1
+,fyi,smisc,2
+,fzi,smisc,3           !  forces as moments at i and j ends of elements
+,mxi,smisc,4
+,myi,smisc,5
+,mzi,smisc,6
+
+,fxj,smisc,7
+,fyj,smisc,8
+,fzj,smisc,9
+,mxj,smisc,10
+,myj,smisc,11
+,mzj,smisc,12
+
+esel,all
+
+smult,sigix,sigi,,mcz(n)
+smult,sigjx,sigj,,mcz(n)  ! calculate the actual stresses and loads on the pipe elements
+                            !  by multiplying by the mode coefficient factor in the x direction
+
+,fxi,fxi,,mcz(n)
+,fyi,fyi,,mcz(n)
+,fzi,fzi,,mcz(n)
+,mxi,mxi,,mcz(n)
+,myi,myi,,mcz(n)
+,mzi,mzi,,mcz(n)
+
+,fxj,fxj,,mcz(n)
+,fyj,fyj,,mcz(n)
+,fzj,fzj,,mcz(n)
+,mxj,mxj,,mcz(n)
+,myj,myj,,mcz(n)
+,mzj,mzj,,mcz(n)
+
+lcwrite,3   !  write out the x direction data as load case 3
+
+!       we now have the x direction scaled results in load case 1
+!       the y direction scaled results in load case 2, and the z
+!       direction scaled results in load case 3.
+
+!       now for the load case operations
+
+!       the objective is to set lcase 4 = (lcase1*lcase1 + lcase2*lcase2 + lcase3*lcase3)**.5
+
+lczero   !  set load case in database to zero
+
+lcase,1    ! make lcase 1 current
+lcoper,squa   !  square the current load case
+lcwrite,4    ! store the lcase1 squared as load case 4 , the squared x excitation data
+
+
+lczero   !  set load case in database to zero
+
+lcase,2    ! make lcase 2 current
+lcoper,squa   !  square the current load case
+lcwrite,5    ! store the lcase2 squared as load case 5 , the squared y excitation data
+
+
+lczero   !  set load case in database to zero
+
+lcase,3    ! make lcase 3 current
+lcoper,squa   !  square the current load case
+lcwrite,6    ! store the lcase3 squared as load case 6 , the squared z excitation data
+
+!  we now have the squared x,y,z stresses, etc in load cases 4, 5 and 6.
+!  now we have to sum them and take the square root of that value.
+
+lczero  !  set load case in database to zero
+
+
+lcase,4       !   put load case 4 into database
+lcoper,add,5   !  add load case 5 to it
+lcoper,add,6   !  add load case 6 to the total in the database
+!                the database now has the sum of the squares in it
+!
+
+lcoper,sqrt ! take the square root of the database
+lcwrite,7  ! write this data to load case 7
+!    load case 7 is now the square root of the sum of the squares of load cases 1,2 and 3
+
+
+

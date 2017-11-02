@@ -1,0 +1,14 @@
+/nopr
+!      
+!       fe2d.mac    A macro to get all the node and elems on a plane
+!                  select thre nodes to define plane
+!
+/nopr
+cs,123,,ndnext(0),ndnext(ndnext(0)),ndnext(ndnext(ndnext(0)))
+csys,123
+nsel,s,loc,z,-.002,.002
+enode
+eplo
+/gopr
+
+

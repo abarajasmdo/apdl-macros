@@ -1,0 +1,7 @@
+!
+! ndxy.mac  rotates nodes to xy plane for use in aux1
+!
+csys,11  !cs for 2D/3D cylindrical Coord system
+nmod,all,,1e-6  !  y=0
+csys,0
+nrotat,all  !  rotate nodes in global for /Aux1

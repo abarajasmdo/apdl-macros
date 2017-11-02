@@ -1,0 +1,10 @@
+!
+! cpd.mac
+!
+!  usage cpd,node1,node2   - couples twp nodes in translational DOF's
+!
+!
+*get,cpmx,mxcp
+ncp=cpmx+1
+cp,ncp,ux,arg1,arg2
+cplgen,ncp,uy,uz

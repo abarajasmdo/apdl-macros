@@ -1,0 +1,117 @@
+
+  /prep7
+  k,1,0
+  k,2,,10
+  k,3,2,8
+  k,4,4,10
+  k,5,5,7
+  k,6,4,4
+  k,7,4.5,3.5
+  k,8,5,
+  lstr,1,2
+  rp7,1,1
+  lstr,8,1
+  al,all
+  et,1,42
+  esize,1
+  amesh,1
+ 
+  *create,ar_mesh,mac
+  /pmacro
+  /nopr
+ 
+  ! This macro is for redefining an area with different startling
+  ! lines and then meshing that area to get different meshes.
+ 
+  ! WARNING - One of the first steps of this macro is to delete
+  ! the designated area to redefine it
+ 
+  cm,_ltemp,line         ! store current lines
+ 
+  *if,arg1,eq,0,then     ! mouse pick option here
+ 
+    :loop
+    er=0
+    asel,r,p
+ 
+    *get,count,area,,count
+ 
+    *if,count,eq,1,then             ! check for only one mouse pick
+       *get,arg1,area,,num,min      ! get area number
+    *else
+       *msg,ui
+  More than one area selected, try again
+       er=1
+    *endif
+ 
+    *if,er,eq,1,:loop
+ 
+  *endif
+ 
+  *if,arg1,ne,0,then      ! process area selected
+ 
+    asel,r,area,,arg1     ! select only this area
+ 
+    lsla                  ! select all lines attached to this area
+ 
+    *get,count,line,,count  ! get number of lines
+ 
+    *dim,ltab,arra,count    ! dimension line table to number of lines
+  selected
+    llow=0                  ! initialize line counter
+ 
+ 
+    *do,i,1,count           ! determine each line number
+ 
+      llow=lsnext(llow)
+      ltab(i)=llow
+ 
+    *enddo
+ 
+ 
+    *do,i,1,count
+ 
+      aclear,arg1
+      adel,arg1
+      al,all,ltab(i)        ! define new area
+      *get,arg1,area,,num,min      ! reobtain area number
+      amesh,arg1
+      *msg,info,ltab(i)
+  The starting line was %i
+ 
+      *ask,accpt,"Accept mesh? 1=yes",0
+ 
+      *if,accpt,eq,1,*exit
+ 
+      aclear,arg1
+      adel,arg1                    ! start over
+      al,all,-ltab(i)       ! define area in other direction
+ 
+      *get,arg1,area,,num,min      ! reobtain area number
+      amesh,arg1
+      *msg,info,-ltab(i)
+  The starting line was %i
+ 
+      *ask,accpt,"Accept mesh? 1=yes",0
+ 
+      *if,accpt,eq,1,*exit
+ 
+    *enddo
+ 
+ 
+  *endif
+ 
+  cmsel,s,_ltemp
+ 
+  cmdel,_ltemp
+  ltab(1)=
+  accpt=
+  count=
+  llow=
+  er=
+ 
+  /go
+ 
+ 
+  *end
+ 

@@ -1,0 +1,36 @@
+!
+! applies cavitie pressures assuming there is a siesta created (function 10,8)
+! pressure file named cavpress.inp
+!
+PARSAV
+!*IF,ARG1,LT,1,THEN
+!*ASK,TIMEPT,TIME POINT AS Txxxxx.x,
+!!*ELSE
+!TIMEPT=ARG1
+!*ENDIF
+!*ask,filename,Enter filename ( less extention ),'file'
+!*ask,ext,Enter file extension,'ext'
+!/INPUT,%filename%,%ext%,,:%TIMEPT%
+!
+!  apply cavity pressure based on line components named cavXX
+!
+arsal
+*DO,LOOP,1,9
+*get,check,comp,cav%loop%,type
+*if,check,eq,0,*cycle
+SFA,CAV%LOOP%,PRES,P00%LOOP%
+*ENDDO
+
+*DO,LOOP,10,99
+*get,check,comp,cav%loop%,type
+*if,check,eq,0,*cycle
+SFA,CAV%LOOP%,PRES,P0%LOOP%
+*ENDDO
+
+!*DO,LOOP,100,999
+!*get,check,comp,cav%loop%,type
+!*if,check,eq,0,*cycle
+!SFL,CAV%LOOP%,PRES,P%LOOP%
+!*ENDDO
+
+PARRES	! DUMPS ALL THE PRESSURE VALUE PARAMS  P001, P00......

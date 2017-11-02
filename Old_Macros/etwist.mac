@@ -1,0 +1,151 @@
+!
+!  etwist - extrudes elements between planes (csys's) that result in "twisted"
+!           lines of elements.  extrudes stif63's
+!
+!  possible enhances: put in feature that assures outside faces are face 1,
+!                     automatic node # offset determination, use equation to 
+!                    calculate exact node position instead of straight line from
+!                  "fill" command.
+*if,arg1,gt,0,then
+*get,nnmax,ndmx
+ninc=(nnmax+1)*arg3
+nelem
+cm,mac_node,node
+cm,mac_elem,elem
+!
+*if,arg3,le,.9,then
+nelem=1
+*else
+nelem=arg3
+*endif
+*get,nod,node,,num,max
+*get,ele,elem,,num,max
+*get,nofn,node,,count
+*get,nofe,elem,,count
+!
+! check to make sure elements are on csys #1
+csys,arg1
+nsel,r,loc,z,-.001,.001
+*get,nchk,node,,count
+*if,nchk,eq,nofn,then
+!
+!  generate nodes from given set to far end
+!
+*do,ng,1,nofn,1
+csys,arg1
+x1=nx(nod)
+y1=ny(nod)
+z1=nz(nod)
+csys,arg2
+n,nod+ninc,x1,y1,z1
+*get,nod,node,nod,nxtl
+*if,nod,eq,0,*exit
+*enddo
+cm,mac_nds,nodes
+!
+! generate intermediate nodes
+!
+*if,nelem,gt,1,then
+cmsel,s,mac_node
+csys,0
+*get,nod,node,,num,max
+*do,nq,1,nofn,1
+cmsel,s,mac_nds
+fill,nod,nod+ninc,nelem-1,,,
+cmsel,s,mac_node
+*get,nod,node,nod,nxtl
+*if,nod,eq,0,*exit
+*enddo
+!
+*else
+*endif
+!
+! generate elems  layers of 63's and 45's
+!
+cmsel,s,mac_elem
+nall
+egen,2,ninc,all  *plates on far layer (for further extruding)
+cmsel,u,mac_elem
+cm,next-ele,elem
+!
+! make bricks
+!
+eall
+*get,ele,elem,,num,max
+numstr,elem,ele+1
+type,1
+cmsel,s,mac_elem
+*get,ele,elem,,num,max
+!
+!  first layer
+!
+*do,layer,1,nofe,1
+n1=nelem(ele,1)
+n2=nelem(ele,2)
+n3=nelem(ele,3)
+n4=nelem(ele,4)
+e,n1,n2,n3,n4,n1+ninc/nelem,n2+ninc/nelem,n3+ninc/nelem,n4+ninc/nelem
+*get,ele,elem,ele,nxtl
+*if,ele,eq,0,*exit
+*enddo
+esel,r,stif,,45
+cm,bricks,elem
+!
+*if,nelem,gt,1,then
+!esel,s,,,ele+1,1e7
+cmsel,s,bricks
+egen,nelem,ninc/nelem,all,,,
+*else
+*endif
+ninc=
+nnmax=
+nchk=
+nofe=
+nofn=
+ele=
+nod=
+nelem=
+n1=
+n2=
+n3=
+n4=
+x1=
+y1=
+z1=
+cmdele,mac_node
+cmdele,mac_elem
+cmdele,bricks
+cmdele,mac_nds
+*msg,note
+Component next-ele has next layer of stif 63's for next extrusion
+*else
+*msg,warn,arg1
+ERROR: Some of the elements selected do not lie on csys %I
+ninc=
+nnmax=
+nchk=
+nofe=
+nofn=
+ele=
+nod=
+nelem=
+n1=
+n2=
+n3=
+n4=
+x1=
+y1=
+z1=
+*else
+*msg,warn,arg1
+Some selected nodes not on csys %I
+*endif
+*else
+*msg,warn
+Usage: etwist,csys(start),csys(end),# of layers of elem
+*endif
+
+
+
+
+

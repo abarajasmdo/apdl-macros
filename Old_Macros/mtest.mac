@@ -1,0 +1,25 @@
+*do,loop,1,3
+
+xmultipro,'start',3
+*del,mats
+*del,trim
+*dim,trim,string,128
+*dim,mats,string,128
+mats(1,1)='crap'
+*cset,1,3,'mats(1,1)','Enter mat name',0
+*cset,4,6,beamH,'Enter the beam height',23.345
+*cset,7,9,beamL,'Enter the beam length',54440.0
+xmultipro,'end'
+blah=strleng(mats(1))
+trim(1)=strsub(mats(1),1,blah-1)
+mats(1)=trim(1)
+*cfopen,out
+*vwrite,mats(1)
+%c
+*cfclos
+
+/sys,cat out
+
+
+*enddo
+

@@ -1,0 +1,91 @@
+/nopr
+!             lxtnd.mac             A macro to extend a lind by a user defined distance.
+!
+!                      Usage:    lxtnd,l,kp,dist
+!
+!                                            l=line number
+!                                            kp=key point on end of line to be extended
+!                                            dist=distance line is to be extended 
+!
+!     get keypoint numbers for the line
+!
+*get,lk1,line,arg1,kp,1                                                             
+*get,lk2,line,arg1,kp,2  
+!
+!      get the coordinates for the keypoints for the line
+!
+*get,kx1,kx,lk1
+*get,ky1,ky,lk1
+*get,kz1,kz,lk1
+*get,kx2,kx,lk2
+*get,ky2,ky,lk2
+*get,kz2,kz,lk2
+*get,kx1,kp,lkp1,loc,x                                               
+*get,ky1,kp,lkp1,loc,y 
+*get,kz1,kp,lkp1,loc,z
+*get,kx2,kp,lkp2,loc,x 
+*get,ky2,kp,lkp2,loc,y 
+*get,kz2,kp,lkp2,loc,z 
+!
+!     calculate the current line length in the x,y, and z directions
+!
+lx=kx2-kx1
+ly=ky2-ky1
+lz=kz2-kz1
+!
+!     calculate total line length
+!
+l=((lx*lx)+(ly*ly)+(lz*lz))**.5
+!
+!     calculate new line length
+!
+newl=l+arg3
+!     
+!     calculate distance keypoint is to be moved in x,y and z directions
+!
+dx=lx*(newl/l-1)
+dy=ly*(newl/l-1)
+dz=lz*(newl/l-1)
+!
+!      check to see if the keypoint to be modified is lk1 or lk2
+!      if it's lk2, then jump to the loop that modifies lk2.
+!
+*if,lk2,eq,arg2,:lp2
+!
+!     modify location of lk1
+!
+kmod,lk1,kx1-dx,ky1-dy,kz1-dz
+!   
+!     jump to end of macro
+!
+*go,:end
+!
+:lp2
+!
+!     modify location of lk2
+!
+kmod,lk2,kx2+dx,ky2+dy,kz2+dz
+!
+!     tidy up parameters and end the macro
+!
+:end
+lk1=
+lk2=
+kx1=
+ky1=
+kz1=
+kx2=
+ky2=
+kz2=
+lx=
+ly=
+lz=
+l=
+newl=
+dx=
+dy=
+dz=
+/gopr
+
+
+

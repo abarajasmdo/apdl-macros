@@ -1,0 +1,12 @@
+/nopr
+!
+!     winwlr.mac     WINdown Wide Left Right
+!
+!          This macro sets up the display to have full width
+!          windows on the left and right of the screen. 
+!
+/win,1,-1,.335,-1,1
+/win,2,.335,1.67,-1,1
+/gopr                                                         
+
+

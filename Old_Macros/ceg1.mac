@@ -1,0 +1,49 @@
+!
+!     Macro   ceg1.mac
+!
+!      Create Element Group 1
+! 
+!      This macro creates a group of elements called eg1.  This group
+!      is actually a macro called eg1.mac  in the problem
+!      subdirectory which has a series of esel commands which select 
+!      the elements in the group.  
+!
+!      To Create The Stored Group:    Select the elements of interest, then type "ceg1".
+!
+!      To Recall The Stored Group:   Type "eg1".
+!
+!      This macro unselects the selected elements as it constructs
+!      macro eg1.mac.  Therefore,  no elements will be currently
+!      selected after this macro is executed.    
+!
+!      This macro can be changed to make additional groups of elements,
+!      (eg2, eg3, etc.) and groups of nodes, keypoints, and so forth.
+!      Use nsel,nall,kpall,lssel, etc. for other entities.
+!
+/nopr
+*get,cnt,esel
+*cfop,eg1.mac
+*cfwr,/nopr
+*cfwr,eall
+*cfwr,einv
+*get,n,elmn
+*cfwr,ease,,n
+:top
+*get,n,elmn,n
+*if,n,eq,0,:end
+*cfwr,ease,,n
+*go,:top
+:end
+*cfwri,/gopr
+*cfcl
+*msg,NOTE,cnt
+('Element Group "eg1" Has',f6.0,'  Elements In It.')
+cnt=
+nn=
+n=
+/gopr
+
+
+
+
+

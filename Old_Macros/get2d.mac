@@ -1,0 +1,25 @@
+/nopr
+!      
+!       getz.mac    A macro to get all the lines at the current Z=0 
+!                           plane with a tolerance of +/-Arg1.
+lsel,s,,,arg1
+lsel,a,,,arg2
+kpls
+*get,k1,kpmn
+*get,k2,kpmx
+kpusel,kpoi,k1
+kpusel,kpoi,k2
+*get,k3,kpmx
+kpasel,kpoi,k2
+kpasel,kpoi,k1
+cskp,40,,k1,k2,k3
+csys,40
+kpsel,z,-.02,.02
+lskp,1
+kpls
+!kwplan,1,k1,k2,k3
+!/auto,1
+lplo
+/gopr
+
+

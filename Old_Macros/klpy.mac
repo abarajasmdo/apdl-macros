@@ -1,0 +1,35 @@
+/nopr
+!
+!   klpy.mac  A macro to create a keypoint where a line
+!                    intersects the Y plane at a given y value.
+!
+!   usage:   kply,line number,Y plane coordinate
+!
+!
+*get,kp1,line,arg1,kp,1
+*get,kp2,line,arg1,kp,2
+!
+*get,kp1x,kp,kp1,loc,x
+*get,kp1y,kp,kp1,loc,y
+*get,kp1z,kp,kp1,loc,z
+
+
+*get,kp2x,kp,kp2,loc,x
+*get,kp2y,kp,kp2,loc,y
+*get,kp2z,kp,kp2,loc,z
+
+x=kp1x+((kp2x-kp1x)*(arg2-kp1y))/(kp2y-kp1y)
+z=kp1z+((kp2z-kp1z)*(arg2-kp1y))/(kp2y-kp1y)
+
+*get,kmax,mxkp
+
+kpid=kmax+1
+
+k,kpid,x,arg2,z
+
+*msg,info,kpid,x,arg2,z
+Keypoint %i created at x= %g y= %g z= %g
+*ask,enter,key to clear screen
+
+
+

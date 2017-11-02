@@ -1,0 +1,37 @@
+! used in conjunction with getsurf.f19  file19.dat
+/gsav
+cm,_etemp_,elem
+cm,_ntemp_,node
+etof
+rlof
+mpof
+cmlist
+/show,,,1   
+/type,all,0 
+/erase
+/user
+/graphics,full
+!nall
+!nelem
+nall
+/edge,,1,30
+eplo
+nsel,none
+!cmlist
+*do,loop,1,30
+!*ask,surfcomp,input surf comp name,'a'
+cmsel,a,r%loop%
+!*ASK,MORE,ENTER Y for more components,'NO'
+!*IF,more,eq,'NO',EXIT
+*enddo
+/noerase
+/edge
+eplo
+/erase
+!nelem
+/gresu
+/show,term,,1
+cmsel,,_etemp_
+cmsel,,_ntemp_
+cmdele,_etemp_
+cmdele,_ntemp_

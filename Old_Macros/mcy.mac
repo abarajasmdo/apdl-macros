@@ -1,0 +1,8 @@
+!  
+!            mcy.mac
+! 
+!          mcy,modestart,modeend
+*dim,mcy,array,25
+*do,n,arg1,arg2
+*get,mcy(n),mode,n,mcoeff
+*enddo

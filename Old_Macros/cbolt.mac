@@ -1,0 +1,25 @@
+!
+! macro cbolt:  makes "spoke bolt" connection from a center node
+!	to all other nodes selected.  Useful for configuration bracket
+!	analysis.
+!
+!	select all nodes to spoke to, set up type,real,mat before running.
+!
+!   usage: cbolt,center node #
+!
+!  by Dan Bohlen    updated: 2/22/96
+!
+CM,_TEMP,NODE
+*get,nele,nodes,,count
+ND=0
+*DO,NZ,1,NELE
+ND=NDNEXT(ND)
+!/gopr
+*IF,ND,EQ,ARG1,*CYCLE
+E,ARG1,ND
+*ENDDO
+ND=
+NELE=
+NZ=
+
+

@@ -1,0 +1,88 @@
+!
+! ce_UX macro makes averaging constraint equation between two sets of
+!		nodes defined by components
+!
+!               allows any number of nodes on either side and offset
+!
+!	DETERMINES THE AVERAGE RADIAL DISPLACMENT IN /POST1
+!
+!	By:  Dan Bohlen / Adrian Allen  
+/NOPR
+PARSAV
+CM,USERNODE,NODE
+*ASK,ICOMP,FIRST NODE COMP NAME,'COMP_NAME'
+*ASK,JCOMP,SECOND NODE COMP NAME,'COMP_NAME'
+!*ASK,CEDOF,CE DOF (ONLY ONE),'UX'
+CEDOF='UX'
+!*ASK,OFFSET,OFFSET VALUE (offset=AVG(%ICOMP%)-avg(%JCOMP%)),0.0
+!
+!	CHECK THAT THE COMP'S HAVE EQUAL NUMBER OF NODES
+!
+CMSEL,,ICOMP
+*GET,INNDS,NODE,,COUNT
+CMSEL,,JCOMP
+*GET,JNNDS,NODE,,COUNT
+!
+!	GET AVG DISPLACEMENTS
+/POST1
+nod=0
+totx=0
+CMSEL,,ICOMP
+*DO,I,1,INNDS
+nod=ndnext(nod)
+totx=totx+ux(nod)
+*enddo
+/GOPR
+IUX=totx/INNDS
+/NOPR
+!
+nod=0
+totx=0
+CMSEL,,JCOMP
+*DO,I,1,JNNDS
+nod=ndnext(nod)
+totx=totx+ux(nod)
+*enddo
+/GOPR
+JUX=totx/JNNDS
+
+!
+OFFSET=IUX-JUX
+/NOPR
+!
+! GET STARTING CE NUMBER
+!
+/PREP7
+/GOPR
+CENUM=CEINQR(,14)+1
+/NOPR
+!
+!	DO POSITIVE COEFF
+!
+CMSEL,,ICOMP
+N=0
+*DO,I,1,INNDS
+N=NDNEXT(N)
+CE,CENUM,0,N,CEDOF,1/INNDS,
+*ENDDO
+!
+!	NOW DO NEGATIVE COEFF
+!
+CMSEL,,JCOMP
+N=0
+*DO,I,1,JNNDS
+N=NDNEXT(N)
+CE,CENUM,0,N,CEDOF,-1/JNNDS,
+*ENDDO
+!
+!       SET OFFSET VALUE
+!
+CECMOD,CENUM,OFFSET
+!
+!	CLEAN UP
+!
+!CELIST,CENUM
+CMSEL,,USERNODE
+CMDE,USERNODE
+PARRES
+

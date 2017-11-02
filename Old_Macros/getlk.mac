@@ -1,0 +1,24 @@
+/nopr
+!
+!     getlk.mac   A macro to peform a series of LSKP and KPLS 
+!                          commands to select a series of connected lines.
+!
+!              usage:
+!                        getlk,N
+!                        where N=number of LSKP-KPLS loops to perform
+!
+NTIM=ARG1
+*IF,NTIM,LT,1,THEN
+NTIM=1
+*ENDIF
+*DO,IX,1,NTIM
+LSKP
+KPLS
+*ENDDO
+/REPLO
+IX=
+NTIM=
+/gopr
+
+
+                                                        

@@ -1,0 +1,30 @@
+! expands 2d to 3d elements assuming nodes are genrated
+!
+cm,_macro_,elem
+e=elnext(0)
+*get,nele,elem,,count
+c=1000
+*do,u,1,nele
+/gopr
+! LOOP THRU # OF LAYERS FOR THIS ELEMENT
+*DO,s,1,4
+/gopr
+i=nelem(e,1)+c*(s-1)
+j=nelem(e,2)+c*(s-1)
+k=nelem(e,3)+c*(s-1)
+l=nelem(e,4)+c*(s-1)
+m=nelem(e,1)+c*s
+n=nelem(e,2)+c*s
+o=nelem(e,3)+c*s
+p=nelem(e,4)+c*s
+E,i,j,k,l,m,n,o,p
+*ENDDO
+cm,new,elem
+cmsel,,_macro_
+e=elnext(e)
+*enddo
+e=
+i=
+s=
+c=
+

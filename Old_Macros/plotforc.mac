@@ -1,0 +1,28 @@
+/post1
+plot=
+/reset
+table52
+/anno,dele
+*DIM,plot,table,21,2,1, 
+*VGET,plot(2,1),ELEM,21,CENT,Z, , , ,2
+*vget,plot(2,2),elem,21,etab,fnorm  
+*VABS,1,1,1,1 
+*VFUN,plot(1,2),COPY,plot(1,2), , , , 
+*vfill,plot(1,1),data,1e-9
+*vfill,plot(1,2),data,1e-9
+*vfill,plot(21,1),data,2.1
+*vfill,plot(21,2),data,1e-9
+*vfill,plot(0,2),data,2
+*vfill,plot(0,1),data,1
+*vfill,plot(0,0),ramp,0,1
+plot(8,2)=plot(8,2)/1.75
+plot(9,2)=plot(9,2)/1.75
+*VSCFUN,max,MAX,plot(1,2) 
+percent=nint((max-305.71)/305.71*100)
+/AXLAB,X,Axial Location on Pressure Face
+/AXLAB,Y,Normal Force (lbs)
+winfull 
+/tlab,-.9,.9,F404-400 AFT SHAFT/DRIVE SHAFT SPLINE PRESS FACE NORMAL LOADS
+/tlab,-.9,.8,HELIX SLOPE FWD  --> AFT  %wear%" TO 0.0"
+/tlab,-.4,.6,APF PERCENT INCREASE FROM BASELINE (305 lbs) =  + %PERCENT% %
+*vplot,plot(1,1),plot(1,2)

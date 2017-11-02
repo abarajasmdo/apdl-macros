@@ -1,0 +1,11 @@
+/nopr
+!
+!          rfof.mac
+!
+!          a macro to turn forces and moments off
+!
+/pbc,force,                                                                   
+,mome,                                                                         
+/gopr
+
+

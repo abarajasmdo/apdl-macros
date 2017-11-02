@@ -1,0 +1,26 @@
+/solu
+eqslv,pcg
+/runstat
+setspeed
+/output,pcg,stats
+rall
+/output,term
+/solu
+eqslv,front
+/output,front,stats
+!rall
+/output,term
+/sys,echo " ">RUN.STATS
+/sys,echo "      PCG STATS">>RUN.STATS
+/sys,echo " ">>RUN.STATS
+/SYS,grep "In Memory Database Space   =" pcg.stats>>RUN.STATS
+/SYS,grep "Total Memory Space Needed  =" pcg.stats>>RUN.STATS
+/sys,echo " ">>RUN.STATS
+/sys,echo "Disk Space Required">>RUN.STATS
+/SYS,grep "TOTAL   (MB)=" pcg.stats>>RUN.STATS
+/sys,echo " ">>RUN.STATS
+/SYS,grep "EST. TOTAL TIME (SEC)" pcg.stats>>RUN.STATS
+*uilist,RUN,STATS
+
+
+

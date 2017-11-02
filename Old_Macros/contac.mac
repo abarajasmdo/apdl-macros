@@ -1,0 +1,97 @@
+!                 THIS MACRO IS CURRENTLY UNTESTED
+!                 DO NOT USE BEFORE TESTING
+!
+!
+/nopr
+/nerr,0,0
+!
+!    This macro Performs Automatic Generation of contact elements
+!    for 3d Bolt Interfaces
+!
+!          By: PRB         Date:  9/19/94
+finish
+/prep7
+immed,0
+!
+*msg,note
+  Contact Element Generation - Assumes Bolt Macro has been executed
+!
+!    define defaults to return to at end of macro
+!
+*get,coors,active,,csys
+!
+csys,43
+!
+!   get nodes of top flange for contacts to top bolt
+!
+cmsel,u,boltv
+aslv,s,1
+asel,r,loc,z,0
+nsla,s,1
+nsel,r,loc,x,0,rcontk
+cm,uflgn,node
+!
+!   get nodes of bottom flange for contacts to  bolt
+!
+allsel
+cmsel,u,boltv
+aslv,s,1
+asel,r,loc,z,mizloc
+nsla,s,1
+nsel,r,loc,x,0,rcontk
+cm,bflgn,node
+!
+!
+!   get nodes of top flange @ Flange interface
+!
+allsel
+cmsel,u,boltv
+vsel,r,loc,z,-uflt,0.0,1
+lsel,r,loc,z,-uflt
+asll,s,1
+nsla,s,1
+cm,uflgint,node
+!
+!   get nodes of bottom flange @ Flange interface
+!
+allsel
+cmsel,u,boltv
+vsel,r,loc,z,-(uflt+lflt),-uflt,1
+lsel,r,loc,z,-uflt
+asll,s,1
+nsla,s,1
+cm,bflgint,node
+!
+!  create contack 49 elements
+!
+allsel
+!
+et,10,49,
+keyopt,10,7,1
+type,10
+real,50
+r,50,contactk,,,,2
+gcgen,hexnodup,uflgn,,(rcontk-bdia/2)/2
+!
+real,51
+r,51,contactk,,,,2
+gcgen,hexnodlw,bflgn,,(rcontk-bdia/2)/2
+!
+real,52
+r,52,contactk,,,,2
+gcgen,uflgint,bflgint,4
+!
+!!!!!!!!!! 
+immed,1
+/gopr
+/nerr
+csys,coors
+allsel
+!
+!! delete all parameters that are not required
+!
+coors=
+!
+!
+*msg,note
+  Macro Complete: Contact elements with real sets 50-52 Generated 

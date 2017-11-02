@@ -1,0 +1,67 @@
+/com,
+/com, simple example of strings
+/com,   --sheldon, csi
+/com,
+
+!*del,all
+
+*dim,MYSTRNG1,string,128
+*dim,MYSTRNG2,string,128
+*dim,MYSTRNG3,string,128
+*dim,MYSTRCAT,string,128
+*dim,MYSTRSUB,string,128
+*dim,MYSTRFIL,string,128
+
+/com, -----------------------------------------------------------
+/com,
+/com, the players:
+!MYSTRNG1(1,1)=' whassup just having a bud true true'
+!MYSTRNG2(1,1)=' wasabi whassup wasabi whassup true true'
+!MYSTRNG3(1,1)='bud'
+MYSTRNG1(1,1)='This is the first string called MYSTRNG1'
+MYSTRNG2(1,1)='This is the second string called MYSTRNG2'
+MYSTRNG3(1,1)='This is the third string called MYSTRNG3'
+
+/com, -----------------------------------------------------------
+/com,
+/com, Concatenating strings
+/com,   two arguments are strings to concat
+MYSTRCAT(1,1)=strcat(MYSTRNG1(1,1),MYSTRNG2(1,1))
+
+/com, -----------------------------------------------------------
+/com,
+/com, Getting a substring
+/com,   first arg is string
+/com,   second arg is position to start
+/com,   third arg is number of chars to grab
+MYSTRSUB(1,1)=strsub(MYSTRNG1(1,1),4,12)
+
+/com, -----------------------------------------------------------
+/com,
+/com,  filling a string
+/com,    first arg is string to begin
+/com,    second arg is string to insert
+/com,    third arg is position of first string to insert second into
+MYSTRFIL(1,1)=strfill(MYSTRNG1(1,1),MYSTRNG2(1,1),16)
+
+/com, -----------------------------------------------------------
+/com,
+/com,  getting length of string
+/com,    string 1 should be 36 chars
+MYLENGTH=strleng(MYSTRNG1(1,1))
+/com,    string 2 should be 40 chars
+MYLENGTH=strleng(MYSTRNG2(1,1))
+
+/com, -----------------------------------------------------------
+/com,
+/com,  Obtaining position of string
+/com,    arg 1 is string (long string)
+/com,    arg 2 is substring to find
+/com,    return value is string position of 2 in 1
+MYPOSITI=strpos(MYSTRNG1(1,1),MYSTRNG3(1,1))
+
+/com, -----------------------------------------------------------
+/com,
+/com,  that's all, folks!
+/com,
+/com, -----------------------------------------------------------

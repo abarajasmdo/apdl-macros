@@ -1,0 +1,119 @@
+From - Fri Sep 29 13:15:51 2000
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2650.21)
+	id TZMCAZK8; Thu, 28 Sep 2000 10:23:05 -0400
+Received: from unknown-24-5.pilot.net by gemb1.ae.ge.com (8.8.8/1.1.22.3/16Sep99-0217PM)
+	id KAA0000025092; Thu, 28 Sep 2000 10:23:12 -0500 (CDT)
+Received: from unknown-147-100.pilot.net (localhost [127.0.0.1]) by unknown-24-5.pilot.net with ESMTP id HAA03695 for <dan.bohlen@ae.ge.com>; Thu, 28 Sep 2000 07:23:03 -0700 (PDT)
+Received: from ch.egroups.com (ch.egroups.com [208.50.99.226]) by unknown-147-100.pilot.net with SMTP id HAA15212 for <dan.bohlen@ae.ge.com>; Thu, 28 Sep 2000 07:22:02 -0700 (PDT)
+Received: from [10.1.10.37] by ch.egroups.com with NNFMP; 28 Sep 2000 14:21:54 -0000
+Received: (EGP: mail-6_0_3); 28 Sep 2000 14:21:50 -0000
+Received: (qmail 4426 invoked from network); 28 Sep 2000 14:21:50 -0000
+Received: from unknown (10.1.10.26) by m3.onelist.org with QMQP; 28 Sep 2000 14:21:50 -0000
+Received: from unknown (HELO laxhuf1.trane.com) (198.80.4.66) by mta1 with SMTP; 28 Sep 2000 14:21:49 -0000
+Received: by nacg.trane.com id JAA16752 (InterLock SMTP Gateway 4.2 for xansys@egroups.com); Thu, 28 Sep 2000 09:21:48 -0500 (CDT)
+Received: by nacg.trane.com (Internal Mail Agent-1); Thu, 28 Sep 2000 09:21:48 -0500 (CDT)
+Received: by nacg.trane.com (Internal Mail Agent-0); Thu, 28 Sep 2000 09:21:48 -0500 (CDT)
+Message-Id: <200009281422.HAA15212@unknown-147-100.pilot.net>
+X-eGroups-Return: sentto-57960-16052-970150911-dan.bohlen=ae.ge.com@returns.onelist.com
+X-Sender: bweathers@trane.com
+X-Apparently-To: xansys@egroups.com
+To: "'xansys@egroups.com'" <xansys@egroups.com>
+X-Mailer: Internet Mail Service (5.5.2448.0)
+From: "Weathers, Bob" <bweathers@trane.com>
+MIME-Version: 1.0
+Mailing-List: list xansys@egroups.com; contact xansys-owner@egroups.com
+Delivered-To: mailing list xansys@egroups.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@egroups.com>
+Date: Thu, 28 Sep 2000 09:21:45 -0500
+Reply-To: xansys@egroups.com
+Subject: RE: [xansys] APDL/UIDL Inquiry of PWD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAQRYirAAAgm5J5JQCgg3Gx0utjVdfJq
+
+This is how I do it in 5.6.2 on NT 4.0 -
+
+! GetDir.mac
+!
+! 	RETURNS:
+!		sDIR - a string parameter containing up to 256 characters of
+the current path
+!
+!	NOTES:
+!		sDIR will be deleted and recreated if it exists when GetDir
+is invoked.
+!
+*GET, AR20, 'PARM', 'SDIR', 'TYPE'
+*IF, AR20, NE, -1, THEN!{
+   *DEL, sDIR
+*ENDIF!}
+*DIM, sDIR, STRI, 32*8, 1
+/SYS,cd > ansys.txt
+*VRE, sDIR(1,1), ansys, txt
+(32A8)
+/DEL, ansys, txt
+
+
+
+
+-----Original Message-----
+From: Dave & Kathleen Johnson [mailto:dandkj@penn.com]
+Sent: Thursday, September 28, 2000 7:04 AM
+To: xansys@egroups.com
+Subject: [xansys] APDL/UIDL Inquiry of PWD
+
+
+Does anybody have a slick way to determine the PWD (present working
+directory) as a
+character string variable in ANSYS 5.6 ?
+  Its an unusual item to request, I think, since the PWD is set in the ANSYS
+Launcher.  Once ANSYS is running, it just works in the PWD with no option to
+change
+directories short of quitting and launching again.
+
+  (I am writing a WinNT command (.cmd) file to execute a solution run at a
+time
+other than the interactive model creation session, i.e., like start after
+5pm.  If I
+can query the PWD during the interactive session, I can make sure the
+"batch" run
+uses that same directory in the .cmd file as was used during the interactive
+session.   The command file is created using *CFOPEN and *VWRITE and APDL
+during the
+interactive session and is a "generic" approach that can work for deferred
+execution
+of many individual model cases)
+
+Thanks,
+Dave Johnson
+Penn State-Erie
+Erie, PA, USA
+
+
+
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@eGroups.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@eGroups.com
+
+ARCHIVED on:
+http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+(New postings not going here anymore - new archive? )
+http://www.eScribe.com/software/xansys/
+             
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@eGroups.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@eGroups.com
+
+ARCHIVED on:
+http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+(New postings not going here anymore - new archive? )
+http://www.eScribe.com/software/xansys/
+             
+

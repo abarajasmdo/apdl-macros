@@ -1,0 +1,172 @@
+!
+! espec.mac  uses siesta to input basic mechanical matl properties into
+!		a model.
+!
+!  By:  Dan Bohlen    4/10/96
+!
+!  development:  Could be modified to use more of siesta functions
+!
+!  MACRO PROMPTS USER FOR ANSYS MATL REF # AND ESPEC MATL NUMBER FROM
+!   A LIST.  IT CHECKS TO SEE FOR THE ANSYS MATL NUMBER EXISTS,  BUT WILL
+!   OVERWRITE.  IT ALSO CHECK SUCCESSFUL COMPLETION
+!
+
+!/nopr
+
+/prep7
+
+!  list latest espec materials
+
+/sys, echo "list"  > InPuT
+/sys, echo "q" >>  InPuT
+/sys, siesta espec < InPuT > OuT
+*UILIST,OuT
+/sys, rm InPuT OuT
+
+!  check to see if material array is set
+
+*GET,SETUP,PARM,MATL_ID,TYPE
+*IF,SETUP,EQ,-1,THEN
+*DIM,MATL_ID,STRING,128,500
+*ENDIF
+
+!	*DO,NUM_MATS,1,50
+*del,_mat
+*del,_trim
+*dim,_trim,string,128
+*dim,_mat,string,128
+*dim,duh,string,128
+var='_mat(1)'
+
+xmulti,'start',3
+*cset,1,3,mat_num,'Ansys Matl Ref # ',1
+*cset,4,6,var,'Mat name - in single quotes',0
+*cset,7,9,ortho,'Enter 1 for bolthole',0
+*cset,10,12,more_mat,'Enter 1 for more mats to define',0
+xmulti,'end'
+
+duh(1)=_mat(1)
+/eof
+
+! Check to see if material already defined!
+EXMAT=MPINQR(mat_num,,1)
+
+*IF,exmat,ne,0,then
+
+*MSG,info,mat_num
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %/ &
+WARNING! ANSYS MATERIAL # %I EXISTS!  ENTER NUMBER AGAIN TO %/ &
+REPLACE OR ENTER A NEW ANSYS MATL REFERENCE NUMBER. %/ &
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/sys,echo '\007' 
+*ASK,MNUM2,REF # (0 to exit)... READ WARNING BELOW,0
+
+	*IF,MNUM2,EQ,mat_num,THEN
+	*msg,info,mat_num
+	OK... replacing Ansys Material # %I 
+	MPDELE,ALL,mat_num
+	dow%mat_num%=
+	*endif
+*endif	
+!*if,MNUM2,eq,0,*exit
+!*endif
+
+!  ok let's get started .............
+
+!  fix material name
+
+blah=strleng(_mat(1))
+_trim(1)=strsub(_mat(1),1,blah-1)
+_mat(1)=_trim(1)
+
+!  start writing SIESTA input file
+
+/sys,echo "ANSYS" > siesta_epsec.inp
+*cfopen,siesta_epsec,inp,,append
+*vwrite,_mat(1)
+%c
+
+!  bolthole?
+
+*if,ortho,eq,1,then
+
+!  get some values
+
+xmulti,'start',3
+*cset,1,3,DOW,'Siesta D over W value (0 to calc) ',0
+*cset,4,6,HOLE_DIA,'Hole Diameter (in.)',0
+*cset,7,9,HOLE_CL,'Hole centerline diameter (in.)',0
+*cset,10,12,NOFHOLES,'Number of holes in row (total)',0
+xmulti,'end'
+
+	*if,DOW,eq,0,then
+	DOW=HOLE_DIA/(HOLE_CL)/(3.141592654/NOFHOLES)
+	*endif
+
+*vwrite
+('MATL DOW')
+*VWRITE,mat_num,DOW
+(I8,2X,F20.16)
+DOW%mat_num%=DOW
+
+*ELSE		!  not a bolthole
+
+DOW%mat_num%=
+*vwrite
+('MATL')
+*VWRITE,mat_num
+(I8)
+
+*endif      !  bolhole IF close
+
+*vwrite
+('q')
+*cfclos		!  done with siesta input file
+
+MATL_ID(1,mat_num)=_mat(1)	! store material name
+
+
+!  let's do the siesta thang
+
+/sys, rm -f f??.dat
+/gopr
+/sys,  siesta espec < siesta_epsec.inp
+
+/inp,f35.dat
+!/nopr
+
+/syp,mv f35.dat,MATL_%mat_num%
+f='f32.'
+/syp,mv f32.dat,%f%%mat_num%
+
+!*if,more_mat,eq,0,*EXIT
+
+!*ENDDO		!  stop donig mats
+
+!  clean up
+
+setup=
+*del,_mat
+*del,_trim
+var=
+mat_num=
+ortho=
+more_mat=
+EXMAT=
+MNUM2=
+blah=
+DOW=
+HOLE_DIA=
+HOLE_CL=
+NOFHOLES=
+f=
+!/sys, rm siesta_epsec.inp
+
+
+
+
+
+
+
+
+

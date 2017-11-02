@@ -1,0 +1,13 @@
+!  converts rpm to rad/sec
+/nopr
+/pmacro
+PARSAV
+/solu
+/GOPR
+*ASK,RPM,SPEED IN RPM,0
+RAD_SEC=RPM*3.141592654/30
+*msg,info,rad_sec
+Speed in radians sec %G
+Fnc_OMEGA
+PARRES
+

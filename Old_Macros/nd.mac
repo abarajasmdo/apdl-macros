@@ -1,0 +1,13 @@
+/nopr
+!
+!         nd.mac                   This macro creates nodes with a node
+!                                          number that is automatically assigned
+!                                          as MXND=MXND+1
+!
+*get,ar11,mxnd                                                                  
+ar11=ar11+1                                                                     
+/gopr
+n,ar11,arg1,arg2,arg3               
+*msg,note,ar11,arg1,arg2,arg3
+(' Created Node ',f6.0,' at X=',f8.4,' Y=',f8.4,' Z=',f8.4)                                            
+

@@ -1,0 +1,53 @@
+!
+!               PDIV.MAC      A macro to divide a pipe element into two or
+!                                           more pipe elements.  
+!
+!                Usage:       pdiv,element number, number of elements to be created
+!
+!
+!
+*if,arg2,ge,2,:skip1
+arg2=2
+:skip1
+*get,nmax,mxnd
+*get,n1,en1,arg1
+*get,n2,en2,arg1
+fill,n1,n2,arg2-1,nmax+1,1
+*get,r1,real,arg1
+*get,m1,mat,arg1
+*get,t1,type,arg1
+real,r1
+mat,m1
+type,t1
+edel,arg1
+nj=nmax+1
+e,n1,nj                           ! create the first element
+lcnt=1                            ! loop counter set to 1
+lpmx=arg2-2               ! maximum number of loops to be done
+*if,lpmx,le,0,:lend       ! check to see if loop needs to be entered
+:lp1
+ni=nmax+lcnt
+nj=nmax+lcnt+1
+e,ni,nj                             ! create the intermediate elements
+lcnt=lcnt+1
+*if,lcnt,le,lpmx,:lp1
+:lend
+e,nj,n2                            ! create the last element
+:end
+*msg,NOTE,arg2
+('Created ',f6.0,' elements')
+n1=
+n2=
+ni=
+nj=
+r1=
+m1=
+t1=
+lcnt=
+lpmx=
+
+
+
+
+
+

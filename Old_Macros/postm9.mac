@@ -1,0 +1,55 @@
+! postprocesses 2d t58 model for location 9 
+!
+/int
+/post1
+/get,12,trans1,u12i
+setg
+esel,,3284
+nelem
+ninv
+einv
+edele,all
+ndele,all
+nall
+eall
+stres,csy,42,2
+,csz,42,4
+set,17,20
+/com, Burst + 3 sec
+prstr,csy,csz
+reset
+!
+/post1
+!/get,12,trans1,u12i
+setg
+esel,,3284
+nelem
+ninv
+einv
+edele,all
+ndele,all
+nall
+eall
+stres,csy,42,2
+,csz,42,4
+set,29,20
+/com, Burst + 22 sec
+prstr,csy,csz
+reset
+/post1
+/get,12,chop,u12i
+setg
+esel,,3284
+nelem
+ninv
+einv
+edele,all
+ndele,all
+nall
+eall
+stres,csy,42,2
+,csz,42,4
+set,10,20
+/com, Burst + 260 sec  (chop)
+prstr,csy,csz
+reset

@@ -1,0 +1,726 @@
+From - Wed Dec  2 08:03:16 1998
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2232.9)
+	id X53CDJWB; Tue, 1 Dec 1998 21:13:52 -0500
+Received: from im.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA04387; Tue, 1 Dec 1998 21:14:21 -0500
+Received: (from majordom@localhost) by im.ge.com (8.6.10/8.6.10) id VAA02548 for xansys-outgoing; Tue, 1 Dec 1998 21:04:17 -0500
+Received: from thomas.ge.com (thomas.ge.com [3.47.28.21]) by im.ge.com (8.6.10/8.6.10) with ESMTP id VAA02540 for <xansys@im.ge.com>; Tue, 1 Dec 1998 21:04:13 -0500
+Received: from ns.ge.com (ns.ge.com [192.35.39.24])
+	by thomas.ge.com (8.9.1/8.9.1) with ESMTP id VAA11445
+	for <xansys@im.ge.com>; Tue, 1 Dec 1998 21:00:03 -0500 (EST)
+Received: from aklbh1u.airnz.co.nz (aklbh1u.airnz.co.nz [203.97.13.39])
+	by ns.ge.com (8.9.1/8.9.1) with ESMTP id PAA07315
+	for <xansys@im.ge.com>; Tue, 1 Dec 1998 15:17:28 -0500 (EST)
+Received: (from daemon@localhost)
+	by aklbh1u.airnz.co.nz (8.9.1a/8.9.1) id JAA09083
+	for <xansys@im.ge.com>; Wed, 2 Dec 1998 09:17:23 +1300 (NZDT)
+Received: from aklndcvu.airnz.co.nz(10.65.16.76) by aklbh1u via smap (V2.0beta)
+	id xma009055; Wed, 2 Dec 98 09:17:14 +1300
+Received: (from daemon@localhost)
+	by aklndcvu.airnz.co.nz (8.9.1a/8.9.1) id JAA28203
+	for <xansys@im.ge.com>; Wed, 2 Dec 1998 09:17:12 +1300 (NZDT)
+Received: from exchange(10.65.20.80) by aklndcvu via smap (V2.0beta)
+	id xma028156; Wed, 2 Dec 98 09:16:48 +1300
+Received: by aklex05w.airnz.co.nz with Internet Mail Service (5.5.2232.9)
+	id <XP01WBBR>; Wed, 2 Dec 1998 09:16:47 +1300
+Message-Id: <31A9B338098ED111B62600805F59B8D26BE2E6@chcex01w.airnz.co.nz>
+From: "Hustedt, Ernst" <Ernst.Hustedt@airnz.co.nz>
+To: "'xansys@im.ge.com'" <xansys@im.ge.com>
+Subject: RE: XANS: "Baloon Animals" Syndrome
+Date: Wed, 2 Dec 1998 09:16:45 +1300 
+Mime-Version: 1.0
+X-Mailer: Internet Mail Service (5.5.2232.9)
+Content-Type: multipart/mixed;
+	boundary="----_=_NextPart_000_01BE1D67.8526F840"
+Sender: owner-xansys@im.ge.com
+Precedence: bulk
+Reply-To: xansys@im.ge.com
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAwV9/aAAAwNGbACgBg3YGR0aMGXHKwA
+
+This message is in MIME format. Since your mail reader does not understand
+this format, some or all of this message may not be legible.
+
+------_=_NextPart_000_01BE1D67.8526F840
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+We had similar problems when modelling a helical gear set for stress
+analysis(5.4 NT) . In our business we don't have time to stuff around, =
+so I
+gave up after a few attempts and resorted to my old macro that I wrote =
+well
+before ANSYS could do extrusion of elements. The macro works on =
+elements and
+nodes only and has an important feature over ANSYS extrusion, i.e.  you =
+have
+direct control over extrusion increment distances. Here it is (writing =
+it
+was a bit of a rush job):
+
+
+ <<A_EXTR.MAC>>  <<A_PERCEN.MAC>>=20
+
+The macro calls another macro to give progress feedback as it can run =
+for
+quite a bit. May be It is handy for others too.
+
+Have fun. If you have any queries contact me.
+
+ernst
+
+
+Dr. Ernst Hustedt,
+A.M.E.S - advanced mechanical engineering solutions ltd.
+P.O. Box 36-018
+Merivale, Christchurch, New Zealand
+ph:     +64 +3  358-0125
+fax:    +64 +3 358-0165
+	email:   solved@ames.co.nz
+
+> -----Original Message-----
+> From:	Viktor Doundakov [SMTP:Viktor.Doundakov@ReadRite.com]
+> Sent:	Wednesday, 2 December 1998 06:44
+> To:	'xANSYS mailing list'
+> Subject:	XANS: "Baloon Animals" Syndrome
+>=20
+> Hello everybody,
+>=20
+> I am having a strange problem with the dragging commands:
+> For example some times when I drag an area along a spline path the =
+final
+> volume looks like a "balloon animal": somewhere along the spline the =
+area
+> is
+> twisted around the spline like 90=B0 or 180=B0 and continues on. The =
+same
+> thing
+> is resulting using a line or a KP for dragging.=20
+> The whole thing is unpredictable (if you model a new geometry you do =
+not
+> know if you are going to get it) but I've seen a colleague of mine =
+the get
+> the same thing.=20
+>=20
+> Are we the only ones that are having this problem? This thing is in =
+5.3,
+> 5.4
+> and 5.5.=20
+> 5.4 was about the get released so ANSYS promised to fix it for 5.5.=20
+> But they did not.=20
+> :-((((
+>=20
+>=20
+> Viktor Doundakov
+> R&D Engineer
+> Read-Rite Corporation
+> Direct: 510-683-7495    Main: 510-683-6100   FAX: 510-683-7065
+> e-mail: Viktor.Doundakov@readrite.com
+>=20
+> ---------------------------------------------------------
+> Archived on http://www.tu-chemnitz.de/~thieme/ansys/ansys.html
+> To unsubscribe put "UNSUBSCRIBE XANSYS (your email address)"
+> in the message body and email to:  MAJORDOMO@IM.GE.COM
+
+
+------_=_NextPart_000_01BE1D67.8526F840
+Content-Type: application/octet-stream;
+	name="A_EXTR.MAC"
+Content-Disposition: attachment;
+	filename="A_EXTR.MAC"
+Content-Location: ATT-0-2039720F5289D211A67D00805F85B844-A
+	_EXTR.MAC
+Content-Transfer-Encoding: quoted-printable
+
+/nopr
+! =
+************************************************************************=
+**
+! Ernie's little extrusion macro =20
+!
+!   This macro creates ELEMENT TYPE No.'s 51, 52 and 53 (no check if =
+allready
+!   in use) generating LINK8 (TYPE 51) from POINT elements, SHELL63 =
+(TYPE 52)
+!   from 2-noded elements and SOLID45 (TYPE 53) from 3- or 4-noded =
+elements.
+!
+!   All currently selected elements are extruded.=20
+!
+!   The extrusion is carried out in the currently active coordinate =
+system=20
+!   using the X, Y, Z increments stored in the array ARY_(NSPA_,3), =
+where NSPA_=20
+!   is the number of extrusion increments or steps.
+!=20
+!   No check is made on the element type of the 'die' elements. The =
+first four=20
+!   nodes of an element are are taken as the vertices regardless of the =
+element
+!   type. This means, the 1st face of a volume element can be used as =
+'die'.
+!  =20
+!   The elements generated are given the currently active MAT and REAL =
+No.s
+!  =20
+!   No check for coinciding nodes is made.
+!
+!   Before re-using the macro, change the attributes of previously =
+generated=20
+!   elements to keep them separate=20
+!  =20
+!   All local parameters used in this macro have an underscore as the =
+last
+!   character ( XYZ_ ) and will be deleted before exiting, except the =
+array=20
+!   ARY_(n,3) which stores the extrusion increments and the flag NSPA_ =
+(number
+!   of spacings). Both ARY_ and NSPA_ will be kept at request for later =
+re-use.=20
+!   NSPA_ can then be redefined (not bigger than initial value) to =
+re-use=20
+!   the first NSPA_ spacings.
+!
+!   If the number of spacings is passed to the macro (as ARG1) the =
+extrusion=20
+!   is carried out without questions asked (BATCH mode) using the =
+current=20
+!   parameters, i.e. the array ARY_(ARG1,3) must be defined from a =
+previous=20
+!   call or otherwise. Also, when used in this way the ARY_ array and =
+the=20
+!   flag NSPA_ will be kept for re-use.
+!
+!
+!   NOTE:
+!=20
+! *  This macro calls the A_PERCEN.MAC message routine for progress =
+report.
+!
+! *  Since Rev. 5.1 the macro must be run in two steps as the *VEDIT =
+command
+!    is not executed when it should, but at the end of the macro (BUG =
+?!?!).
+!    The work-around is to run the macro twice: Do a 1st run to define =
+the extrusion=20
+!    increments and exit with the option to keep the data. At the end =
+of=20
+!    this the array edit window will pop up and you can change the =
+individual=20
+!    values. Then enter the macro again and select to extrude directly.
+!
+!
+!                                              E Hustedt, A.M.E.S, =
+Chch, N.Z.
+!                                              PHONE: +64+3 358-0125
+!                                              FAX:         358-0165
+!                                              solved@ames.co.nz
+!    June 94
+!***********************************************************************=
+*****=20
+*get,iwo_,active,,rout       ! Make sure we are in /PREP7
+*if,iwo_,eq,17,:YES_
+*msg,error
+ You are not in PREP7 !
+*go,:BOTTOM
+
+:YES_
+ag1_ =3D arg1
+*if,ag1_,gt,0,:OK1_          ! Proceed in 'BATCH' mode if ARG1 > 0
+
+
+*if,nspa_,ne,0,:VAR1_        ! Go straight to ARRAY EDIT if re-use
+
+:TOP_=20
+*msg,info=20
+The A-M-E-S Extrusion MACRO (Extrude selected elements) %/ %/&=20
+[1].....Define Spacings %/ [2].....Extrude %/ [0].....EXIT =20
+
+*ask,iw_,' code ',0
+*if,iw_,eq,0,:DONE_
+*if,iw_,eq,1,:SETUP_
+*if,iw_,eq,2,:EXTRU_
+*go,:TOP_
+
+
+
+:SETUP_
+*if,nspa_,ne,0,:VAR1_        ! Skip this if re-use of array
+*msg,info
+Number of extrusion INCREMENTS: %/ If positive, equal spacing is =
+assumed, &
+ %/ if negative variable spacing of nodes is assumed.=20
+*ask,ispa_,'number of increments',0
+*if,ispa_,eq,0,:TOP_
+ nspa_=3Dabs(ispa_)
+ ag1_=3Dnspa_
+*dim,ary_,array,nspa_,3      ! Define array for X,Y,Z increments
+*if,ispa_,lt,0,:VAR_
+
+! ---------------------------------- Setup constant X,Y,Z increments
+*msg,info
+Enter constant extrusion increments (defaults =3D 0.0)
+*ask,x_,X-Increment,0
+*ask,y_,Y-Increment,0
+*ask,z_,Z-Increment,0
+*vfil,ary_(1,1),ramp,x_,0
+*vfil,ary_(1,2),ramp,y_,0
+*vfil,ary_(1,3),ramp,z_,0
+*go,:VAR_
+
+
+
+:VAR1_
+! ---------------------------------- Edit Array of Extrusion Increments
+*msg,note
+ %/ To change the number of increments %/ exit without saving the ARRAY =
+&
+and re-enter this macro !
+ag1_=3Dnspa_
+
+:VAR_
+*get,cs_,active,,csys
+*msg,note,cs_
+Columns 1, 2, 3 are the X, Y and Z coordinates in the current CSYS =3D =
+%I %/ &
+ ---- When in ARRAY EDIT, use SAVE to keep changes, then QUIT !
+*vedit,ary_(1,1)
+*go,:TOP_
+
+
+:EXTRU_
+*if,nspa_,gt,0,:OK1_
+*msg,error
+First the X,Y,Z increments for extrusion must be defined !
+*go,:TOP_
+
+
+:OK1_
+nspa_ =3D ag1_
+! =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D GET READY =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+cm,nodum1_,nodes               ! Save current node set as            =
+<NODUM1_>
+allsel,all,node                ! Select all nodes=20
+*get,maxnp_,node,,num,max      !    to find maximum node number      =
+<MAXNP_>
+*dim,nodar_,array,maxnp_,1     !    and to set up node vector        =
+<NODAR_>
+
+nsle,s                         ! Select nodes of selected elements
+cm,nodum2_,nodes               !    and save node set as             =
+<NODUM2_>
+*get,nump_,node,,count         ! Get number of nodes in set          =
+<NUMP_>
+
+*get,numel_,elem,,count        !   Get number of selected elements   =
+<NUMEL_>
+
+newnod_=3Dnump_*nspa_            ! Number of nodes generated           =
+<NEWNOD_>
+newel_=3Dnumel_*nspa_            ! Number of elements generated        =
+<NEWEL_>
+
+*msg,note,newnod_,newel_
+ %/ Generating %I  Nodes,  and    %I  Elements=20
+
+*if,newel_*newnod_,le,0,:NOEL_
+
+*if,arg1,gt,0,:DOIT_
+*ask,idum_,'<CR> or any Char to quit',0
+*if,idum_,ne,0,:TOP_
+
+
+:DOIT_
+! =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D NODE GENERATION =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+immed,0
+
+n_=3D0                           ! Initialize current node number      =
+<N_>
+i_=3D0                           ! and Node count                      =
+<I_>
+
+iperco_=3D0
+
+:NEXTN_
+i_=3Di_+ 1
+ *if,i_,gt,nump_,:JUMP_
+    *get,nn_,node,n_,nxth      ! get next higest node number,        =
+<NN_>
+     n_=3Dnn_                    ! make it current
+     newnp_=3Di_+ maxnp_         !=20
+     nodar_(n_)=3Dnewnp_         ! and set first new node number
+       =20
+     adx_=3D0                    ! Initialize accumulated increments   =
+<ADX_>
+     ady_=3D0                    !                                     =
+<ADY_>
+     adz_=3D0                    !                                     =
+<ADZ_>
+                               ! Loop over No. of extrusion steps
+       *do,j_,1,nspa_
+        adx_=3Dadx_+ary_(j_,1)=20
+        ady_=3Dady_+ary_(j_,2)
+        adz_=3Dadz_+ary_(j_,3)
+        n,newnp_,nx(n_)+adx_,ny(n_)+ady_,nz(n_)+adz_
+        newnp_=3Dnewnp_+nump_
+       *enddo
+
+a_percen,i_,nump_,'Node Gen'
+/nopr
+=20
+*go,:NEXTN_
+:JUMP_
+                       =20
+! =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =
+ ELEMENT GENERATION  =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+
+iperco_=3D0
+
+ie_=3D0                          !   Initialize current element no.   =
+<IE_>
+ne1_=3D0                         !   and counters for LINEs           =
+<NE1_>
+ne2_=3D0                         !                    AREAs           =
+<NE2_>=20
+ne3_=3D0                         !                    VOLUMEs         =
+<NE3_>
+i_=3D0                           !                    Elements in Die =
+<I_>
+
+:NEXTE_                        !   Loop over Elements in the Die
+i_=3Di_+ 1                       !
+
+a_percen,i_,numel_,'Elem Gen'
+
+*if,i_,gt,numel_,:END2_        !   until all elements are done
+                               !
+*get,iie_,elem,ie_,nxth        !   Get next element number          =
+<IIE_>
+ie_=3Diie_                       !       and make it current
+n1_=3Dnelem(ie_,1)               !   Get element nodes one by one    =20
+n2_=3Dnelem(ie_,2)               !
+*if,n2_,eq,0,:ONE_             !   and identfy as POINT if n2_=3D0
+
+n3_=3Dnelem(ie_,3)
+*if,n3_,eq,0,:TWO_             !               as LINE if n3_=3D0
+
+n4_=3Dnelem(ie_,4)
+*if,n4_,eq,0,:THREE_           !               as TRIA. AREA if n4_=3D0
+
+
+:FOUR_                         !  in all other cases treat as QUAD. =
+AREA
+   *if,ne3_,eq,0,then    =20
+    et,53,SOLID45    ! <<------------------ Generate SOLID45 from =
+RECTANGLE
+   *endif
+
+type,53        =20
+
+j_=3D1
+
+ne3_=3Dne3_+1                     ! First element
+   n11_=3Dnodar_(n1_)
+   n22_=3Dnodar_(n2_)
+   n33_=3Dnodar_(n3_)
+   n44_=3Dnodar_(n4_)
+  e,n1_, n2_, n3_, n4_, n11_, n22_, n33_, n44_
+   n1_=3Dn11_
+   n2_=3Dn22_
+   n3_=3Dn33_
+   n4_=3Dn44_
+
+:DO4_                           ! other elements
+j_=3Dj_+1
+*if,j_,gt,nspa_,:NEXTE_
+
+ne3_=3Dne3_+1
+   n11_=3Dn1_+nump_
+   n22_=3Dn2_+nump_
+   n33_=3Dn3_+nump_
+   n44_=3Dn4_+nump_
+  e,n1_, n2_, n3_, n4_, n11_, n22_, n33_, n44_
+   n1_=3Dn11_
+   n2_=3Dn22_
+   n3_=3Dn33_
+   n4_=3Dn44_
+*go,:DO4_
+
+! --------------- Generate SOLID45 from TRIANGLE
+:THREE_       =20
+   *if,ne3_,eq,0,then          !  I-J-K,K--L-M-N,N
+    et,53,SOLID45
+   *endif
+
+type,53
+j_=3D1
+
+ne3_=3Dne3_+1                     ! First element
+   n11_=3Dnodar_(n1_)
+   n22_=3Dnodar_(n2_)
+   n33_=3Dnodar_(n3_)
+  e,n1_, n2_, n3_, n3_, n11_, n22_, n33_, n33_
+   n1_=3Dn11_
+   n2_=3Dn22_
+   n3_=3Dn33_
+
+:DO3_                            ! other elements
+j_=3Dj_+1
+*if,j_,gt,nspa_,:NEXTE_
+
+ne3_=3Dne3_+1
+   n11_=3Dn1_+nump_
+   n22_=3Dn2_+nump_
+   n33_=3Dn3_+nump_
+  e,n1_, n2_, n3_, n3_, n11_, n22_, n33_, n33_
+   n1_=3Dn11_
+   n2_=3Dn22_
+   n3_=3Dn33_
+*go,:DO3_
+
+
+:TWO_          ! --------------- Generate SHELL63 from LINE
+   *if,ne2_,eq,0,then
+    et,52,SHELL63
+   *endif
+
+type,52
+j_=3D1
+
+ne2_=3Dne2_+1                     ! First element
+   n11_=3Dnodar_(n1_)
+   n22_=3Dnodar_(n2_)
+  e,n1_, n2_, n22_, n11_,=20
+   n1_=3Dn11_
+   n2_=3Dn22_
+
+:DO2_
+j_=3Dj_+1
+*if,j_,gt,nspa_,:NEXTE_
+
+ne2_=3Dne2_+1
+   n11_=3Dn1_+nump_
+   n22_=3Dn2_+nump_
+  e,n1_,n2_,n22_,n11_
+   n1_=3Dn11_
+   n2_=3Dn22_
+*go,:DO2_
+
+
+:ONE_            ! ------------- Generate 2-noded LINE from POINT
+   *if,ne1_,eq,0,then
+    et,51,LINK8
+   *endif
+
+type,51
+j_=3D1
+
+ne1_=3Dne1_+1                     ! First element
+   n11_=3Dnodar_(n1_)
+  e,n1_, n11_
+   n1_=3Dn11_
+
+:DO1_                           ! other elements
+j_=3Dj_+1
+*if,j_,gt,nspa_,:NEXTE_
+
+ne1_=3Dne1_+1
+   n11_=3Dn1_+nump_
+  e,n1_, n11_
+   n1_=3Dn11_
+*go,:DO1_
+
+:END2_
+
+! =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+ End of Extrusion Step =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+immed,1
+
+*msg,note,newnod_,ne1_,ne2_,ne3_,newel_
+Generated NODES: %I %/ LINE Elements(ET,51): %I %/ AREA =
+Elements(ET,52): %I %/ &
+VOLUME Elements(ET,53): %I   =3D> Elements Total: %I
+
+cmsel,u,nodum2_                ! Make only previous set and new nodes =
+active=20
+cmsel,a,nodum1_               =20
+*go,:DONE_
+
+:NOEL_
+*msg,error
+No NODES and/or no ELEMENTS in current set !
+
+
+! =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D Exit Macro =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+:DONE_
+cmdel,nodum1_                  ! Delete stored node sets
+cmdel,nodum2_                  !
+
+*if,arg1,gt,0,:JUMP2_
+
+*if,nspa_,eq,0,:JUMP1_
+*msg,info
+The array containing extrusion increments will be deletet! %/ If you =
+want to &
+re-use the data enter <1> here. (Note: Parameters ARY_ and NSPA_ are =
+kept)=20
+*ask,iw_,'<CR> to continue',0
+*if,iw_,ne,1,:JUMP1_
+*msg,note
+When re-entering this macro it will take you straight to ARRAY EDIT.
+*go,:JUMP2_
+
+:JUMP1_
+*set,ary_                      ! Clear array and
+nspa_=3D                         ! row number parameter
+:JUMP2_
+                               ! clear all other local parameters
+ag1_=3D
+nodar_=3D
+newnp_=3D
+iw_ =3D                         =20
+i_  =3D
+j_  =3D
+
+ispa_ =3D
+
+
+x_ =3D
+y_ =3D
+z_ =3D
+adx_=3D
+ady_=3D
+adz_=3D
+dis_=3D
+
+idum_=3D
+
+cs_=3D
+
+ie_=3D
+iie_=3D
+
+maxnp_ =3D
+nump_  =3D
+numel_ =3D
+
+n_  =3D
+nn_ =3D
+
+n1_ =3D
+n11_=3D
+n2_ =3D
+n22_=3D
+n3_ =3D
+n33_=3D
+n4_ =3D
+n44_=3D
+
+ne1_=3D
+ne2_=3D
+ne3_=3D
+ne4_=3D  =20
+newnod_=3D
+newel_=3D
+iperco_=3D
+
+:BOTTOM
+iwo_=3D
+/gopr
+=1A
+------_=_NextPart_000_01BE1D67.8526F840
+Content-Type: application/octet-stream;
+	name="A_PERCEN.MAC"
+Content-Disposition: attachment;
+	filename="A_PERCEN.MAC"
+Content-Location: ATT-1-2139720F5289D211A67D00805F85B844-A
+	_PERCEN.MAC
+
+/nopr
+! **************************************************************************
+!   Ernie's little HOW FAR WE GOT macro  
+!
+!   This macro issues a message if the first value is the first time 
+!   near 20, 40, 60, 80, or 100% of the second value within a tolerance
+!   to monitor the progress of a APDL procedure (e.g. of a Loop).
+!
+!  ARG1 = first value
+!  ARG2 = second value
+!  ARG3 = Name of calling program
+!
+!  Note:  Before first call set IPERCO_ = 0 (outside the loop)
+!         to avoid '0% DONE' message.
+!
+!
+!     Example:
+!                .
+!                .
+!                
+!                 IPERCO_=0           
+!
+!                     *DO,i,1,last
+!
+!                      A_PERCEN,i,last,'calling_prog'
+! 
+!                       (do some thing)
+!
+!                     *ENDDO
+!             
+!                 IPERCO_=
+!                .
+!                .
+!                                              E Hustedt, A.M.E.S, Chch, N.Z.
+!                                              
+!  November 94
+! ************************************************************************** 
+
+MACNAM_=arg3
+
+iperc_=nint(arg1/arg2*10)
+
+iperc1_=nint(iperc_/2)
+iperc2_=iperc1_*2
+
+*if,iperc2_,ne,iperco_,then
+
+*if,iperc2_,eq,iperc_,then
+
+*if,iperc_,lt,10,then
+*msg,info,MACNAM_,iperc_*10
+Process < %C >:  %I percent done!
+*else
+*msg,info,MACNAM_,
+Process < %C > Almost completed!
+*endif
+
+iperco_=iperc2_
+*endif
+
+*endif
+
+iperc_=
+iperc1_=
+iperc2_=
+
+------_=_NextPart_000_01BE1D67.8526F840--

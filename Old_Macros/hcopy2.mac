@@ -1,0 +1,45 @@
+!
+! HCOPY.MAC - DOES EITHER A RASTER OR VECTOR /REPLOT AND SENDS THE PLOT TO 
+!	EITHER A B&W OR COLOR PRINTER.
+!
+!	NOTE:  MACRO REQUIRES PLOT51 OR 52 SET UP WITH PLOTTER #1 TO BE A
+!	MONCHROME PRINTER AND #2 A COLOR PLOTTER.
+!
+!  USAGE: HCOPY 
+!
+!  BY: DAN BOHLEN    UPDATED: 2-25-96
+!
+*ask,type,Plot Type? RAST (0) or VECT (1),1
+*ask,mono,MONO (1) or COLOR (2) plot?,1
+!
+!  Z BUFF CHECK
+!
+*DO,WIND,1,4
+*GET,CURRENT,GRAPH,WIND,TYPE
+*IF,CURRENT,GT,5,THEN
+*ASK,CHG,ZBUFF? ENTER TYPE OR STOP_-1,CURRENT
+*ELSE
+*CYCLE
+*ENDDIF
+*IF,CHG,NE,-1,THEN
+/TYPE,ALL,CHG
+*EXIT
+*ELSE
+*STOP
+*ENDDIF
+*ENDDO
+!
+/show,plot,temp,type
+/replo
+/show,junk
+/show,term,,type
+*if,mono,eq,2,then
+!/sys,plot52 -p 2 -D color plot.temp &
+*else
+/sys,plot52 -p 1 -D bw plot.temp &
+*endif
+type=
+mono=
+!*endif
+
+

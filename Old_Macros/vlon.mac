@@ -1,0 +1,6 @@
+/nopr
+!
+!             vlon.mac                This macro turns volumes off.
+!
+/pnum,volu,1                                                                    
+/gopr                                                                           

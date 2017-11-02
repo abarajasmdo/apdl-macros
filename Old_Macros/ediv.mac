@@ -1,0 +1,66 @@
+/nopr
+!
+!                NBN.MAC      A macro to create nodes between nodes.
+!
+!             Usage: nbn,node1,node2,number of nodes between node1 and node2
+!
+!                                              
+!
+!
+*get,r1,real,arg1
+*get,m1,mat,arg1
+*get,t1,type,arg1
+!
+real,r1
+mat,m1
+type,t1
+*msg,note,m1,t1,r1
+(' Mat = ',f3.0,'  Type =  ',f3.0,'  Real = ',f3.0)
+
+*get,nmax,mxnd
+nstr=nmax+1
+*get,n1,en1,arg1
+*get,n2,en2,arg1
+*get,n3,en3,arg1
+*get,n4,en4,arg1
+fill,n2    ,    n3,3,nstr,1
+fill,n1    ,    n2,1,nstr+3,1
+fill,n3    ,    n4,1,nstr+4,1
+fill,nstr+3,nstr+4,1,nstr+5,1
+fill,nstr+1,nstr+4,1,nstr+6,1
+fill,nstr+1,nstr+3,1,nstr+7,1
+fill,n1    ,    n4,1,nstr+8,1
+fill,nstr+8,nstr+5,1,nstr+9,1
+e,nstr+3,n2    ,nstr  ,nstr+7
+e,nstr+7,nstr  ,nstr+1,nstr+5
+e,nstr+5,nstr+1,nstr+2,nstr+6
+e,nstr+6,nstr+2,n3    ,nstr+4
+e,nstr+3,nstr+7,nstr+5,nstr+5
+e,nstr+5,nstr+6,nstr+4,nstr+4
+e,n1    ,nstr+3,nstr+5,nstr+9
+e,nstr+9,nstr+5,nstr+4,n4
+e,n1    ,nstr+9,n4,   ,n4
+!*if,arg3,ge,.5,:lp1
+!numn=1
+!*go,:lp2
+!:lp1
+!numn=arg3
+!*go,:lp2
+!:lp2
+!fill,arg1,arg2,numn,nstr,1
+nmax=
+nnum=
+r1=
+m1=
+t1=
+nstr=
+/gopr
+
+
+
+
+
+
+
+
+                                                                      

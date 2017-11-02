@@ -1,0 +1,57 @@
+From suffol@c0655.ae.ge.com Wed Oct  4 09:19:04 EDT 2000
+Received: from c0655.ae.ge.com (suffol@c0655.ae.ge.com [129.202.171.155])
+	by c0112.ae.ge.com (8.8.6 (PHNE_17135)/8.8.6) with ESMTP id JAA13375
+	for <bohlen@c0112.ae.ge.com>; Wed, 4 Oct 2000 09:19:04 -0400 (EDT)
+Received: (from suffol@localhost)
+	by c0655.ae.ge.com (8.8.6 (PHNE_17135)/8.8.6) id JAA19180
+	for bohlen@c0112.ae.ge.com; Wed, 4 Oct 2000 09:19:04 -0400 (EDT)
+Date: Wed, 4 Oct 2000 09:19:04 -0400 (EDT)
+From: "U-E67907-Daniel G. Suffoletta" <suffol@c0655.ae.ge.com>
+Message-Id: <200010041319.JAA19180@c0655.ae.ge.com>
+To: bohlen@c0112.ae.ge.com
+Subject: wrtuof.mac
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Status: R
+
+
+*GET,NUMNODE,NODE,0,COUNT
+*CFOPEN,f48,dat
+*VWRITE
+('XSIZ'/'NDEF  NCOL  NSIG  NFOR  ECOL  EFOR  NTMP  ESIG  EEPS')
+*VWRITE
+('    0     0     1     0     0     0     1    10     0')
+*VWRITE
+('NAME'/'  1')
+*VWRITE
+(' NODE SIG'/' NAME  S11  S22  S33  S12  S13  S23  SEFF')
+NCURR=0
+*DO,I,1,NUMNODE
+NCURR=NDNEXT(NCURR)
+*GET,SXX,NODE,NCURR,S,X
+*GET,SYY,NODE,NCURR,S,Y
+*GET,SZZ,NODE,NCURR,S,Z
+*GET,SXY,NODE,NCURR,S,XY
+*GET,SXZ,NODE,NCURR,S,XZ
+*GET,SYZ,NODE,NCURR,S,YZ
+*GET,SEFF,NODE,NCURR,S,EQV
+*VWRITE,NCURR,SXX,SYY,SZZ,SXY,SXZ,SYZ,SEFF
+(I8,4G15.7,' &'/3G15.7)
+*ENDDO
+*VWRITE
+(' NODE TEMP'/' NAME  TEMP')
+NCURR=0
+*DO,I,1,NUMNODE
+NCURR=NDNEXT(NCURR)
+*GET,NTMP,NODE,NCURR,BFE,TEMP
+*VWRITE,NCURR,NTMP
+(I8,F10.2)
+*ENDDO
+*CFCLOSE
+
+
+
+
+
+

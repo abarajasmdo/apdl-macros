@@ -1,0 +1,41 @@
+/nopr
+!
+!                KBK.MAC      A macro to create a keypoint between two other keypoints.
+!
+!             Usage: nbn,kp1,kp2,number of keypoints between kp1 and kp2
+!
+!                                              
+!
+!
+!        get the maximum number of keypoints in the model
+*get,nmax,mxkp
+!        obtain the start number for the next keypoints by adding
+!         1 to the current number of keypoints.
+nstr=nmax+1
+!         check if the number of keypoints desired between kp1 and kp2 is
+!         greater than zero.  If so, skip down to :lp1.  If not, set the number
+!         of desired keypoints to 1, then skip down to :lp2.
+*if,arg3,ge,.5,:lp1
+numn=1
+*go,:lp2
+:         loop 1
+:lp1
+numn=arg3
+*go,:lp2
+!         loop 2
+:lp2
+!          create the number of keypoints between kp1 and kp2
+kfill,arg1,arg2,numn,nstr,1
+nmax=
+nstr=
+numn=
+/gopr
+
+
+
+
+
+
+
+
+                                                                      

@@ -1,0 +1,6 @@
+!
+! macro for  changing to raster plots
+!
+/show,term,,1
+/PLOPTS,LEG2,0  
+

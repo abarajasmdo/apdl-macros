@@ -1,0 +1,10 @@
+!
+!  some settings to speed up post procressing
+!
+ernorm,off
+eall
+nsel,,ext
+cm,exn,node
+enode
+cm,exe,elem
+

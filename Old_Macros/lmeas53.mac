@@ -1,0 +1,68 @@
+/nopr
+/pmacro
+!
+! This macro calculates the radius
+! and center of an arc and creates
+! a keypoint at the arc center
+!
+!  Adapted from Weisbrod's macro , but now does
+!  3d arcs
+!
+!   usage: lmeas53,line number
+!
+parsav,all
+get_rout
+/prep7
+pi=3.141592654
+cm,_macro_,line
+*get,acoord,active,,csys  !   get to restore
+csys,0
+imme,0
+*IF,ARG1,LT,1,THEN
+LSEL,R,P
+*ELSE
+LSEL,,,,ARG1
+*ENDIF
+/nopr
+*GET,NL,LINE,,COUNT
+*get,mxkp,mxkp
+!*get,mxnd,node,,num,max
+kp2=mxkp+1
+LN=0
+*DO,L,1,NL
+LN=LSNEXT(LN)
+!kl,LN,.5,kp2	!  MID KPOINT
+*get,kp1,line,LN,kp,1    ! END KPPOINTS
+!*get,kp3,line,LN,kp,2
+/output,crap,asdf
+!nkpt,mxnd+1,kp1
+!nkpt,mxnd+2,kp2
+!nkpt,mxnd+3,kp3
+kcenter,line,LN
+knew=_return
+rad=distkp(kp1,knew)
+lsum
+*GET,LENG,LINE,,LENG
+ARC=LENG/(2*PI*RAD)*360
+/output
+*if,rad,eq,0,then
+*msg,warn,LN
+LINE %I IS A STRAIGHT LINE!
+!ndele,mxnd+1,mxnd+4
+*else
+!ndele,mxnd+1,mxnd+4
+*msg,info,LN,rad
+The approx. radius of line %I is %G
+*MSG,INFO,LENG,ARC
+The length is %G , the approx arc is %G deg
+*ENDIF
+kdele,knew
+*ENDDO
+cmsel,,_macro_
+cmdele,_macro_
+imme,1
+csys,acoord
+set_rout
+parres,
+/gopr
+

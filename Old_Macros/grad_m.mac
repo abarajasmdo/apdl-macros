@@ -1,0 +1,18 @@
+!
+! does meridonal gradients
+!
+*get,node,ndmn
+cs,39,,arg1,arg2,node
+lpath,arg1,arg2
+pdef,intr,spar,sy
+/show,file,,1
+/pnum,node,
+/pnum,elem,
+/pbc,path,1
+/tlabel,dele
+/tlabel,-.4,.9,Meridonal Stress Gradient Location __________
+eplo
+/zoom,1,off
+plpath,arg1,arg2
+
+

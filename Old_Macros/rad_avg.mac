@@ -1,0 +1,16 @@
+/nopr
+! does a weighted average radial stresses 
+*get,numele,elem,,count
+etab,csx,s,x
+etab,volume,volu
+smult,csxxvol,csx,volume
+ssum
+*get,tot_vol,ssum,volume,
+*get,txvolsum,ssum,csxxvol
+sx_avg=txvolsum/tot_vol/1000
+/gopr
+*msg,ui,sx_avg
+The avg. rad stress of the selected elements is %G  ksi
+)t_avg=
+)etab,temps,erase
+etab,eras

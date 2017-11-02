@@ -1,0 +1,64 @@
+From jsc@ansys.com Wed Jan 10 13:35:52 EST 1996
+Received: from gemb1.ae.ge.com by c0112.ae.ge.com with SMTP
+	(1.37.109.16/16.2) id AA020028951; Wed, 10 Jan 1996 13:35:51 -0500
+Return-Path: <jsc@ansys.com>
+Received: from thomas.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA07013; Wed, 10 Jan 1996 13:34:46 -0500
+Received: from ns.ge.com (ns.ge.com [192.35.39.24]) by thomas.ge.com (8.6.12/8.6.12) with ESMTP id NAA01674 for <dan.bohlen@ae.ge.com>; Wed, 10 Jan 1996 13:27:08 -0500
+Received: from fea1.ansys.com.ansys.com (fea1.swanson.com [192.104.24.51]) by ns.ge.com (8.6.12/8.6.11) with SMTP id NAA06767 for <dan.bohlen@ae.ge.com>; Wed, 10 Jan 1996 13:35:42 -0500
+Received: from by fea1.ansys.com.ansys.com 
+	id AA01959; Wed, 10 Jan 96 13:35:15 EST
+Received: from devser (devser.ansys.com) by mailhub.ansys.com (4.1/SMI-4.1)
+	id AA16299; Wed, 10 Jan 96 13:24:33 EST
+Received: by devser (950413.SGI.8.6.12/930416.SGI.AUTO)
+	for dan.bohlen@ae.ge.com id NAA20502; Wed, 10 Jan 1996 13:47:11 -0500
+Date: Wed, 10 Jan 1996 13:47:11 -0500
+From: jsc@ansys.com (John Crawford)
+Message-Id: <199601101847.NAA20502@devser>
+To: dan.bohlen@ae.ge.com (Dan Bohlen at GEAE)
+Status: RO
+
+/nopr
+!
+!  kponln2.mac  a macro to place N keypoints on a line
+!               does not include the end keypoints which
+!               are already associated with the line.
+!
+!               this macro is used by a function
+!
+!  _z1= number of points on the line(s)
+!  _z2= number of lines selected
+!  _z3= routine number to check if we're in /prep7
+!
+*get,_z3,active,,rout
+*if,_z3,eq,17,then
+cm,_z,line
+lsel,s,p
+Fnc_KPONLN2  !  a function which puts a box on the screen
+!  this could be replaced with "*ask,_z1,Key in no. of KPs,1"
+*if,_z1,gt,0,then
+*get,_z2,line,,count
+!  loop through the number of lines selected
+*do,i,1,_z2
+arg1=lsnext(arg1)
+!  loop through the number of keypoints to make
+*do,j,1,_z1
+K,,lx(arg1,j/(1+_z1)),ly(arg1,j/(1+_z1)),lz(arg1,j/(1+_z1))
+*enddo
+*enddo
+*endif
+!  make the originally selected lines current again
+cmse,s,_z
+cmde,_z
+i=
+j=
+*endif
+
+
+_________________________________________________________________
+John Crawford                                 jcrawford@ansys.com
+ANSYS Inc.                         
+201 Johnson Road                              FAX: (412) 873-3118
+Houston, PA 15342                  Phone: (412) 746-3304 Ext.1120
+_________________________________________________________________
+

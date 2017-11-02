@@ -1,0 +1,12 @@
+set,list,2
+*ask,tpoint, time where time - unload,0
+lcdef,1,tpoint
+lcase,1
+lcdef,2,4
+lcdef,stat
+*ask,goorno, go = 1 no =0 , 1
+*if,goorno,eq,1,then
+lcoper,sub,2
+*endif
+tpoint=
+goorno=

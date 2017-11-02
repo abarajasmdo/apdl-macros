@@ -1,0 +1,15 @@
+!  macro writes out the currently selected node Y coordinate in csys=11
+!  good for "unflattening" nodes
+!
+parsav
+*get,nnds,node,,count
+*cfopen,nmod_cmds
+*cfwrit,csys,11
+csys,11
+n1=ndnext(0)
+*do,loop,1,nnds
+*cfwrit,nmod,n1,,ny(n1),,
+n1=ndnext(n1)
+*enddo
+*cfclos
+

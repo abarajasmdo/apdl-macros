@@ -1,0 +1,5 @@
+!
+!  macro plot2file  points plots to the default file with the vect or raster
+!			setting
+*get,r_or_v,graph,,display
+/show,term,,r_or_v

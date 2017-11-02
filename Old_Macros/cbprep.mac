@@ -1,0 +1,7 @@
+!
+! cbdsp.mac  preps nodes for cbdsp on 44a
+!
+csys,11  *  2D cylindrical system "Y" axial
+nmod,all,,1e-30,,   *get on X-Y plane
+csys,0
+nrota,all  * take off nodal rotations

@@ -1,0 +1,7 @@
+!
+!         kpof.mac          This macro turns keypoint numbers off.
+!
+/nopr                                                                           
+/pnum,kpoi,    
+/replot                                                    
+/gopr                                                                           

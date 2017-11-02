@@ -1,0 +1,62 @@
+/nopr
+!                                                                                                                                  
+!     str18.mac       This macro get stresses and forces on STIF18 elements
+!
+!    von mises stress at node i, STIF18
+stress,sigi,18,27                                                           
+!    von mises stress at node j, STIF18    
+,sigj,18,31                                                 
+!    direct (axial) stress at node i, STIF18                    
+,sdi,18,13                                                        
+!    bending stress at node i, STIF18     
+,sbi,18,14
+!    torsional stress at node i, STIF18
+,sti,18,15
+!    hoop stress at node i, STIF18
+,spi,18,16
+!    shear stress at node i, STIF18
+,ssi,18,17
+!    direct (axial) stress at node j, STIF18
+,sdj,18,18
+!    bending stress at node j, STIF18
+,sbj,18,19
+!    torsional stress at node j, STIF18
+,stj,18,20
+!    hoop stress at node j, STIF18
+,spj,18,21
+!    shear stress at node j, STIF18
+,ssj,18,22
+!    stress intensification factor at node i, STIF18
+,sifi,18,32
+!    stress intensification factor at node j, STIF18
+,sifj,18,33
+!    average element temperature
+,tavg,18,34
+!     average element pressure
+,eprs,16,37
+
+,fxi,18,1
+
+,fyi,18,2
+
+,fzi,18,3
+
+,mxi,18,4
+
+,myi,18,5
+
+,mzi,18,6
+
+,fxj,18,7
+
+,fyj,18,8
+
+,fzj,18,9
+
+,mxj,18,10
+
+,myj,18,11
+
+,mzj,18,12
+                                                                
+/gopr                                                                                                                                          

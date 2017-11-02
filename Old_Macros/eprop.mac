@@ -1,0 +1,38 @@
+!
+! evolum  calculates volum of selected elements
+!
+!  xbar etc don't seem to give good numbers
+!
+/nopr
+*get,loops,elem,,count
+*get,el,elem,,num,min
+etot=0
+mx=0
+my=0
+mz=0
+mxyz=0
+*do,add,1,loops
+*get,evol,elem,el,volu
+etot=etot+evol
+mx=mx+(centrx(el)*evol)
+my=my+(centry(el)*evol)
+mz=mz+(centrz(el)*evol)
+mxyz=evol*centrx(el)*centry(el)*centrz(el)
+el=elnext(el)
+*enddo
+xbar=mx/etot
+ybar=my/etot
+zbar=mz/etot
+/gopr
+/uis,msgpop,0
+*msg,note,loops,etot
+Volume of %I selected elements is %G
+*msg,note,mx,my,mx,mxyz
+Xbar= %G Ybar= %G Zbar= %G mxyz= %G
+/uis,msgpop,defa
+mx=
+my=
+mz=
+mxyz=
+etot=
+

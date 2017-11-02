@@ -1,0 +1,68 @@
+!
+! HCOPY.MAC - DOES EITHER A RASTER OR VECTOR /REPLOT AND SENDS THE PLOT TO 
+!	EITHER A B&W OR COLOR PRINTER.
+!
+!	NOTE:  MACRO REQUIRES PLOT51 OR 52 SET UP WITH PLOTTER #1 TO BE A
+!	MONCHROME PRINTER AND #2 A COLOR PLOTTER.
+!
+!  USAGE: HCOPY 
+!
+!  BY: DAN BOHLEN    UPDATED: 2-25-96
+!
+parsav
+*get,r_or_v,graph,,display
+type=arg1
+mono=arg2
+*if,arg2,lt,1,then
+*ask,type,Plot Type? RAST (0) or VECT (1),0
+*ask,mono,MONO (1) or COLOR ( 2 ) plot?,2
+*endif
+/show,plot,,type
+/replo
+/show,_junk_
+/show,term,,type
+a='-D'
+file='plot &'
+back='> RUN'
+!
+!	hp5 settings
+!
+!  do full screen plots
+!
+!*get,size,graph,1,range,xmax
+size=2
+!
+! check for full screen plot
+!
+*if,size,gt,1,then
+	*if,mono,gt,1,then
+	plotrc='c_nlogo'
+	*else
+	plotrc='bw_nlogo' 
+	*endif
+!
+!  square window plot
+!
+*else
+	*if,mono,gt,1,then
+	plotrc='color'
+	*else
+	plotrc='bw' 
+	*endif
+*endif
+/sys,echo '{' plot54 -p '$1' plot ';' cp ~/start.dsp_basic ~/start.dsp '' > hcopy.script
+
+!/sys,echo '{' plot54 -p '$1' -D '$2' plot ';' cp ~/start.dsp_basic ~/start.dsp '' > hcopy.script
+!/sys,echo 'send_sound /home/abmo01t/bin/sounds/alldone.wav' >> hcopy.script
+!/sys,echo "send_sound ~/bin/sounds/alldone.wav ;} &" >> hcopy.script
+/sys,echo "beep ;} &" >> hcopy.script
+!/syp,sh hcopy.script,mono,plotrc
+
+/syp,sh hcopy.script,mono
+!/sys,rm hcopy.script
+!/syp,echo plot54 -p,mono,a,plotrc,file,%back%
+!/sys,sh RUN
+/show,term,,r_or_v
+parres
+
+

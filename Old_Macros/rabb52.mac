@@ -1,0 +1,75 @@
+!  
+! macro mk52.mac  This macro builds STIF 52 gaps on rabbet joints that 
+!   have an interference.  This is done by creating a set of dummy nodes based
+!	on the rabbet surface to get the stif 52 direction correct.  
+! 
+!  usage :  rabb52
+!
+! prep:  have gap elements between rabbets defined, 
+!	stif52 type defined, cylindrical system selected, real constant for 
+!	stif52 and 21 must be defined
+!
+!	POSSIBLE ENHANCEMENTS.  NMOD NGEN'D NODES AND USE ETINF TO GENERATE
+!	FINAL GAPS BETWEEN PSUEDO NODES AND OUTER NODES VS. ONE AT A TIME.
+!
+!                                 J*
+!                            |   .  <--- dummy node
+!                            |   |
+!                            |   -
+!                            |   - 
+!                            |   | i  <---- component "inner"                              
+!         ___________________|___.____
+!                            |       |                      }
+!                            |___.___|_____________________ {
+!   component "outer" ----->     J   |
+!                                    |
+
+!
+!  prep
+PARSAV
+!eall
+!einv
+csys,11
+/prep7
+!*get,etmax,etyp,,num,max
+*ask,et_,Enter element type,0
+*ask,real_,Enter real number,0
+!et,etmax+1,21,,,2	!  make dummy element type  x,y,z
+!RMAX=RLINQR(0,14)
+!R,RMAX+1,1E-9
+!et,et_,52,,,
+!KEYOPT,et_,11,2	! new keyopt(11)=2
+!R,real_,9999999	! CHANGE TO PROPER STIFFNESS ANS INTF
+!einv  ! unselect all elems
+CMSEL,,INNER	! SMALL z COORD  (csys 11)
+CMSEL,A,OUTER	! LARGER z COORD  (csys,11)
+ROTN3D		! ROTATES NODES INTO GLOBAL CYLINDRICAL
+*GET,LNUM,NODE,,NUM,MIN
+*GET,NMAX,MXND
+INC=NMAX-LNUM+10
+!*ASK,DISP,TOLER FOR GENERATING INITIAL GAPS,.0001
+TYPE,et_
+REAL,real_
+
+NGEN,2,INC,INNER,,,.01,,  ! CREATE PSUEDO INNER NODE +.01 radially outward, INCREMENT=INC
+CMSEL,U,INNER
+,U,OUTER
+CM,DUMMY,NODE
+NWRIT
+NGEN,2,0,DUMMY,,,-.01,,	!MOVE DUMMY NODES AND GAP WITH INNER
+CMSEL,A,INNER
+EINTF,.001
+CMSEL,U,INNER
+CMSEL,A,OUTER		!  SELECT OUTER AND COUPLE TO DUMMY NODE
+CPINFT,UX,.01
+CPINFT,UY,.01
+CPINTF,UZ,.01
+NREAD   	! RETURN DUMMY NODES TO PROPER POSITION
+!NROTAT,ALL   !  ROTATE IN CYLIN SYSTEM
+!
+
+! CLEAN UP
+!
+CMSEL,,DUMMY
+CMDELE,DUMMY
+PARRES,NEW

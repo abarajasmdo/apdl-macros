@@ -1,0 +1,57 @@
+!
+! lnorml creates line normal to the end of another line
+!
+!  usage: lnorml,line,kpoint end, kpoint on plane in direction,length
+!
+/PMACRO
+!*if,arg1,gt,0,then
+*get,ocys,active,,csys  ! old csys
+cm,temp,line
+CM,KTEMP_,KP
+!*get,k1,line,arg1,kp,1
+*IF,ARG1,LT,1,THEN
+*msg,info
+>>> Select base line 
+LSEL,R,P
+KPLS
+*msg,info
+>>> Select keypoint end to start the normal line 
+KSEL,R,P
+ARG2=KPNEXT(0)
+CMSEL,,KTEMP_
+KPAL
+KPSEL,U,,,ARG2
+*msg,info
+>>> Select keypoint in direction you want normal line to point
+KSEL,R,P
+ARG3=KPNEXT(0)
+*ASK,ARG4,LENGTH OF PERPENDICULAR LINE,1
+*ELSE
+lsel,s,,,arg1
+*ENDIF
+kpls
+ksel,u,,,arg2
+*get,kx,kp,,num,max
+kpal
+cskp,99,,arg2,kx,arg3
+csys,99
+*IF,ARG4,EQ,0,THEN
+ARG4=1
+*ENDIF
+ly,arg2,arg4  !use ly macro to make line
+cmsel,a,temp  !get old lines back
+kpls
+cmdele,temp
+CMDELE,KTEMP_
+csys,ocys
+csdele,99
+/replo
+!*else
+!*msg,warn
+!usage: lnorml,line,kpoint end, kpoint on plane in direction,length
+!*msg,note
+!usage: lnorml,line,kpoint end, kpoint on plane in direction,length
+!*endif
+kx=
+ocys=
+k1=

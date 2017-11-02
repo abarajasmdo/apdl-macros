@@ -1,0 +1,77 @@
+/nopr
+!
+!   cpcheck.mac   A macro to check the distance
+!                           between coupled nodes.  This macro
+!                           creates the file "cpcheck", which has a
+!                           listing of coupled node sets and distances.
+!
+!                          Written for ANSYS 4.4
+!
+!   create components for the currently selected nodes so 
+!   they can be retrieved when the macro is finished running.
+!cm,dummyn,node
+!
+!*cfopen,cpcheck
+*get,cpmax,active,,cp
+*msg,note
+( ' CP Set Number   Node 1   Node 2   Distance Between Nodes  ')
+!
+!   set initial value for coupled set number to 1
+cp=1
+!  enter loop to calculate nodal distances
+:lp1
+!   get the nodes which make up coupled set cp
+nsel,s,cp,cp
+!   get the node number for the two nodes
+*get,n1,ndmn
+*get,n2,ndmx
+!   if this coupled set number is unused, detect that n1 and/or
+!   n2 are zero and jump down to the appropriate output message
+*if,n1,eq,0,:lp2
+*if,n2,eq,0,:lp2
+!   get the distance between the nodes
+dx=nx(n1)-nx(n2)
+dy=ny(n1)-ny(n2)
+dz=nz(n1)-nz(n2)
+d=((dx**2)+(dy**2)+(dz**2))**.5
+!   if the distance is greater than .01, jump down to the 
+!   message that flags this line of output
+*if,d,ge,.01,:lp3
+!   write the line of output with out the flag
+*msg,note,cp,n1,n2,d
+(5x,f4.0,8x,f6.0,3x,f6.0,9x,f8.4)
+!   go to the next phase, end3
+*go,:end3
+:lp3
+*msg,note,cp,n1,n2,d
+(5x,f4.0,8x,f6.0,3x,f6.0,9x,f8.4,'  <-----')
+*go,:end3
+!  this is the section where unused coupled set message is written
+:lp2
+*msg,note,cp
+(5x,f4.0,'    This coupled set number is unused')
+:end3
+!  check to see if we're done yet
+*if,cp,ge,cpmax,:end
+!   increment cp by 1
+cp=cp+1
+!   go to the top of the loop
+*go,:lp1
+:end
+!   now that we're finished, close the file cpcheck
+!*cfclos
+!   restore nodal data which existed when the macro began
+!cmse,s,dummyn
+!   delete this components from the database
+!cmde,dummyn
+!   clear this stuff from the database
+!cp=
+!cpmax=
+!n1=
+!n2=
+!dx=
+!dy=
+!dz=
+!d=
+!  all done
+/gopr

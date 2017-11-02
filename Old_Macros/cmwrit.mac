@@ -1,0 +1,4 @@
+CDWRITE,CM,components, ,, , ,
+/sys,csplit -f ansys_cm components /CMBLOCK/
+*msg,info
+Your Ansys components on on file ansys_cm01

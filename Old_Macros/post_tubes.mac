@@ -1,0 +1,40 @@
+!
+!  macro postprocess Matt's ge90 fuel manifold results
+!
+!  select elements to be checked ahead of time
+/uis,msgpop,3
+/dscal,all,off
+smax=0
+emax=0
+_ELEM=0
+cm,_TEMP,elem
+PLES,SIGE
+*GET,NELEMS,ELEM,,COUNT
+!
+!  LOOP TO FIND ELEM WITH MAX NONAVG NODAL STRESS
+!
+*DO,N,1,NELEMS
+	_ELEM=ELNEXT(_ELEM)
+	ESEL,S,ELEM,,_ELEM
+	*DO,NN,1,8
+	*GET,SE,NODE,NELEM(_ELEM,NN),S,EQV
+	*IF,SE,GT,SMAX,THEN
+	SMAX=SE
+	EMAX=_ELEM
+	*ENDIF
+	*ENDDO
+CMSEL,S,_TEMP	
+*ENDDO
+ESEL,,EMAX
+PRES,S
+*msg,info,smax,emax
+SIGE max is %G at element %I
+/uis,msgpop,
+SMAX=
+EMAX=
+_ELEM=
+CMDEL,_TEMP
+
+
+
+

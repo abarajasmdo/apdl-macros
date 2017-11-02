@@ -1,0 +1,23 @@
+/nopr
+!
+!                     fm16.mac              Forces and Moments on stif16.MAC
+!           
+!                                                This macro sets is used in /POST1 prior to
+!                                                 issuing the SET command , and sets up
+!                                                 the postprocessing for obtaining forces
+!                                                 and moments for STIF16 elements.
+!
+stress,fx6i,16,1                                                                 
+,fy6i,16,2                                                                       
+,fz6i,16,3                                                                       
+,mx6i,16,4                                                                       
+,my6i,16,5                                                                       
+,mz6i,16,6                                                                       
+,fx6j,16,7                                                                       
+,fy6j,16,8                                                                       
+,fz6j,16,9                                                                       
+,mx6j,16,10                                                                      
+,my6j,16,11                                                                      
+,mz6j,16,12                                                                      
+/gopr
+

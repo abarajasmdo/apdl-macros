@@ -1,0 +1,131 @@
+#
+# create zero deflection modal plots
+#
+prefix=redes_fx
+!    NOTE USE RSYS= CSYS WITH Z NORMAL TO AIRFOIL!!!!!
+# create Ansys53 input file
+cat > ${prefix}.xplot <<EOF
+/batch
+resume
+/post1
+inres,all
+file,${prefix},rst
+/vup,,x
+/angle,,0
+/view,1,1,1,1
+/show,,,1
+/type,,2
+/VIEW,1, 0.57735    , 0.57735    , 0.57735    
+/FOC, 1,  8.9260    ,-0.56460    ,-0.88190    
+/DIST,1,  4.3430    
+/VUP, 1, X
+/PLOPTS,TITLE,0 
+/PLOPTS,FRAME,0 
+/PLOPTS,INFO,0  
+/TRIAD,OFF 
+rsys,111
+/wind,2,dele
+/wind,3,dele
+/wind,4,dele
+/wind,5,dele
+/plop,leg1,0
+/plop,leg2,0
+/plop,leg3,0
+/plop,info,0
+/plop,vers,0
+/plop,frame,1
+/wind,1,-1,1.67,-1,1
+
+/clabel,,-1 
+/contour,,5,-.0001,.00005
+winfull
+set,1,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+/show,${prefix}1,zero,1
+plnstr,uz
+set,1,2
+/show,${prefix}2,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,3
+/show,${prefix}3,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,4
+/show,${prefix}4,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,5
+/show,${prefix}5,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,6
+/show,${prefix}6,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,7
+/show,${prefix}7,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,8
+/show,${prefix}8,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,9
+/show,${prefix}9,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,10
+/show,${prefix}10,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,11
+/show,${prefix}11,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+set,1,12
+/show,${prefix}12,zero,1
+/anno,dele
+*GET,MODE,ACTIVE,,SET,SBST
+*GET,FREQ,ACTIVE,,SET,FREQ
+/TLABEL,-.2,.95,MODE= %MODE% , FREQ= %FREQ%
+plnstr,uz
+fini
+/exit,nosave
+EOF
+
+ansys53 -j ${prefix} -m 650 -db 150 -b ${prefix}.xplot ${prefix}.out
+rm ${prefix}.xplot

@@ -1,0 +1,238 @@
+From - Thu Nov 18 09:21:42 1999
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2650.21)
+	id W8T3X79H; Thu, 18 Nov 1999 03:24:06 -0500
+Received: from unknown-24-5.pilot.net by gemb1.ae.ge.com (8.8.8/1.1.22.3/16Sep99-0217PM)
+	id DAA0000013811; Thu, 18 Nov 1999 03:23:36 -0600 (CST)
+Received: from unknown-147-100.pilot.net (localhost [127.0.0.1]) by unknown-24-5.pilot.net with ESMTP id AAA29978 for <dan.bohlen@ae.ge.com>; Thu, 18 Nov 1999 00:24:07 -0800 (PST)
+Received: from onelist.com (pop3.onelist.com [209.207.164.221]) by unknown-147-100.pilot.net with SMTP id AAA20200 for <dan.bohlen@ae.ge.com>; Thu, 18 Nov 1999 00:24:00 -0800 (PST)
+Received: (qmail 3305 invoked by alias); 18 Nov 1999 08:06:07 -0000
+Received: (qmail 3244 invoked from network); 18 Nov 1999 08:06:06 -0000
+Received: from unknown (209.207.164.239) by pop3.onelist.com with QMQP; 18 Nov 1999 08:06:06 -0000
+Received: from unknown (HELO mailserver2.hrz.tu-darmstadt.de) (130.83.22.129) by mta1.onelist.com with SMTP; 18 Nov 1999 08:05:57 -0000
+Received: from hrz3.hrz.tu-darmstadt.de (hrz3.hrz.tu-darmstadt.de [130.83.47.116]) by mailserver2.hrz.tu-darmstadt.de (8.9.1a/8.9.1) with ESMTP id JAA05395 for <xansys@onelist.com>; Thu, 18 Nov 1999 09:04:23 +0100 (MET)
+Received: from HRZ3/SpoolDir by hrz3.hrz.tu-darmstadt.de (Mercury 1.45); 18 Nov 99 09:05:57 +0100
+Received: from SpoolDir by HRZ3 (Mercury 1.45); 18 Nov 99 09:05:38 +0100
+Message-Id: <199911180804.JAA05395@mailserver2.hrz.tu-darmstadt.de>
+From: "Peter Bastian" <Peter.Bastian@KLUB.TU-Darmstadt.De>
+Organization: Darmstadt University of Technology
+To: xansys@onelist.com
+Date: Thu, 18 Nov 1999 09:05:35 +0100
+MIME-Version: 1.0
+Priority: normal
+X-mailer: Pegasus Mail for Win32 (v2.53DE/R1)
+Mailing-List: list xansys@onelist.com; contact xansys-owner@onelist.com
+Delivered-To: mailing list xansys@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@ONElist.com>
+Reply-to: xansys@onelist.com
+Subject: [xansys] DIGITS-Macro
+Content-type: Multipart/Mixed; boundary=Message-Boundary-12715
+X-Mozilla-Status: 8001
+X-Mozilla-Status2: 00000000
+X-UIDL: AAwOlCAAAAgm5J5JQCgg3Gx0utjVdfJq
+
+--Message-Boundary-12715
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
+
+Hi all,
+a couple of days ago, I asked for a command that would control the 
+number of digits after the decimal point in my stress-plots. With 
+some hints (thanks)  I wrote a little macro for the /post1-processor 
+that gives control about it. The syntax is:
+
+SPLOT,STRESS-COMPOMENT,DIGITS,DECI,NCONT
+
+!#	STRESS-COMPONENT is 1 or 'x' =x, 2 or 'y' =y, 3 or 'y' =z
+#	4 or 'xy' =xy, 5 or 'xz' =xz, 6 or 'yz' =yz
+#	DIGITS is the number of digits after the decimal-point. 
+#	DECI is the number of places for which a "0" should be displayed. 
+#	DECI is only valid, if DIGITS is blank or equals "0".
+#	NCONT is the number of contours to be generated (default=9)					
+
+I did not find a way around the single quotes ( ' ) for the stress 
+component. So you will have to type "SPLOT,'XY',... or SPLOT,4,... . 
+If somebody knows how to fix this, please give me a mail.
+
+I hope, that some of you will find this macro to be usefull :-)
+
+
+
+---------------------------------------------------
+Dipl.-Ing. P.Bastian
+Technische Universitaet Darmstadt
+Fachgebiet Konstruktiver Leichtbau und Bauweisen
+Petersenstrasse 30
+64287 Darmstadt
+Tel.:06151-162459
+Fax.: 06151-163260
+email: Peter.Bastian@KLuB.TU-Darmstadt.de
+WWW: http:\\WWW.KLuB.Maschinenbau.Tu-Darmstadt.De
+
+
+--Message-Boundary-12715
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Text from file 'splot.mac'
+
+!
+! ###############################################################
+! #                                                           	#
+! #	The macro was written in November-1999 by		#
+! #	Dipl.-Ing. Peter Bastian				#
+! #								#
+! #	Darmstadt University of Technology, Germany		#
+! #	Department for Lightweight Construction			#
+! #								#
+! #								#
+! #                HOPE IT HELPS :-)                           	#
+! #								#
+! #								#
+! #								#
+! #	The command-syntax is:					#
+! #								#
+! #	S,STRESS-COMPOMENT,DIGITS,DECI,NCONT			#
+! #								#
+! #	STRESS-COMPONENT is 1=x, 2=y, 3=z, 4=xy, 5=xz, 6=yz	#
+! #	DIGITS 	is the number of digits after the decimal-point.#
+! #	DECI 	is the number of places for which a "0" should 	#
+! # 	     	be displayed.					#
+! #	DECI	is only valid, if DIGITS is blank or equals "0".#
+! #	NCONT 	is the number of contours to be generated	#
+! #		(default=9)					#
+! #                                                           	#
+! #								#
+! #	This macro displays results as continuos contours	#
+! #	using the PLNSOL command.				#
+! #	For the display of the numbers in the legend, you	#
+! #	can define the number of contours and the number of	#
+! #	digits after the decimal point, to be displayed.	#
+! #	If you do not want any digits after the decimal point,	#
+! #	you can define, how many places should be displayed	#
+! #	with a "0". For example 2100 instead of 2123.		#
+! #		                                           	#
+! #	s,xy,2 	gives the SX-Plot with the following format: 	#
+! #		SX=1238.34					#
+! #	s,xy,,2 gives the SX-Plot with the following format:	#
+! #		SX=1200						#
+! #		                                               	#
+! #	For access from the ansys-input-window copy the macro	#
+! #	to the default macro-path or use the psearch-command	#
+! #	to define the used path.				#
+! ###############################################################
+
+/plots,info,auto			!Display the legend if necessary
+error=0					!Set the error-variable to zero
+
+arg1typ=arg1
+*get,partyp,'parm',arg1typ,type		!Check the typ of the input
+
+*if,partyp,eq,3,then			!Set the stress-component when character
+  *if,arg1,eq,'x',then
+  stress='x'
+  *elseif,arg1,eq,'y'
+  stress='y'
+  *elseif,arg1,eq,'z'
+  stress='z'
+  *elseif,arg1,eq,'xy'
+  stress='xy'
+  *elseif,arg1,eq,'xz'
+  stress='xz'
+  *elseif,arg1,eq,'yz'
+  stress='yz' 
+  *else					!Display error-message
+  *msg,error
+  The command-syntax is "S,STRESS-COMPOMENT,DIGITS,DECI,NCONT" %/ &
+  %/ &
+  STRESS-COMPONENT is 1 or 'x' =x, 2 or 'y' =y, 3 or 'z' =z %/ &
+  4 or 'xy' =xy, 5 or 'xz' =xz, 6 or 'yz' =yz. %/ &
+  DIGITS is the number of digits after the decimal-point. %/ &
+  DECI is the number of places for which a "0" should be displayed. %/ &
+  NCONT is the number of contours to be generated (default=9) %/ &
+  %/ &
+  DECI is only valid, if DIGITS is blank or equals "0". %/ &
+  %/ &  
+
+  error=1				!Set error-variable to one
+ *endif
+*elseif,partyp,eq,0,then		!
+ *if,arg1,eq,1,then			!Set the stress-component
+  stress='x'
+  *elseif,arg1,eq,2
+  stress='y'
+  *elseif,arg1,eq,3
+  stress='z'
+  *elseif,arg1,eq,4
+  stress='xy'
+  *elseif,arg1,eq,5
+  stress='xz'
+  *elseif,arg1,eq,6
+  stress='yz'
+  *else					!Display error-message
+  *msg,error
+  The command-syntax is "S,STRESS-COMPOMENT,DIGITS,DECI,NCONT" %/ &
+  %/ &
+  STRESS-COMPONENT is 1 or 'x' =x, 2 or 'y' =y, 3 or 'z' =z %/ &
+  4 or 'xy' =xy, 5 or 'xz' =xz, 6 or 'yz' =yz. %/ &
+  DIGITS is the number of digits after the decimal-point. %/ &
+  DECI is the number of places for which a "0" should be displayed. %/ &
+  NCONT is the number of contours to be generated (default=9) %/ &
+  %/ &
+  DECI is only valid, if DIGITS is blank or equals "0". %/ &
+  %/ &  
+
+  error=1				!Set error-variable to one
+ *endif
+*else
+ *msg,error
+  The command-syntax is "S,STRESS-COMPOMENT,DIGITS,DECI,NCONT" %/ &
+  %/ &
+  STRESS-COMPONENT is 1 or 'x' =x, 2 or 'y' =y, 3 or 'z' =z %/ &
+  4 or 'xy' =xy, 5 or 'xz' =xz, 6 or 'yz' =yz. %/ &
+  DIGITS is the number of digits after the decimal-point. %/ &
+  DECI is the number of places for which a "0" should be displayed. %/ &
+  NCONT is the number of contours to be generated (default=9) %/ &
+  %/ &
+  DECI is only valid, if DIGITS is blank or equals "0". %/ &
+  %/ &  
+
+ error=1				!Set error-variable to one
+*endif
+
+*if,error,eq,0,then			!Goto end of file and quit if error<>0
+ digit=arg2				!How many digits after the decimal point
+ deci=arg3				!How many places with "0" before the decimal point
+
+ *if,arg4,le,0,then			!Number of conturs to be generated (default=9)
+ ncont=9
+ *else
+ ncont=arg4
+ *endif
+
+ nsort,s,%stress%,1			!Sort, refering to the stress-component
+ *get,s%stress%min,sort,,min		!Get the minimun stress-value
+ *get,s%stress%max,sort,,max		!Get the maximum stress-value
+ range=(s%stress%max-s%stress%min)	!Calculate the stress-range
+
+ *if,digit,gt,0,then			!Calculate increment and minimum stress to display
+   vinc=nint((range/ncont)*(10**%digit%))/(10**%digit%)	!for a display with a given number
+   smin=nint(s%stress%min*(10**%digit%))/(10**%digit%)	!of digits after the decimal point.
+    
+ *else					!Calculate increment and minimum stress to display
+   vinc=nint((range/ncont)/(10**%deci%))*(10**%deci%)	!for a display with a given number of places
+   correct=nint((range-ncont*vinc)/2)			!to display with "0"
+   smin=nint((s%stress%min+correct)/(10**%deci%))*(10**%deci%)
+
+ *endif
+
+ /cont,,ncont,smin,vinc			!Define the user specified contours
+ rsys,solu				!Set the result-coordinate-system as calculated
+ plnsol,s,%stress%			!Generate the stressplot
+*endif
+
+/cont,,9,auto				!Set the contour-display to auto for the next plot
+
+
+
+--Message-Boundary-12715--

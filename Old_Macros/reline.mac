@@ -1,0 +1,20 @@
+/nopr
+!
+!              reline.mac
+!
+!           This macro reconstructs the selected lines
+!           and clears the meshing data associated
+!           with them.  Good for fixing contaminated
+!           areas.
+!
+:top                                                                            
+*get,n,lsmx                                                                     
+*if,n,le,.5,:end                                                                
+*get,k1,lk1,n                                                                   
+*get,k2,lk2,n                                                                   
+l,k1,k2                                                                         
+lsus,,n                                                                         
+*go,:top                                                                         
+:end
+/gopr
+

@@ -1,0 +1,4 @@
+/sys, echo "list"  > input
+/sys, echo "q" >> input 
+/sys, siesta espec < input > output
+*UILIST,output

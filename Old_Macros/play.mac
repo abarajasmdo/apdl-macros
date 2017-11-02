@@ -1,0 +1,18 @@
+*del,_mat
+*del,_trim
+*dim,_trim,string,128
+*dim,_mat,string,128
+*dim,duh,string,128
+var='_mat(1)'
+*DIM,MATL_ID,STRING,128,500
+
+xmulti,'start',3
+*cset,1,3,mat_num,'Ansys Matl Ref # ',1
+*cset,4,6,var,'Mat name - in single quotes',0
+*cset,7,9,ortho,'Enter 1 for bolthole',0
+*cset,10,12,more_mat,'Enter 1 for more mats to define'
+*cset,61,62,'32 char string for help','32 char string for help'
+*cset,63,64,'32 char string for help','32 char string for help'
+xmulti,'end'
+
+duh(1)=_mat(1)

@@ -1,0 +1,155 @@
+/nopr
+!
+!     amlist.mac
+!                              A macro to list the surface areas of the 
+!                              selected mesh areas and the surface area 
+!                              of their associated nodes and elements
+!                              to allow for easy verification of correct
+!                              meshing.
+!
+!   create components for each  ANSYS entity, so they can
+!   be retrieved when the macro is finished running.
+*cfopen,amlist
+
+*vwrite
+( '       Area =             area number')
+*vwrite
+( '       NA =               nodes associated with the area ') 
+*vwrite
+( '       NE =               nodes associated with the elements') 
+*vwrite
+( '       Elements =         elements associated with the area') 
+*vwrite
+( '       Area of Area =     surface area of the area') 
+*vwrite
+( '       Area of Elements = surface area of the elements on the area ') 
+*vwrite
+( '       Ratio =            area of area/area of elements ') 
+*vwrite
+( '   ') 
+*vwrite
+( ' Area  NA   NE  Elements   Area of Area  Area of Elements  Ratio ')
+cm,dummya,area
+cm,dummyv,volu
+cm,dummyl,line
+cm,dummyk,kp
+cm,dummye,elem
+cm,dummyn,node
+!   get the lowest area number of areas currently selected
+*get,n,area,,num,min
+!   get the highest area number in the currently selected set
+!   this will be used to find if all the areas have been checked.
+*get,nmax,area,,num,max
+!   enter the loop which calculates each area/element comparison
+:loop
+!   select the next area to be processed
+asel,s,area,,n
+!   do an asum command so the area of the area can be obtained
+!   with the *get command.
+asum
+!   get the lines associated with the area
+lsla
+!   get the keypoints associated with the lines
+ksll
+
+
+
+!   get the elements associated with the area
+esla
+!   get number of elements associated with the mesh area
+nele
+!   get the number on nodes associated with the
+!   selected elements.
+*get,nne,node,,count
+!   get the nodes associated with the area
+!   Note:  this is done (instead of NELE) so that
+!   nodes which don't have any elements associated
+!   with them due to faulty meshing but which are 
+!   associated with the area can be obtained and plotted
+!   with the elements.
+nsla,,1
+!   get the number on nodes currently selected
+*get,nnd,node,,count
+!   get the number of elements currently selected
+*get,nel,elem,,count
+
+!   set the total element area to 0 at the beginning of the element
+!   area calculation loop
+eatot=0
+!   set the upper limit node number to something very high
+!   so that the next highest node number can be found with
+!   the *get command.  This number is then incremented down
+!   at the looping proceeds.
+enum=9e9
+!   enter the loop which calculates the sum of the element 
+!   surface areas.
+:lp2
+!   get the element number just below the current value for enum
+*get,enum,elem,enum,nxtl
+!   if enum equals zero (all the elements have been summed) then
+!   jump out of the loop by going to :done
+*if,enum,eq,0,:done
+!   get the area for element enum
+*get,eare,elem,enum,area
+!   add this area to the total element area
+eatot=eatot+eare
+!   go to the top of the loop
+*go,:lp2
+!   the element area calculation loop stops here
+!   and the program continues.
+:done
+!   get the area of mesh area n
+*get,aare,area,n,area
+!   calculate the ratio of area/element 
+!   note that values substantially larger than 1
+!   indicate that the area may not have been 
+!   accurately meshed, and may be missing
+!   elements.
+ratio=aare/eatot
+*if,ratio,ge,1.05,:lp3
+*if,nnd,ne,nne,:lp3
+*vwrite,n,nnd,nne,nel,aare,eatot,ratio
+(1x,f4.0,1x,f4.0,1x,f4.0,2x,f4.0,8x,f7.4,7x,f7.4,8x,f6.4)
+*go,:end3
+:lp3
+*vwrite,n,nnd,nne,nel,aare,eatot,ratio
+(1x,f4.0,1x,f4.0,1x,f4.0,2x,f4.0,8x,f7.4,7x,f7.4,8x,f6.4,'  <----')
+:end3
+!   check if we've done the last area or not.  if so, then 
+!   go to :end
+*if,n,ge,nmax,:end
+!   restore the original selected areas to the model so we
+!   can get the next area number.
+cmse,s,dummya
+!   get the next highest area number
+*get,n,area,n,nxth
+!   go to the top of the outer loop
+*go,:loop
+!   the end of the outer loop
+:end
+*cfclos
+!   restore model data which existed when the macro began
+cmse,s,dummya
+cmse,s,dummyv
+cmse,s,dummyl
+cmse,s,dummyk
+cmse,s,dummye
+cmse,s,dummyn
+!   delete these components from the database
+cmde,dummya
+cmde,dummyv
+cmde,dummyl
+cmde,dummyk
+cmde,dummye
+cmde,dummyn
+n=
+nmin=
+ratio=
+aare=
+eare=
+eatot=
+enum=
+nel=
+nnd=
+/gopr
+

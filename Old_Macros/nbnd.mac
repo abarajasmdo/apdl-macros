@@ -1,0 +1,32 @@
+/nopr
+!
+!
+!                    nbnd, Node 1, Node 2, distance 
+!
+!                    This macro creates a Node at a given "distance"
+!                    from Node 1 towards node 2.
+!
+*get,x1,nx,arg1
+*get,y1,ny,arg1
+*get,z1,nz,arg1
+*get,x2,nx,arg2
+*get,y2,ny,arg2
+*get,z2,nz,arg2
+*get,nmax,mxnd
+nn=nmax+1
+dx=x2-x1
+dy=y2-y1
+dz=z2-z1
+dist=((dx*dx)+(dy*dy)+(dz*dz))**.5
+mult=arg3/dist
+newx=x1+mult*dx
+newy=y1+mult*dy
+newz=z1+mult*dz
+n,nn,newx,newy,newz
+*msg,note,nn,arg3,arg2
+Node %i is located %g towards node %i
+/gopr
+  
+ 
+    
+  

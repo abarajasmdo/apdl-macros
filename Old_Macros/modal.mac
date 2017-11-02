@@ -1,0 +1,8 @@
+!
+!               modal.mac - sets up model for modal analysis for freq range arg1 to arg2
+!
+kan,2
+kay,2,-1
+exmo,arg1,arg2,1e-20
+extm,arg1,arg2
+

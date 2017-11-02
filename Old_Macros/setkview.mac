@@ -1,0 +1,27 @@
+! $Id: setkview.mac,v 1.2 1996/03/18 18:00:45 buyuk Exp $
+! $Log: setkview.mac,v $
+!Revision 1.2  1996/03/18  18:00:45  buyuk
+!added author/comments
+!
+!Revision 1.1  1995/01/18  20:48:01  buyuk
+!Initial revision
+!
+! Osman  Buyukisik   243-4282
+/nopr
+! set /view along _k1 and _k2
+_k1=arg2
+_k2=arg3
+*get,_coord,active,,csys
+csys,0
+_vx1=(kx(_k1)-kx(_k2))
+_vy1=(ky(_k1)-ky(_k2))
+_vz1=(kz(_k1)-kz(_k2))
+/view,arg1,_vx1,_vy1,_vz1
+_k1=
+_k2=
+_vx1=
+_vy1=
+_vz1=
+csys,_coord
+_coord=
+/gopr

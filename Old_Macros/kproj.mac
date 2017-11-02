@@ -1,0 +1,66 @@
+/nopr
+!
+!  kproj.mac  a macro to project the selected keypoints onto the
+!               working plane -->  z=0 for the new lines.
+!                
+!
+!
+!  make sure we're in prep7
+/prep7
+!
+!  get the current coordinate system ID number
+*get,csid,active,,csys
+!  create a local coordinate system at the workplane origin
+cswpla,999
+!  create a component of the original keypoints
+cm,kps,kp
+!
+!  get the number of selected keypoints
+*get,knum,kp,,count
+!
+!
+!  get the highest keypoint ID in the model
+ksel,all
+*get,kmax,kp,,num,max
+!
+!  start with the lowest kp ID
+kpid=0
+!
+*do,j,1,knum
+!  get the originally selected keypoints
+cmse,s,kps
+!
+!  start with the next highest keypoint ID
+kpid=kpnext(kpid)
+!
+k,kmax+j,kx(kpid),ky(kpid),0
+!
+!  status message for the user
+*msg,info,kmax+j,j,knum
+Created keypoint %i , %i of %i total keypoints
+!
+!
+!  finished creating this keypoint, go back to the top or quit
+*enddo
+!
+!
+!  select the original group of keypoints
+cmse,s,kps
+!  select the new keypoints
+ksel,a,,,kmax+1,kmax+j
+!
+!  delete the temporary component
+cmde,kps
+!  go back to the original coordinate system
+csys,csid
+!
+!  delete the temporay coordinate system
+csde,999
+!
+!  clean up various parameters
+csid=
+i=
+j=
+kmax=
+knum=
+kpid=

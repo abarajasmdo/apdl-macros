@@ -1,0 +1,13 @@
+!  Sample ANSYS macro to use
+!  *ASK to get a long file name.
+!
+*dim,xxxx,string,50,1
+xxxx(1,1)='DummyVariable'
+*ask,'xxxx(1,1)',enter
+*stat,xxxx
+shit=
+*cfopen,shit
+*vwrit,xxxx(1,1)
+%c
+*cfclos
+/sys,cat shit

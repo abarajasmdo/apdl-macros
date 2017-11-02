@@ -1,0 +1,23 @@
+!
+!  nrot  rotates selected nodes to "rotor" cylindrical system
+!             x-radial, y-axial, z-circumferiential for use in Ansys44a
+!
+/nopr
+csys,0
+*afun,deg   ! return degrees vs. radian
+*get,anod,node,,num,min
+:lp
+*get,nx,node,anod,loc,x
+*get,nz,node,anod,loc,z
+nangl=atan2(nz,nx)
+nmod,anod,,,,,,nangl
+*get,anod,node,anod,nxth
+*if,anod,eq,0,:done
+*go,:lp
+:done
+anod=
+nx=
+nz=
+nangl=
+*afun,rad
+/gopr

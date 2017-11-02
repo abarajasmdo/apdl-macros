@@ -1,0 +1,37 @@
+/nopr
+/pmacro
+!
+!     lhorz.mac   A macro to create a horizontal line
+!                 from a keypoint.
+!
+!     Usage:  lhorz,keypoint,X direction length
+!
+!          where,     keypoint=starting point for the line
+!                     X direction length= length of line in the
+!                                         X direction.  Note
+!                                         that this can be either
+!                                         positive or negative.
+!
+*if,arg1,lt,1,then
+/pmacro
+cm,_tmp_,kp
+ksel,r,p
+arg1=kpnext(0)
+cmsel,,_tmp_
+cmdele,_tmp_
+*ask,arg2,enter line length,1
+*endif
+*get,kx,kx,arg1
+*get,ky,ky,arg1
+*get,kz,kz,arg1
+*get,knum,mxkp
+knum=knum+1
+kx=kx+arg2
+k,knum,kx,ky,kz
+l,arg1,knum
+kx=
+ky=
+kz=
+knum=
+/gopr
+

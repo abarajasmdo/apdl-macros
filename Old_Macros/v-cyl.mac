@@ -1,0 +1,44 @@
+!
+! macro v-cyl,   divides volume into 2 volumes at the radius of kp arg2
+!
+*if,arg1,gt,0,then
+!
+*get,csactive,active,,csys
+*get,cschk,cdsy,csactive,attr,kcs
+*if,cschk,eq,1,then
+vsel,s,,,arg1,,,1
+*get,k1,kp,,mxloc,y
+*get,k2,kp,,mnloc,y
+*get,k3,kp,,mnloc,z
+*get,k4,kp,,mxloc,z
+k1=k1+10
+k2=k2-10
+k3=k3-1
+k4=k4+1
+rx=kx(arg2)
+k,9000,rx,k1,k4
+,9001,rx,k2,k4
+,9002,rx,k2,k3
+,9003,rx,k1,k3
+numstr,area,1000
+a,9000,9001,9002,9003
+numstr,defa
+boptn,keep,no
+vsba,arg1,1000
+boptn,defa
+k1=
+k2=
+k3=
+k4=
+rx=
+csactive=
+cschk=
+*else
+*msg,warn
+ACTIVE CSYS IS NOT CYLINDRICAL!
+*endif
+*else
+*msg,warn
+usage: v-cly,volum #, kpoint @ radius [Have correct cylin csys active!]
+*endif
+

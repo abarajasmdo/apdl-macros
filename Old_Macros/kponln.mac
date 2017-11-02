@@ -1,0 +1,52 @@
+From jsc@ansys.com Tue Jan  9 14:56:39 EST 1996
+Received: from gemb1.ae.ge.com by c0112.ae.ge.com with SMTP
+	(1.37.109.16/16.2) id AA268647398; Tue, 9 Jan 1996 14:56:38 -0500
+Return-Path: <jsc@ansys.com>
+Received: from thomas.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA12460; Tue, 9 Jan 1996 14:55:30 -0500
+Received: from ns.ge.com (ns.ge.com [192.35.39.24]) by thomas.ge.com (8.6.12/8.6.12) with ESMTP id OAA07593 for <dan.bohlen@ae.ge.com>; Tue, 9 Jan 1996 14:47:59 -0500
+Received: from fea1.ansys.com.ansys.com (fea1.swanson.com [192.104.24.51]) by ns.ge.com (8.6.12/8.6.11) with SMTP id OAA00204 for <dan.bohlen@ae.ge.com>; Tue, 9 Jan 1996 14:56:24 -0500
+Received: from by fea1.ansys.com.ansys.com 
+	id AA27462; Tue, 9 Jan 96 14:55:56 EST
+Received: from devser (devser.ansys.com) by mailhub.ansys.com (4.1/SMI-4.1)
+	id AA13338; Tue, 9 Jan 96 14:45:04 EST
+Received: by devser (950413.SGI.8.6.12/930416.SGI.AUTO)
+	for dan.bohlen@ae.ge.com id PAA02245; Tue, 9 Jan 1996 15:06:38 -0500
+Date: Tue, 9 Jan 1996 15:06:38 -0500
+From: jsc@ansys.com (John Crawford)
+Message-Id: <199601092006.PAA02245@devser>
+To: dan.bohlen@ae.ge.com (Dan Bohlen at GEAE)
+Status: RO
+
+/nopr
+!
+!  kponln.mac  a macro to place N keypoints on a line
+!              does not include the end keypoints which
+!              are already associated with the line.
+!
+!  syntax:  kponln,line number,number of keypoints
+!
+!  
+*if,lsel(arg1),eq,1,then
+*if,arg2,eq,0,then
+arg2=1
+*endif
+
+*do,i,1,arg2
+K,,lx(arg1,i/(1+arg2)),ly(arg1,i/(1+arg2)),lz(arg1,i/(1+arg2))
+*enddo
+i=
+*else
+*msg,info,arg1
+LINE %i IS EITHER NOT SELECTED OR DOES NOT EXIST
+*endif
+
+
+
+_________________________________________________________________
+John Crawford                                 jcrawford@ansys.com
+ANSYS Inc.                         
+201 Johnson Road                              FAX: (412) 873-3118
+Houston, PA 15342                  Phone: (412) 746-3304 Ext.1120
+_________________________________________________________________
+

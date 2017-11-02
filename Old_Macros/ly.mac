@@ -1,0 +1,41 @@
+/nopr
+!
+!     lvert.mac   A macro to create a vertical line
+!                 from a keypoint.
+!
+!     Usage:  lvert,keypoint,Y direction length
+!
+!          where,     keypoint=starting point for the line
+!                     Y direction length= length of line in the
+!                                         Y direction.  Note
+!                                         that this can be either
+!                                         positive or negative.
+!
+/pmacro
+cm,qwerty,kp
+*IF,ARG1,LT,1,THEN
+CM,TEMP_,KP
+ksel,r,p
+arg1=kpnext(0)
+CMSEL,,TEMP_
+CMDELE,TEMP_
+*ask,arg2,Enter length of line,1
+*ELSE
+*ENDIF
+*get,kx,kx,arg1
+*get,ky,ky,arg1
+*get,kz,kz,arg1
+*get,knum,mxkp
+knum=knum+1
+ky=ky+arg2
+k,knum,kx,ky,kz
+l,arg1,knum
+CMSEL,A,QWERTY
+CMDELE,QWERTY
+kx=
+ky=
+kz=
+knum=
+
+/gopr
+

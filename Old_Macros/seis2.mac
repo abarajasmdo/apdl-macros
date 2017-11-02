@@ -1,0 +1,72 @@
+/nopr
+!
+!  seis2.mac      
+!
+!   usage:     seis2,mode   
+!
+!    where:  arg1=the mode that stresses and deflections are calculated for.
+!
+!  a macro to calculate stresses and forces and moments
+!  due to 3-D excitation
+!
+!  this has been preceeded by doing a modal analysis and getting
+!  the mode coefficients mcx, mcy and mcz using the macros
+!  mcx.mac, mcy.mac and mcz.mac.  
+!
+n=arg1
+lczero
+!   define load cases with scaling factors
+lcdef,1,1,n
+lcfact,1,mcx(n)   !  lcase1 is the x direction results
+lcdef,2,1,n
+lcfact,2,mcy(n)   !  lcase2 is the y direction results
+lcdef,3,1,n
+lcfact,3,mcz(n)   !  lcase3 is the z direction results
+!
+lcase,1   
+lcoper,squa  !  square x direction results
+lcwrite,4      !  store them in load case 4
+!
+lcase,2
+lcoper,squa  !  square y direction results
+lcwrite,5      !  store them in load case 5
+!
+lcase,3
+lcoper,squa  !  square z direction results
+lcwrite,6      !  store them in load case 6
+!
+lcase,4        !  sum the squares and take the square root
+lcoper,add,5   
+lcoper,add,6
+lcoper,sqrt
+lcwrite,7     !  save it as lcase 7
+!
+!   select only the pipe elements
+esel,s,ename,,16,18   
+!
+!   start setting up the etable
+etab,vmmax,nmisc,89    !  max von mises stress in each element
+,fxi,smisc,1
+,fyi,smisc,2
+,fzi,smisc,3           !  forces as moments at i and j ends of elements
+,mxi,smisc,4
+,myi,smisc,5
+,mzi,smisc,6
+,fxj,smisc,7
+,fyj,smisc,8
+,fzj,smisc,9
+,mxj,smisc,10
+,myj,smisc,11
+,mzj,smisc,12
+!
+!  select all the elements
+!
+esel,all
+!  
+!    the element table will now contain the data I need
+!    however, the max von mises stress is set to zero.
+/gopr
+
+
+
+

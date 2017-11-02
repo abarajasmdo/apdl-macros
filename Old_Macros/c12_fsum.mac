@@ -1,0 +1,5 @@
+/post1
+FILE,T%arg1%,rst
+set,last
+c12_fsum_node_real.mac
+/syp,rename contac12_fsum_node_real , arg1

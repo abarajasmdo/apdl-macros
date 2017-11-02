@@ -1,0 +1,9 @@
+!/CONT,1,8,AUTO
+!/replo
+!/CONTOUR,1,9,USER
+!/replo
+*get,Z_vmin,plnsol,,min
+*get,Z_vmax,plnsol,,max
+/contour,1,9,Z_vmin,,Z_vmax
+
+

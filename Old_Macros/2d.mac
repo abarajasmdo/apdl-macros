@@ -1,0 +1,20 @@
+/NOPR
+/PMACRO
+PARSAV
+!CM,KPS_ST,KP
+*GET,_ACSYS,ACTIVE,,CSYS
+BEEP
+*MSG,INFO
+  %/
+----------------------------------------- %/
+SELECT THREE KEYPOINTS TO DEFINE 2D PLANE %/
+-----------------------------------------
+KSEL,R,P
+KWPLAN,,NDNEXT(0),NDNEXT(NDNEXT(0)),NDNEXT(NDNEXT(NDNEXT(0)))
+CSYS,4
+KSEL,S,LOC,Z
+LSKP,1
+ARLS,1
+!	clean up!
+CSYS,_ACSY
+PARRES

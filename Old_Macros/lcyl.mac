@@ -1,0 +1,16 @@
+!
+! macro L2CYL - extrudes cylinder of radius arg2 along line arg1
+!
+arall
+arinv
+*ask,lnum,Enter center line of cylinder
+*ask,orad,Enter radius of cylinder
+*get,k1,line,lnum,kp,1
+kwpave,k1
+lwplan,-1,lnum         ! -1 for don't change plot view
+*get,llen,line,lnum,leng
+cylind,,orad,0,llen
+llen=
+orad=
+lnum=
+

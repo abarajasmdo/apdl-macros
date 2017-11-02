@@ -1,0 +1,27 @@
+/nopr
+!
+!     ratio.mac  a macro to calculate displacement ratios
+!                for the starter air duct.
+!
+eall
+nall
+*get,nxux,ux,nxmx
+*get,nyuy,uy,nymx
+*get,nzuz,uz,nzmx
+*get,ntut,disp,ntmx
+
+rx=abs(nxux/uxmx)
+ry=abs(nyuy/uymx)
+rz=abs(nzuz/uzmx)
+rt=abs(ntut/utmx)
+
+*get,load,load
+*get,iter,iter
+
+*msg,info,load,iter
+(' Load Step ',f3.0,'  Iteration ',f3.0)
+*msg,info,nxux,nyuy,nzuz,ntut
+(' nxux = ',f9.5,'  nyuy = ',f9.5,' nzuz = ',f9.5,' ntut = 'f9.5)
+*msg,info,rx,ry,rz,rt
+(' Ratio X = ',f4.2,'  Ratio Y = ',f4.2,'  Ratio Z = ',f4.2,'  Ratio T = ',f4.2)
+/gopr

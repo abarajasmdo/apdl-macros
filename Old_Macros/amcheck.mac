@@ -1,0 +1,200 @@
+/nopr
+!
+!     amcheck.mac
+!                    A macro to sequencially plot the selected areas
+!                    and their associated nodes and elements
+!                    to allow for easy verification of correct
+!                    meshing.
+!
+!   save the current view setting which will be retrieved
+!   when the macro is finished running.
+/gsave,startvw
+!   reset the viewing data
+/reset
+!   create components for each  ANSYS entity, so they can
+!   be retrieved when the macro is finished running.
+cm,dummya,area
+cm,dummyv,volu
+cm,dummyl,line
+cm,dummyk,kp
+cm,dummye,elem
+cm,dummyn,node
+!   set up 4 windows to view the area and element plots
+!   windows 1 and 3 are for the area, 2 and 4 are for the elements.
+/win,1,ltop
+/win,2,rtop
+/win,3,lbot
+/win,4,rbot
+!   orient the windows for front and top views
+/view,1,,1
+/view,2,,1
+/view,3
+/view,4
+!   get the lowest area number of the areas currently selected
+*get,n,area,,num,min
+!   get the highest area number in the currently selected set
+!   this will be used to find if all the areas have been checked.
+*get,nmax,area,,num,max
+!   enter the loop which displays each area/element comparison
+:loop
+/tspec,10,1,2
+!   delete previous /tlab data
+/annot,dele
+!   select the next area to be processed
+asel,s,area,,n
+!   do an asum command so the area of the area can be obtained
+!   with the *get command.
+asum
+!   get the lines associated with the area
+lsla
+!   get the keypoints associated with the lines
+ksll
+!   get the elements associated with the area
+esla
+!   get number of elements associated with the mesh area
+nele
+!   get the number on nodes associated with the
+!   selected elements.
+*get,nne,node,,count
+!   get the nodes associated with the area
+!   Note:  this is done (instead of NELE) so that
+!   nodes which don't have any elements associated
+!   with them due to faulty meshing but which are 
+!   associated with the area can be obtained and plotted
+!   with the elements.
+nsla,,1
+!   get the number on nodes currently selected
+*get,nnd,node,,count
+!   get the number of elements currently selected
+*get,nel,elem,,count
+!   create a component made up of the currently selected
+!   areas so that they can be retrieved for plotting after their surface 
+!   area has been calculated.
+cm,dumye2,elem
+!   set the total element area to 0 at the beginning of the element
+!   area calculation loop
+eatot=0
+!   set the upper limit node number to something very high
+!   so that the next highest node number can be found with
+!   the *get command.  This number is then incremented down
+!   at the looping proceeds.
+enum=9e9
+!   enter the loop which calculates the sum of the element 
+!   surface areas.
+:lp2
+!   get the element number just below the current value for enum
+*get,enum,elem,enum,nxtl
+!   if enum equals zero (all the elements have been summed) then
+!   jump out of the loop by going to :done
+*if,enum,eq,0,:done
+!   get the area for element enum
+*get,eare,elem,enum,area
+!   add this area to the total element area
+eatot=eatot+eare
+!   go to the top of the loop
+*go,:lp2
+!   the element area calculation loop stops here
+!   and the program continues.
+:done
+!   get the area of mesh area n
+*get,aare,area,n,area
+!   calculate the ratio of area/element 
+!   note that values substantially larger than 1
+!   indicate that the area may not have been 
+!   accurately meshed, and may be missing
+!   elements.
+ratio=aare/eatot
+!   make a /tlab which displays what the area/element ratio is.
+/tlab,.01,-.1,AREA/ELEMENT RATIO %ratio%
+!   check to see if the number of nodes associated with the area 
+!   is equal to the number of nodes associated with the elements
+!   if not, then put a label on the plot which indicates that this
+!   mesh area is likely to be in error
+*if,nne,eq,nnd,:lp3
+/tspec,12,1.5,4
+/tlab,-.9,-.8,***NUMBER OF AREA NODES DOES NOT*** 
+/tlab,-.9,-.9,***MATCH NUMBER OF ELEMENT NODES***
+:lp3
+!   restore the elements which make up the area we are interested
+!   in so they can be plotted next to the area.
+cmse,s,dumye2
+!   make a /tlab which will display the area number, and the
+!   number of nodes and elements which represent it.
+/tspec,10,1,2
+/tlab,-.7,.95,AREA %n%             %nnd% NODES %nel% ELEMENTS
+!   turn off the windows which will be used to
+!   plot the elements.
+/win,2,off
+/win,4,off
+!   plot the area in windows 1 and 3
+aplot
+!   turn off the legend and outline for faster and cleaner
+!   plotting of elements and nodes
+/plopts,leg1,0
+/plopts,leg2,0
+/plopts,leg3,0
+/plopts,title,0
+!   keep the screen from erasing
+/noer
+!   turn windows 1 and 3 off (they have the area on them)
+!   and turn windows 2 and 4 on (so the nodes and element
+!   can be plotted)
+/win,1,off
+/win,3,off
+/win,2,on
+/win,4,on
+!   plot the elements
+eplo
+!   plot the nodes
+nplo
+!   display the message which tell us what the results are
+!   and prompts us to hit enter so the program can proceed
+*msg,info,n,nnd,nel,ratio
+Area %i has %i nodes and %i elements. / Area/Element Ratio %g
+*ask,enter,key to clear screen
+!   turn erase capability back on
+/plopt,defa
+/erase
+!   turn windows 1 and 3 back on
+/win,1,on
+/win,3,on
+!   check if we've done the last area or not.  if so, then 
+!   go to :end
+*if,n,ge,nmax,:end
+!   restore the original selected areas to the model so we
+!   can get the next area number.
+cmse,s,dummya
+!   get the next highest area number
+*get,n,area,n,nxth
+!   go to the top of the outer loop
+*go,:loop
+!   the end of the outer loop
+:end
+!   restore model data which existed when the macro began
+cmse,s,dummya
+cmse,s,dummyv
+cmse,s,dummyl
+cmse,s,dummyk
+cmse,s,dummye
+cmse,s,dummyn
+!   delete these components from the database
+cmde,dummya
+cmde,dummyv
+cmde,dummyl
+cmde,dummyk
+cmde,dummye
+cmde,dummyn
+!   restore the original view data to the data base
+/gresu,startvw
+!   remove the parameters from the data base
+n=
+nmin=
+ratio=
+aare=
+eare=
+eatot=
+enum=
+nel=
+nnd=
+/gopr
+

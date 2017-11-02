@@ -1,0 +1,22 @@
+! Prints model data to output during solution.  Execute macro during batch
+! solution or add commands to JCL
+!
+!  BY Adrain Allan
+!
+etlist,all
+rlist,all
+elist,all
+nlist,all
+mlist,all
+mplist,all
+cplist,all
+celist,all
+dlist,all
+flist,all
+bflist,all
+sfelist,all
+atype
+stat
+inrtia
+stat
+!

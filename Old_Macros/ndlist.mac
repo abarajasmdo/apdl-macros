@@ -1,0 +1,30 @@
+/pmacro
+cm,temp_nd,node
+*get,a_dsys,active,,dsys
+*get,a_csys,active,,csys
+nsel,r,p
+/output,NODE.LIST
+NLIST,ALL, , ,XYZ,NODE,NODE,NODE
+/nopr
+DIAM=NX(NDNEXT(0))*2
+dsys,a_csys
+/gopr
+NLIST,ALL, , ,XYZ,NODE,NODE,NODE
+/com,
+/com,LIST DIAMETERS
+/com,--------------
+/COM,
+/nopr
+*msg,info,NDNEXT(0),diam
+Node %I _ Diameter= %g
+/out
+/nopr
+*uilist,NODE.LIST
+dsys,a_dsys
+cmsel,,temp_nd
+cmdele,temp_nd
+a_dsys=
+a_csys=
+/sys,rm NODE.LIST
+/gopr
+

@@ -1,0 +1,14 @@
+!
+!                       LNEP.MAC     This macro plots lines, nodes and elements
+!                                                   simultaneously.
+!
+/nopr                                                                           
+lplo                                                                            
+/user                                                                           
+/noer                                                                           
+/plof,1,1,1,1
+eplo                                                                            
+nplo                                                                            
+/erase         
+/plof                                                                 
+/gopr                                                                           

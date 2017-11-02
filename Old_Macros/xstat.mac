@@ -1,0 +1,124 @@
+!
+!  macro mystat - does run stat for frontal and PCG
+!
+!	the macro will wsort the model if it hasn't been done yet.
+!	save before running if that's a problem!
+!
+/NOPR
+PARSAV
+FLAG=0
+EALL
+NALL
+get_rout	! gets current routine
+!	CHECK TO SEE IF WSORTED
+*GET,WS,ACTIVE,,WFRONT,RMS
+*IF,WS,LT,2,THEN
+WAVES
+WSORT,ALL
+FLAG=1
+*ENDIF
+/runstat
+/output,STAT,1
+rall
+/OUTPUT,TERM
+*GET,SIZE1,RUNST,0,RFILSZ,TOTAL
+SIZE1=NINT(SIZE1)+1
+*GET,TIME1,RUNST,0,RTIMST,TOTAL
+TIME1=NINT(TIME1)
+!	check to see if pcg or frontal is active
+*get,d,runst,,rfilsz,tri
+*GET,TRI_,RUNST,,RFILSZ,TRI
+*IF,TRI_,GT,0,THEN
+FRT_SIZE=SIZE1
+FRT_TIME=TIME1
+/SYS,mv STAT.1 STAT.FRONT
+/SOLU
+EQSLV,PCG
+/OUTPUT,STAT,PCG
+/RUNSTAT
+RALL
+/OUTPUT,TERM
+*GET,PCG_SIZE,RUNST,0,RFILSZ,TOTAL
+*GET,PCG_TIME,RUNST,0,RTIMST,TOTAL
+/solu
+EQSLV,FRONT
+*ELSE
+/SYS,mv STAT.1 STAT.PCG
+PCG_SIZE=SIZE1
+PCG_TIME=TIME1
+/SOLU
+EQSLV,FRONT
+/OUTPUT,STAT,FRONT
+/RUNSTAT
+RALL
+/OUTPUT,TERM
+*GET,FRT_SIZE,RUNST,0,RFILSZ,TOTAL
+*GET,FRT_TIME,RUNST,0,RTIMST,TOTAL
+/solu
+eqslv,pcg
+*ENDIF
+!
+getname		! get jobname 
+!
+! READ DATA INTO ANSYS FROM OUTPUT FILES DB SIZE MEMORY REQ
+!
+data=
+/sys,echo "ll \$1.db | awk '/db/ {printf\"%i\", \$5/1000000+1}' >_dbsize">get_dbsize  !  DATA(1)=DB (IN MB)
+/syp,sh get_dbsize,name(1)
+/sys,echo " ">>_dbsize
+/SYS,echo `grep "Max. Solution Memory Space =" STAT.FRONT | awk '/Max/ {printf"%i", $6 +1}'`>>_dbsize
+/SYS,echo `grep "PCG  Memory required (In-Core)" STAT.PCG | awk '/PCG/ {printf"%i", $6 +1}'`>>_dbsize
+*dim,data,array,3,1
+*VREAD,data(1),_dbsize, ,  ! read db size back into ansys
+(I20), , , , ,1,
+/prep7
+/OUTPUT,RUNSTAT,COMPARE
+*MSG,INFO,FRT_TIME,FRT_SIZE,DATA(2),DATA(1),DATA(2)+DATA(1)
+------------------ FRONTAL SOLVER STATS ------------------------- %/&
+%/&
+TOTAL SOLUTION RUN TIME.... = %I SECS (FOR 1 ITERATION)  %/&
+TOTAL DISK SPACE REQUIRED.. = %I MB ..(EXCL. SUBSTRUCTURE FILES) %/&
+MAX SOLUTION MEMORY REQ.... = %I MB %/&
+DATABASE MEMORY (OPTIONAL). = %I MB %/&
+........................  ------------  %/&
+TOTAL SOLUTION MEMORY REQ.. = %I MB 
+*MSG,info,NAME(1),DATA(2)+DATA(1),DATA(1),FRT_SIZE
+%/&
+(I.E.)....lsfansys -j %C -m %I -db %I -d %I   %/
+!
+*IF,FLAG,GT,.5,THEN
+*MSG,INFO,
+....(NOTE: YOUR MODEL WAS *NOT* WAVE SORTED, IT IS NOW! %/&
+TO GET THE ABOVE PERFORMANCE DO: WAVES, THEN WSORT,ALL) %/&
+%/
+*ENDIF
+!
+*MSG,INFO,PCG_TIME,PCG_SIZE,DATA(3),DATA(1),DATA(3)+DATA(1)
+ -------------------- PCG SOLVER STATS  --------------------------- %/&
+ %/&
+TOTAL SOLUTION RUN TIME.... = %I SECS (FOR 1 ITERATION) %/&
+TOTAL DISK SPACE REQUIRED.. = %I MB %/&
+MAX SOLUTION MEMORY REQ.... = %I MB %/&
+DATABASE MEMORY (OPTIONAL). = %I MB %/&
+........................  ------------  %/&
+TOTAL SOLUTION MEMORY REQ.. = %I MB  %/&
+%/
+*MSG,info,NAME(1),DATA(3)+DATA(1),DATA(1),PCG_SIZE
+(I.E.)...  lsfansys -j %C -m %I -db %I -d %I   %/
+/OUTPUT,TERM
+*uilist,RUNSTAT.COMPARE
+!RESUME
+get_rout
+PARRES
+!	clean up files!
+/sys,rm -f  _dbsize get_dbsize
+/gopr
+*msg,note
+The files STAT.PCG and STAT.FRONT contain the full /runstat listing
+
+
+                
+
+
+
+

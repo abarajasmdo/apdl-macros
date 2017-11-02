@@ -1,0 +1,71 @@
+! plelcf  plots elcf location components
+!
+!  USAGE PLELCF, starting loc # , ending location number to plot
+!
+!/NOPR
+
+! setup color array
+*DIM,CLR,CHAR,15
+CLR(12)='RED'
+CLR(4)='BLUE'
+='MRED'
+='CBLU'
+'YGRE'
+'DGRA'
+'MAGE'
+'CYAN
+'YELL'
+'LGRA'
+'BMAG'
+/ANNO,SAVE
+/ANNO,DELE
+*IF,ARG1,LT,0,THEN
+*ASK,STRT,Starting ELCF location number,1
+*ELSE
+STRT=ARG1
+*ENDIF
+*IF,ARG2,LT,0,THEN
+*ASK,EEND,ENDing ELCF location number,100
+*ELSE
+EEND=ARG2
+*ENDIF
+
+!loop thru comp cav
+*CFOPEN,ZXVC
+*DO,LOOP,STRT,EEND
+*GET,QCMP,COMP,LOC%LOOP%,TYPE
+*IF,QCMP,EQ,0,CYCLE
+CMSEL,,LOC%LOOP%
+
+! toggles element edges on/off
+*get,_ESTAT_,graph,1,edge !
+*IF,_ESTAT_,EQ,0,THEN
+/EDGE,ALL,1,45
+*ELSE
+/EDGE,ALL,0,45
+*ENDIF
+EPLO
+
+*GET,NELES,ELEM,,COUNT
+EL=ELNEXT(0)
+XCENT=0
+YCENT=0
+	*DO,ZZZ,1,NELES
+XCENT=XCENT+CENTRX(EL)
+YCENT=YCENT+CENTRY(EL)
+EL=ELNEXT(EL)
+	*ENDDO
+XCENT=XCENT/NELES
+YCENT=YCENT/NELES
+
+*CFWRIT,/AN3D,TEXT,XCENT,YCENT,0,LOC %LOOP%
+*ENDDO
+
+!*CFWRITE,/rmtemp
+*CFCLOS
+/INP,ZXVC
+
+/GOPR
+*CFCLOS
+
+

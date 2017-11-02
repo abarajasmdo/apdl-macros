@@ -1,0 +1,88 @@
+From - Mon Apr 19 11:27:01 1999
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2448.0)
+	id 26M90W2R; Wed, 14 Apr 1999 14:43:36 -0400
+Received: from [3.47.28.17] by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA30292; Wed, 14 Apr 1999 14:38:10 -0400
+Received: from ns2.ge.com (ns2-i.ge.com [10.35.39.25])
+	by thomas3.ge.com (8.9.3/8.9.3) with ESMTP id OAA00140
+	for <dan.bohlen@ae.ge.com>; Wed, 14 Apr 1999 14:39:59 -0400 (EDT)
+Received: from onelist.com (pop.onelist.com [209.207.135.253])
+	by ns2.ge.com (8.9.3/8.9.3) with SMTP id OAA25648
+	for <dan.bohlen@ae.ge.com>; Wed, 14 Apr 1999 14:33:57 -0400 (EDT)
+Received: (qmail 31504 invoked by alias); 14 Apr 1999 18:10:17 -0000
+Received: (qmail 31310 invoked from network); 14 Apr 1999 18:10:12 -0000
+Received: from unknown (HELO smtpgw.etn.com) (151.110.126.50) by pop.onelist.com with SMTP; 14 Apr 1999 18:10:12 -0000
+Received: from dtw.etn.com (sunscreen.dtw.etn.com [151.110.2.17]) by smtpgw.etn.com (8.8.6 (PHNE_14041)/8.8.6) with SMTP id OAA05765 for <xansys@onelist.com>; Wed, 14 Apr 1999 14:26:47 -0400 (EDT)
+Received: from frisco.etn.com (frisco.dtw.etn.com) by dtw.etn.com (4.1/SMI-4.1) id AA27448; Wed, 14 Apr 99 14:19:29 EDT
+Received: from frisco by frisco.etn.com (8.9.1b+Sun/SMI-SVR4) id OAA01460; Wed, 14 Apr 1999 14:19:27 -0400 (EDT)
+Message-Id: <199904141819.OAA01460@frisco.etn.com>
+Date: Wed, 14 Apr 1999 14:19:27 -0400 (EDT)
+From: Hursha Narayan <narayan@sunscreen.dtw.etn.com>
+To: xansys@onelist.com
+X-Mailer: dtmail 1.3.0 CDE Version 1.3 SunOS 5.7 sun4u sparc 
+Mailing-List: list xansys@onelist.com; contact xansys-owner@onelist.com
+Delivered-To: mailing list xansys@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@ONElist.com>
+Reply-To: xansys@onelist.com
+Mime-Version: 1.0
+Content-Type: MULTIPART/mixed; BOUNDARY=Bale_of_Turtles_339_000
+Subject: [xansys] Thanks for the help on /AN3D command
+X-Mozilla-Status: 8001
+X-Mozilla-Status2: 00000000
+X-UIDL: AAADNyiAAAwNGbACgBg3YGR0aMGXHKwA
+
+--Bale_of_Turtles_339_000
+Content-Type: TEXT/plain; charset=us-ascii
+Content-MD5: qI9fokpnrhJLXIGA4Xvj8Q==
+
+Hi,
+
+I modified the macro as per the suggestion given by Peter Budgell and the macro 
+works great. Thank you very much Peter. I'm posting the updated macro so that it 
+might be useful to someone. 
+
+Regards,
+Hursha S Narayan
+
+*ASK, COMPN,COMPONENT NAME IN SINGLE QUOTE:,
+*ASK,COLNUM,BLACK-0 WHITE-15:,
+/TSPEC,COLNUM     !TEXT COLOR
+CMSEL,S,COMPN
+*GET,NCOUNT,NODE,,COUNT
+NODEN = NDNEXT(0) !SELECT THE FIRST NODE IN THE COMPONENT
+*CFOPEN,an3d,dat
+*DO,ZZ,1,NCOUNT,1
+XCO = NX(NODEN)   !X COORDINATE
+YCO = NY(NODEN)   !Y COORDINATE
+ZCO = NZ(NODEN)   !Z COORDINATE
+NTEMP = TEMP(NODEN) ! TEMPERATURE AT NODEN
+*CFWRITE,/AN3D,SYMB,3,XCO,YCO,ZCO,0.5 !FILLED CIRCLE AT THE NODE
+*CFWRITE,/AN3D,TEXT,XCO,YCO,ZCO,%NTEMP% !WRITE NODAL TEMPERATURE AT THE NODE
+NODEN = NDNEXT(NODEN) !SELECT THE NEXT NODE IN THE COMPONENT
+*ENDDO
+*CFCLOSE
+/INPUT,an3d,dat
+ALLSEL
+
+
+
+--Bale_of_Turtles_339_000
+Content-Type: APPLICATION/x-sun-mac-file; name="text3d.mac"; x-unix-mode=0666
+Content-Transfer-Encoding: BASE64
+Content-Description: text3d.mac
+Content-MD5: nRPAeuTIEabmUCZcU8xrTQ==
+
+KkFTSywgQ09NUE4sQ09NUE9ORU5UIE5BTUUgSU4gU0lOR0xFIFFVT1RFOiwKKkFTSyxDT0xOVU0s
+QkxBQ0stMCBXSElURS0xNTosCi9UU1BFQyxDT0xOVU0gICAgICFURVhUIENPTE9SCkNNU0VMLFMs
+Q09NUE4KKkdFVCxOQ09VTlQsTk9ERSwsQ09VTlQKTk9ERU4gPSBORE5FWFQoMCkgIVNFTEVDVCBU
+SEUgRklSU1QgTk9ERSBJTiBUSEUgQ09NUE9ORU5UCipDRk9QRU4sYW4zZCxkYXQKKkRPLFpaLDEs
+TkNPVU5ULDEKWENPID0gTlgoTk9ERU4pICAgIVggQ09PUkRJTkFURQpZQ08gPSBOWShOT0RFTikg
+ICAhWSBDT09SRElOQVRFClpDTyA9IE5aKE5PREVOKSAgICFaIENPT1JESU5BVEUKTlRFTVAgPSBU
+RU1QKE5PREVOKSAhIFRFTVBFUkFUVVJFIEFUIE5PREVOCipDRldSSVRFLC9BTjNELFNZTUIsMyxY
+Q08sWUNPLFpDTywwLjUgIUZJTExFRCBDSVJDTEUgQVQgVEhFIE5PREUKKkNGV1JJVEUsL0FOM0Qs
+VEVYVCxYQ08sWUNPLFpDTywlTlRFTVAlICFXUklURSBOT0RBTCBURU1QRVJBVFVSRSBBVCBUSEUg
+Tk9ERQpOT0RFTiA9IE5ETkVYVChOT0RFTikgIVNFTEVDVCBUSEUgTkVYVCBOT0RFIElOIFRIRSBD
+T01QT05FTlQKKkVORERPCipDRkNMT1NFCi9JTlBVVCxhbjNkLGRhdApBTExTRUwK
+
+--Bale_of_Turtles_339_000--

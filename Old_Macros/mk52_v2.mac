@@ -1,0 +1,82 @@
+!  
+! macro mk52.mac  This macro builds STIF 52 gaps between flange joints that 
+!   have an interference.  This is done by creating a set of dummy nodes based
+!	on the aft surface to get the stif 52 direction correct.  The aft
+!	node is coupled to the psuedo aft node and a stif 52 is built
+!	between the fwd node and the pseudo aft node for the correct dir.
+! 
+!  usage :  rabbet
+!
+! prep:  have component of inner nodes outer nodes, have stif 21 type defined,
+!	stif52 type defined, cylindrical system selected, real constant for 
+!	stif52 and 21 msut be defined
+!
+!	POSSIBLE ENHANCEMENTS.  NMOD NGEN'D NODES AND USE ETINF TO GENERATE
+!	FINAL GAPS BETWEEN PSUEDO NODES AND FWD NODES VS. ONE AT A TIME.
+!
+!  prep
+PARSAV
+*ASK,ACOORD,SITF 52 COORDINATE SYSTEM NUMBER,0
+csys,ACOORD
+CMSEL,,FWD	! SMALL z COORD  (csys 11)
+CMSEL,,AFT	! LARGER z COORD  (csys,11)
+!NROTAT,ALL	!  MUST ROTAT FOR CPINTF TO WORK!
+*GET,LNUM,NODE,,NUM,MIN
+*GET,NMAX,MXND
+INC=NMAX-LNUM+10
+*ASK,DISP,TOLER FOR GENERATING INITIAL GAPS,.0001
+NGEN,2,INC,AFT,,,,,-.01  ! CREATE PSUEDO AFT NODE -.01 aft, INCREMENT=INC
+CM,_NTEMP_,NODE	!  ALL NODES INVOLVED IN MACRO
+NROTAT,ALL	!  ROTATE INTO proper SYSTEM
+TYPE,21
+REAL,21
+MAKE21S		! USE MACRO TO MAKE STIF 21'S ON EVERY NODE (REQUIRED)
+CMSEL,U,FWD
+,U,AFT
+CM,PSUEDO,NODE	!MAKE COMP OF PSUEDO NODES
+!
+! LOOP CREATES PSUEDO ELEMENT, COUPLES, AND STIF 52'S
+!
+CMSEL,,AFT
+*GET,ENUM,NODE,,COUNT
+*DIM,NARRAY,ARRAY,ENUM,
+NAFT=0
+!	FILL ARRAY WITH AFT NODE VALUES
+*DO,FILL,1,ENUM
+NAFT=NDNEXT(NAFT)
+NARRAY(FILL,1)=NAFT
+*ENDDO
+!	TWEAK FWD NODES TO AFT NODE LOCATION
+CMSEL,,FWD
+*DO,IT,1,ENUM
+NAFT=NARRAY(IT,1)
+NFWD=NNEAR(NAFT)
+NMOD,NFWD,NX(NAFT),NY(NAFT),NZ(NAFT),
+*ENDDO
+!
+!  Fast approach  step 1 create final gaps between fwd and psuedo nodes
+!
+!	move psuedo nodes back temporaryily
+CMSEL,,PSUEDO
+NWRIT,PSUEDO,NODE	! SAVE OLD LOCATION
+NGEN,2,,ALL,,,,,.01	!  MOVE BACK TO AFT AND FWD NODE LOCATION
+CMSEL,A,FWD
+NROTAT,ALL
+TYPE,52
+*ASK,GREAL,REAL CONSTANT FOR GENERATED GAPS,1
+REAL,GREAL
+EINTF,DISP	! MAKE FINAL GAPS
+!	
+!	NOW COUPLE PSUEDO NODES TO AFT NODES AND READ IN OLD PSEUDO NODES
+CMSEL,,PSUEDO
+CMSEL,A,AFT
+NROTAT,ALL
+CPINTF,ALL,DISP
+NREAD,PSUEDO,NODE
+!
+! CLEAN UP
+!
+NARRAY=
+CMDELE,_NTEMP_
+CMDELE,PSUEDO
+PARRES,NEW

@@ -1,0 +1,36 @@
+! aligns certain coorddinates for 52'
+!  select the gaps you want to align
+!
+parsav
+*GET,ACSYS,ACTIVE,,CSYS
+
+*ask,coord, What coordinate system to use,11
+csys,coord
+*ask,base, I or J for base I:1 J:2, 1
+*ask,xcoord, Align X coordate? yes:1, 0
+*ask,ycoord, Align Y coordate? yes:1, 0
+*ask,zcoord, Align Z coordate? yes:1, 0
+*get,nele,elem,,count
+EL=0
+*DO,I,1,NELE
+*if,base,eq,0,*cycle
+EL=ELNEXT(EL)
+base_nd=NELEM(EL,base)
+*if,base,eq,1,then
+mv_nd=NELEM(EL,2)
+*else
+mv_nd=NELEM(EL,1)
+*endif
+*if,xcoord,eq,1,then
+NMOD,mv_nd,NX(base_nd)
+*endif
+*if,ycoord,eq,1,then
+NMOD,mv_nd,,NY(base_nd)
+*endif
+*if,zcoord,eq,1,then
+NMOD,mv_nd,,,NZ(base_nd)
+*endif
+*enddo
+csys,acsys
+
+parres

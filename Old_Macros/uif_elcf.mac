@@ -1,0 +1,55 @@
+!
+/NOPR
+comp=
+strt=
+name=
+!*cfopen,location,uif
+
+
+
+*ASK,NAME,COMPONENT NAME ( 8 Characters max.),'comp'
+!*IF,ARG1,LT,1,THEN
+*ASK,STRT, ELCF Loc. number,1
+
+*cfopen,loc%name%,uif
+
+*vwrit,strt
+("TABL ", I8 , "  SIG SURF")
+*vwrit
+("TNAM")
+*Vwrit,name
+(A)
+*vwrit
+("NOMS")
+*vwrit
+("2")
+*vwrit
+("SCOM SFMR SFHP")
+*vwrit
+("11 0.0  1.0")
+*vwrit
+("22 1.0  0.0")
+*vwrit
+("$")
+*vwrit,STRT
+("LIST " , I8)
+*vwrit
+("LNAM")
+*vwrit,name
+(A)
+
+!*CFCLOS
+!/EOF
+
+*GET,NELES,ELEM,,COUNT
+*DIM,ELES,,NELES
+EL=ELNEXT(0)
+*DO,L,1,NELES
+ELES(L)=EL
+EL= ELNEXT(EL)
+*ENDDO
+
+*VWRITE,ELES(1)
+(I8 ,"  &")
+
+*cfclos

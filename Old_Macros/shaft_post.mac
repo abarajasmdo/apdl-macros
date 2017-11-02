@@ -1,0 +1,128 @@
+!/nopr
+resume
+/post1
+set
+/gresum,top_bott.gsav
+getname
+/show,name(1),rplot
+ernorm,on
+rsys,11
+dsys,0
+eall
+nall
+plns,sige
+nsel,ext
+enode
+etab,ssige,surf,19
+plet,ssige
+!	do hole 1 rollouts
+cmsel,,hole1
+/PLOPTS,MINM,1
+LSLA
+KSLL
+NSLA,,1 
+enode
+/reset
+! fix csys21 for post
+WPCSYS,-1,21,   
+wpro,90.000000,,
+wpro,90.000000,,
+CSWPLA,21,1,1,1,
+dsys,21 
+/view,1,1,,,,
+/anno,dele
+/tlab,-.9,.9, Outboard  <----       HOLE #1  Rollout   
+/tlab,-.993,-.897,FWD-
+!plns,sige
+!*get,max_1,plnsol,,max
+!*msg,info,max_1
+!HOLE 1 Max sige %g
+/pnum,sval,1
+/PLOPTS,MINM,0  
+plet,ssige
+!WPCSYS,-1,21,   
+!wpro,90.000000,,
+!wpro,90.000000,,
+!CSWPLA,21,1,1,1,
+!plet,ssige
+*get,ssmax_1,plnsol,,max
+*msg,info,ssmax_1
+HOLE 1 Max surface sige %g
+cmsel,,hole2
+/PLOPTS,MINM,1
+LSLA
+KSLL
+NSLA,,1 
+enode
+/reset
+dsys,22
+/view,1,1,,,,
+/anno,dele
+/tlab,-.9,.9, Outboard  <----       HOLE #2  Rollout   
+/tlab,-1.000, 0.790,FWD-
+!plns,sige 
+!*get,max_2,plnsol,,max
+!*msg,info,max_2
+!HOLE 2 Max sige %g
+/pnum,sval,1
+/PLOPTS,MINM,0  
+plet,ssige
+*get,ssmax_2,plnsol,,max
+*msg,info,ssmax_2
+HOLE 2 Max surface sige %g
+cmsel,,hole3
+/PLOPTS,MINM,1
+LSLA
+KSLL
+NSLA,,1 
+enode
+/reset
+dsys,23
+/view,1,1,,,,
+/anno,dele
+/tlab,-.9,.9, Outboard  <----       HOLE #3  Rollout   
+/tlab,-0.667, 0.349,FWD-
+!plns,sige 
+*get,max_3,plnsol,,max
+*msg,info,max_3
+HOLE 3 Max sige %g
+/pnum,sval,1
+/PLOPTS,MINM,0 
+!eusel,,4815,4820 
+plet,ssige
+*get,ssmax_3,plnsol,,max
+*msg,info,ssmax_3
+HOLE 3 Max surface sige %g
+!	plot  hole layout
+eall
+einv
+/anno,dele
+/inp,layout,ano
+/wind,2,dele
+/wind,3,dele
+/wind,4,dele
+/wind,5,dele
+/plop,leg1,0
+/plop,leg2,0
+/plop,leg3,0
+/plop,info,0
+/plop,vers,0
+/plop,frame,1
+/wind,1,-1,1.67,-1,1
+/triad,off
+eplo
+/reset  
+/vup,all,x  
+eall
+/VIEW, 1 ,1,1,1 
+/ANG, 1 
+/show,,,1   
+/type,all,4 
+all
+dsys,0
+winfull	1 replots
+parsav
+/show,junk
+/show,term
+/gopr
+

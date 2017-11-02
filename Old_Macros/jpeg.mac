@@ -1,0 +1,10 @@
+!jpeg
+/nopr
+*if,arg1,eq,0,then
+vid='reve'
+*else
+vid='norm'
+*endif
+/ui,copy,save,jpeg,grap,colo,vid,port,,100
+/eof
+

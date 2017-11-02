@@ -1,0 +1,25 @@
+/nopr
+!
+!   elarea.mac  a macro to calculate the area of the selected elements
+!
+!  AREA ELEMENTS ONLY (IE. STIF 63's 43's ETC)
+!
+!     arguments are not used.
+!
+!
+eatot=0
+ELE=0
+*GET,NELES,ELEM,,COUNT
+*DO,LOOP,1,NELES
+ELE=ELNEXT(ELE)
+*get,eare,elem,ele,area
+eatot=eatot+eare
+*ENDDO
+*msg,info,neles,eatot
+Area of the %I selected elements is %g
+ELE=
+LOOP=
+EARE=
+EATOT=
+/gopr
+

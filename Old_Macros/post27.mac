@@ -1,0 +1,23 @@
+From dschwar@c0131.ae.ge.com Tue Nov 21 15:23:55 EST 1995
+Received: from c0131.ae.ge.com by c0112.ae.ge.com with ESMTP
+	(1.37.109.16/16.2) id AA099655433; Tue, 21 Nov 1995 15:23:54 -0500
+Return-Path: <dschwar@c0131.ae.ge.com>
+Received: by c0131.ae.ge.com
+	(1.37.109.16/16.2) id AA288755432; Tue, 21 Nov 1995 15:23:52 -0500
+Date: Tue, 21 Nov 1995 15:23:52 -0500
+From: U-E69657-David Schwartz <dschwar@c0131.ae.ge.com>
+To: bohlen@c0112.ae.ge.com
+Subject: post27
+Status: RO
+
+/COM,ANSYS REVISION  4.4    UP437 A167     12.5108     2/ 3/1994
+/get,12,ls56mrb,f12
+/fdel,12,-1
+/post27
+store,edata,disp
+algebra,1,20,1.0
+/get,12,ls56ds,f12
+algebr,1,20,-1.0
+write
+fini
+

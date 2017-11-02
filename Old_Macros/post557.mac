@@ -1,0 +1,81 @@
+!  postprocesses s1disk
+cmsel,,s1disk
+eusel,type,2
+,mat,31,32
+nelem
+!	graphics settings
+/RESET
+/DEVICE,VECT,OFF 
+! General Graphics Settings
+/PLOP,LEG2, 0
+/PLOP,INFO, 1
+/TRIAD,OFF 
+! Window Settings
+/WIND,1, -1.0000    , 0.00000E+00, -1.0000    ,  1.0000    
+/GTYPE,  1,NODE,OFF 
+/GTYPE,  1,KEYP,OFF 
+/GTYPE,  1,LINE,OFF 
+/GTYPE,  1,VOLU,OFF 
+/VIEW,1, 0.00000E+00, 0.00000E+00, -1.0000    
+/FOC, 1,AUTO
+/DIST,1,AUTO
+/VUP, 1, X
+/LIG, 1,1,  1.0000    , 0.97749    , 0.64710E-01, 0.20082    , 0.00000E+00
+/TYPE,1, 4
+/EDG, 1, 0,  45.000    
+/CONT,1,  9,AUTO
+/DSCA,1,OFF
+! Window Settings
+/WIND,2, 0.00000E+00,  1.0000    , -1.0000    ,  1.0000    
+/VIEW,2, 0.00000E+00, 0.00000E+00, -1.0000    
+/FOC, 2,  6.6480    ,  198.44    , 0.24307E-13
+/DIST,2,  1.2335    
+/VUP, 2, X
+/LIG, 2,1,  1.0000    , 0.00000E+00, 0.00000E+00, -1.0000    , 0.00000E+00
+/TYPE,2, 4
+/EDG, 2, 0,  45.000    
+/CONT,2,  9,AUTO
+/DSCA,2,OFF
+/GO  
+!
+/show,temp,f33
+/CONT,all,9,380.91, ,859.63
+PLESOL,BFE,TEMP,0,1 
+/show,term
+/sys,plot54 -p 2 temp.f33 
+!!/sys,f33-ms_epsi temp.f33
+!/syp,rename pscr00,temp_%arg1%
+!
+/show,sx,f33
+/CONT,all,9,-100539, ,132981
+plns,sx
+/show,term
+/sys,plot54 -p 2 sx.f33
+!/sys,f33-ms_epsi sx.f33
+!/syp,rename pscr00,sx_%arg1%
+!
+/show,sy,f33
+/CONT,all,9,-102576, ,86832
+plns,sy
+/show,term
+/sys,plot54 -p 2 sy.f33 
+!/sys,f33-ms_epsi sy.f33
+!/syp,rename pscr00,sy_%arg1%
+!
+/show,sz,f33
+/CONT,all,9,0, ,133441
+plns,sz
+/show,term
+/sys,plot54 -p 2 sz.f33
+!/sys,f33-ms_epsi sz.f33
+!/syp,rename pscr00,sz_%arg1%
+!
+/show,sige,f33
+/CONT,all,9,0, ,126992
+plns,sige
+/show,term
+/sys,plot54 -p 2 sige.f33
+!/sys,f33-ms_epsi sige.f33
+!/syp,rename pscr00,sige_%arg1%
+!
+

@@ -1,0 +1,60 @@
+!
+! macro  gap40.mac : builds stif 40's with i-j definition given by components
+!
+! requires: that the node components are defined and the nodes should be rotated
+!		have type,-- cmd set to stif 40. set real also.
+!
+!xtime
+PARSAV
+cm,start,node
+!/nopr
+*ask,ICOMP,COMPONENT NAME FOR "I" NODES,'i'
+*ask,JCOMP,COMPONENT NAME FOR "J" NODES,'j'
+!		READ I NODES INTO ARRAY
+CMSEL,,ICOMP	
+!LSLA
+!KSLL
+!NSLA,,1 
+*GET,NNDS,NODE,,COUNT
+*DIM,NODES,ARRAY,NNDS,3
+N=0
+!	READ NODES INTO ARRAY
+*DO,L,1,NNDS
+N=NDNEXT(N)
+NODES(L,1)=N
+*ENDDO
+!
+!	Now go through I node array find J node near put into array 
+!
+!CMSEL,,START
+CMSEL,,JCOMP	! SELECT J NODES FOR NNEAR COMMAND
+*GET,JNDS,NODE,,COUNT
+*IF,JNDS,NE,NNDS,THEN
+*MSG,WARN,
+THERE ARE A DIFFERENT NUMBER OF I AND J NODES
+*ENDIF
+!LSLA
+!KSLL
+!NSLA,,1 
+*DO,M,1,NNDS
+NODES(M,2)=NNEAR(NODES(M,1))	! STORE THE NEAREST J NODE NUMBER INT0 ARRAY
+DIST=DISTND(NODES(M,2),NODES(M,1))
+*IF,DIST,GT,.0001,THEN
+*MSG,WARN,DIST
+DISTANCE BETWEEN NODES IS %G !
+*ENDIF
+*ENDDO
+!	Now use array to make elements!
+CMSEL,,START
+!LSLA
+!KSLL
+!NSLA,,1 
+*DO,E,1,NNDS
+E,NODES(E,1),NODES(E,2)
+*ENDDO
+!	Ten second tidy!
+PARRES
+NODES=
+!XTIME
+e_dir
+/gopr

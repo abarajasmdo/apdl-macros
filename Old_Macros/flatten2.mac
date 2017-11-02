@@ -1,0 +1,28 @@
+!flattens model for cut bcs from 2D
+/prep7
+parsav
+nwrit,backUP,node
+*msg,note
+Current node definitions backed up on backUP.node
+modmsh,noch
+zero=0
+shpp,off
+csys,11
+imme
+!  store angluar locations
+*get,nnodes,node,,count
+*dim,angle,array,nnodes,2
+nnd=ndnext(0)
+*do,i,1,nnodes
+!/gopr
+angle(i,1)=nnd
+angle(i,2)=ny(nnd)
+nnd=ndnext(nnd)
+*enddo
+
+
+nmod,all,,zero
+imme,1
+csys,0
+!nrot,all
+/replo

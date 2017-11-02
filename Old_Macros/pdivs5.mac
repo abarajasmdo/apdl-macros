@@ -1,0 +1,56 @@
+!
+!               PDIV5.MAC      A macro to divide a pipe element into two or
+!                                           more pipe elements for ANSYS 5.0.
+!
+!                Usage:       pdivs5,starting elem #, end elem #, number of elements to be created
+!
+!
+!
+ncou=arg1
+:lp
+*if,ncou,gt,arg2,:end
+*if,arg3,le,1,:end
+*get,nmax,mxnd
+*get,n1,en1,ncou
+*get,n2,en2,ncou
+fill,n1,n2,arg3-1,nmax+1,1
+*get,r1,real,ncou
+*get,m1,mat,ncou
+*get,t1,type,ncou
+real,r1
+mat,m1
+type,t1
+edel,ncou
+nj=nmax+1
+e,n1,nj                           ! create the first element
+lcnt=1                            ! loop counter set to 1
+lpmx=arg3-2               ! maximum number of loops to be done
+*if,lpmx,le,0,:lend       ! check to see if loop needs to be entered
+:lp1
+ni=nmax+lcnt
+nj=nmax+lcnt+1
+e,ni,nj                             ! create the intermediate elements
+lcnt=lcnt+1
+*if,lcnt,le,lpmx,:lp1
+:lend
+e,nj,n2                            ! create the last element
+ncou=ncou+1
+*go,:lp
+:end
+!*msg,NOTE,arg3
+!  Created %G elements
+!n1=
+!n2=
+!ni=
+!nj=
+!r1=
+!m1=
+!t1=
+!lcnt=
+!lpmx=
+
+
+
+
+
+

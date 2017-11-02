@@ -1,0 +1,27 @@
+! select component
+imme,0
+*get,nels,elem,,count
+el=elnext(0)
+kpnum=0
+*do,loop,1,nels
+k,kpnum+1,nx(nelem(el,1)),ny(nelem(el,1)),0
+k,kpnum+2,nx(nelem(el,2)),ny(nelem(el,2)),0
+k,kpnum+3,nx(nelem(el,3)),ny(nelem(el,3)),0
+k,kpnum+4,nx(nelem(el,4)),ny(nelem(el,4)),0
+a,kpnum+1,kpnum+2,kpnum+3,kpnum+4
+kpnum=kpnum+4
+el=elnext(el)
+*enddo
+numm,kpoi
+LSEL,R,EXT
+cm,temp,line
+lsal
+cmsel,u,temp
+adele,all
+ldele,all
+lsal 
+imme,1
+lplo
+
+
+

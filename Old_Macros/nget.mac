@@ -1,0 +1,17 @@
+/nopr
+!
+!     nget.mac    A macro to select a discontinuous
+!                        series of nodes.
+!
+!         Usage:   nget,n1,n2,n3,n4,n5,n6,n7,n8,n9
+!                
+*if,arg1,eq,0,:end
+nall
+ninv
+nsel,s,,,arg1
+*do,n,2,9
+*if,arg(n),eq,0,:end
+nsel,a,,arg(n)
+*enddo
+:end
+nlis

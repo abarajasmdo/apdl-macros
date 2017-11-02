@@ -1,0 +1,39 @@
+/nopr
+!
+!                NTFY.MAC    Nodal Temperature as a Funtion of Y
+!
+!                                 Usage: NTFY,Y1,T1,Y2,T2
+!
+!                                 Where:           T1 = Temperature at location Y1
+!                                                          T2 = Temperature at location Y2
+!
+:loop
+*get,nmax,ndmx                   ! get highest node number of selected nodes
+*get,ny,ny,nmax                    ! get this nodes Y value
+!           calculate y axis intercept
+b=arg2-arg1*((arg4-arg2)/(arg3-arg1))
+!           calculate slope of the line
+m=(arg4-arg2)/(arg3-arg1)
+!           calculate value of temperature
+temp=m*ny+b
+!
+t,nmax,temp                           ! apply calculated temperature to node nmax
+nusel,,nmax                            ! remove node nmax from selected set
+*get,nnod,nsel                        ! get number of nodes left in set
+                                                 
+*msg,info,nmax,ny,temp
+(' node ',f8.0,'    at y = ',f10.4,'      has a temperature of = ',f10.4)
+*msg,info,nnod
+(' ',f8.0,'   nodes left in currently selected set')
+*if,nnod,gt,0.4,:loop              ! if number of nodes left in set is greater than
+                                                  ! zero go to top of loop.
+m=
+b=
+nmax =                     
+ny =                                             ! remove parameters from memory     
+temp =  
+nnod =  
+
+
+
+

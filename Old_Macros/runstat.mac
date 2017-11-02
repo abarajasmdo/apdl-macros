@@ -1,0 +1,13 @@
+/NOPR
+PARSAV
+get_rout
+/runstat
+rall
+*GET,SIZE1,RUNST,0,RFILSZ,TOTAL
+SIZE1=NINT(SIZE1)+1
+*GET,TIME1,RUNST,0,RTIMST,TOTAL
+TIME1=NINT(TIME1)
+*GET,Parm,RUNST,,RMEM,SOLMEMORY
+getname	
+/sys,echo "ll \$1.db | awk '/db/ {printf\"%i\", \$5/1000000+1}' >_dbsize">get_dbsize  !  DATA(1)=DB (IN MB)
+/syp,sh get_dbsize,name(1)

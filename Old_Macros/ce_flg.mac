@@ -1,0 +1,33 @@
+!
+! ce_flg  macro makes averaging constraint equation between one set of
+!		nodes defined by components and a single node.  makes the 
+!		equation 1*ux(234) + 1*ux(76) + 1*ux(57) ... - (sum # of nodes)*single node = 0
+!
+/prep7
+PARSAV
+*ask,JNODE,The SINGLE node number,0
+*ask,ICOMP,Second node set comp name,'comp_name'
+*ASK,CEDOF,CE DOF (ONLY ONE),'UX'
+!
+! GET STARTING CE NUMBER
+!
+CENUM=CEINQR(,14)+1
+CMSEL,,ICOMP
+*GET,NNDS,NODE,,COUNT
+NASEL,,JNODE
+!	
+!	DO POSITIVE COEFF
+!
+N=0
+*DO,I,1,NNDS
+N=NDNEXT(N)
+CE,CENUM,0,N,CEDOF,1,
+*ENDDO
+!	NOW DO NEGATIVE COEFF
+CE,CENUM,0,JNODE,CEDOF,(-1)*NNDS,
+!	CLEAN UP
+CELIST,CENUM
+PARRES
+
+
+	

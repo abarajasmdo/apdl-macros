@@ -1,0 +1,36 @@
+/nopr
+!
+!  knear.mac  a macro to find the two nearest keypoints and
+!                     the distance between them.
+!
+!      usage: knear
+!
+csys,0
+kdist=1000
+minkp=0
+*get,maxkp,kp,,num,max
+:return
+*get,minkp,kp,minkp,nxth
+ksel,u,kp,,minkp
+nearkp=kp(kx(minkp),ky(minkp),kz(minkp))
+ksel,a,kp,,minkp
+kdist1=(kx(minkp)-kx(nearkp))**2+(ky(minkp)-ky(nearkp))**2
+kdist1=(kdist1+(kz(minkp)-kz(nearkp))**2)**.5
+*if,kdist,le,kdist1,:pass
+kdist=kdist1
+keypt1=minkp
+keypt2=nearkp
+:pass
+*if,minkp,lt,maxkp,:return
+*msg,info,keypt1,keypt2,kdist
+ The closest keypoints are %i and %i %/ which are %g apart.
+*ask,enter,key to clear screen
+kdist=
+kdist1=
+keypt1=
+keypt2=
+minkp=
+maxkp=
+nearkp=
+/gopr
+

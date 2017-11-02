@@ -1,0 +1,49 @@
+/nopr
+
+!      kdist5.mac      Usage: kdist5,kpoint1,kpoint2
+
+!            For ANSYS 5.0.
+
+!            This macro calculates the distance between
+
+!            keypoint1 and keypoint2.
+
+*get,x1,kx,arg1                                 
+*get,y1,ky,arg1                                                                 
+*get,z1,kz,arg1                                                                 
+*get,x2,kx,arg2                                                                 
+*get,y2,ky,arg2                                                                 
+*get,z2,kz,arg2                                                                 
+dx=x2-x1                                                                
+dy=y2-y1                                                                        
+dz=z2-z1 
+ddx=dx*dx
+ddy=dy*dy
+ddz=dz*dz                                                       
+d=(ddx+ddy+ddz)**.5                                                            
+n1=arg1
+
+n2=arg2
+
+!*msg,info,n1,n2,d,dx,dy,dz                                                         
+Distance Between  Keypoint %i And Keypoint %i is %g %/ &
+Relative Distance Is...  dx= %g   dy= %g   dz= %g
+
+!*ask,enter,Hit the enter key to clear screen
+x1=
+y1=
+z1=
+x2=
+y2=
+z2=
+ddx=
+ddy=
+ddz=
+dx=
+dy=
+dz=
+n1=
+n2=
+!d=
+enter=    
+/gopr

@@ -1,0 +1,7 @@
+! scales stif12 real constants
+!
+*do,r,77,78
+/gopr
+*GET,R2,RCON,R,CONST,2
+RMOD,R,2,R2/160
+*enddo

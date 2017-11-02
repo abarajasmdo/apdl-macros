@@ -1,0 +1,4 @@
+!
+!  gets active routine for later switching back
+!
+*GET,ROUTINE,ACTIVE,,ROUT

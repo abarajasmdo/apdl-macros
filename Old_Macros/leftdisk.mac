@@ -1,0 +1,6 @@
+!
+! macro left disk  assigns files 2,3,11 to /tmp/ansys2_3_11
+!
+/get,2,file02,dat,/tmp/
+/get,3,file03,dat,/tmp/
+/get,11,file11,dat,/tmp/

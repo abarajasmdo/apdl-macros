@@ -1,0 +1,195 @@
+!
+!   Written by David Schwartz 6/27/99
+!   GEAE propriatary
+!
+!   ELRMT.MAC - Plots ELEMENTS by Real, Material, and Type IDs
+!               All plots will be written to elrmt_r.grph
+!                                            elrmt_m.grph
+!                                            elrmt_t.grph
+!
+!/nopr
+/prep7
+*msg,info
+____________________________________________________________________ %/ &
+%/ REAL CONSTANT PLOTTING... %/&
+____________________________________________________________________ %/
+!/GOPR
+/erase
+/show,elrmt_r,grph,1
+/pnum,defa
+/type,1,0
+R=0
+!
+!       GET HIGHEST REAL CONSTANT NUMBER
+!
+RMAX=RLINQR(0,14)
+/annot,on
+/num,2
+*do,r,1,rmax
+!
+!  CHECK IF REAL,R NUMER IS USED
+!
+*IF,RLINQR(R,1),EQ,0,*CYCLE
+!
+!  NOW CHECK IF MORE THAN ONE ELEMENT USES REAL,R
+!
+ESEL,S,REAL,,R
+*GET,ENUM,ELEM,,COUNT
+*IF,ENUM,GE,1,THEN
+*MSG,NOTE,R,ENUM
+NOTE:  REAL CONSTANT SET= %I IS USED BY %I ELEMENTS %/
+nsle
+/auto
+/show,term,,1
+/type,1,0
+/annot,dele
+*cfopen,.a
+*cfwrite,/tlabel,-.8,.9,REAL %R%
+*cfclose
+/input,.a
+/erase
+eplot
+/user
+/dist,1,2.,1
+allsel
+/edge,1,1
+/show,file,,1
+/type,1,0
+eplot
+/noer
+ESEL,S,REAL,,R
+*IF,ENUM,LT,51,THEN
+/pnum,real,1
+*endif
+/edge,1,0
+eplot
+/pnum,real,0
+*endif
+*enddo
+/show,term
+/num,0
+
+*msg,info
+____________________________________________________________________ %/ &
+%/ MAT CONSTANT PLOTTING... %/&
+____________________________________________________________________ %/
+!/GOPR
+/erase
+/show,elrmt_m,grph,1
+/pnum,defa
+/type,1,0
+R=0
+!
+!       GET HIGHEST MAT TABLE NUMBER
+!
+RMAX=MPINQR(0,,14)
+/annot,on
+/num,2
+*do,r,1,rmax
+!
+!  CHECK IF MAT,R NUMER IS USED
+!
+*IF,MPINQR(R,,1),EQ,0,*CYCLE
+!
+!  NOW CHECK IF MORE THAN ONE ELEMENT USES MAT,R
+!
+ESEL,S,MAT,,R
+*GET,ENUM,ELEM,,COUNT
+*IF,ENUM,GE,1,THEN
+*MSG,NOTE,R,ENUM
+NOTE:  MAT TABLE SET= %I IS USED BY %I ELEMENTS %/
+nsle
+/auto
+/show,term,,1
+/type,1,0
+/annot,dele
+*cfopen,.a
+*cfwrite,/tlabel,-.8,.9,MAT %R%
+*cfclose
+/input,.a
+/erase
+eplot
+/user
+/dist,1,2.,1
+allsel
+/edge,1,1
+/show,file,,1
+/type,1,0
+eplot
+/noer
+ESEL,S,MAT,,R
+*IF,ENUM,LT,51,THEN
+/pnum,MAT,1
+*endif
+/edge,1,0
+eplot
+/pnum,MAT,0
+*endif
+*enddo
+/show,term
+/num,0
+
+*msg,info
+____________________________________________________________________ %/ &
+%/ ELEMENT TYPE PLOTTING... %/&
+____________________________________________________________________ %/
+!/GOPR
+/erase
+/show,elrmt_t,grph,1
+/pnum,defa
+/type,1,0
+R=0
+!
+!       GET HIGHEST TYPE NUMBER
+!
+RMAX=ETYIQR(0,14)
+/annot,on
+/num,2
+*do,r,1,rmax
+!
+!  CHECK IF TYPE,R NUMER IS USED
+!
+*IF,ETYIQR(R,1),EQ,0,*CYCLE
+!
+!  NOW CHECK IF MORE THAN ONE ELEMENT USES TYPE,R
+!
+ESEL,S,TYPE,,R
+*GET,ENUM,ELEM,,COUNT
+*IF,ENUM,GE,1,THEN
+*MSG,NOTE,R,ENUM
+NOTE:  ELEMENT TYPE= %I IS USED BY %I ELEMENTS %/
+nsle
+/auto
+/show,term,,1
+/type,1,0
+/annot,dele
+*cfopen,.a
+*cfwrite,/tlabel,-.8,.9,TYPE %R%
+*cfclose
+/input,.a
+/erase
+eplot
+/user
+/dist,1,2.,1
+allsel
+/edge,1,1
+/show,file,,1
+/type,1,0
+eplot
+/noer
+ESEL,S,TYPE,,R
+*IF,ENUM,LT,51,THEN
+/pnum,type,1
+*endif
+/edge,1,0
+eplot
+/pnum,type,0
+*endif
+*enddo
+/show,term
+/num,0
+/pnum,defa
+/annot,dele
+allsel
+/erase
+eplot

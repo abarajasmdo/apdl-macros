@@ -1,0 +1,15 @@
+/nopr
+!                  enpl.mac   Plots Elements and Nodes Simultaneously
+!
+!                 USAGE:     enpl   (no arguments)
+!
+eplo                                                                            
+/noer                                                                           
+!/ploff,1,1,1,1
+!
+nplo                                                                            
+/erase 
+/user                                                                       
+!/ploff
+!
+/gopr

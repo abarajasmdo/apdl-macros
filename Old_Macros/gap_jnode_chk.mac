@@ -1,0 +1,24 @@
+!  gap_jnode_chk.mac checks to make sure no two gaps hav ethe same j node
+!  this messes up siesta gap postprocessing
+
+parsav
+*get,nele,elem,,count
+enum=0
+
+*do,loop,1,nele
+ENUM=ELNEXT(ENUM)
+jnode=nelem(enum,2)
+
+e2=enum
+*do,loop2,1,nele-loop
+e2=ELNEXT(e2)
+!*if,e2,eq,enum,*cycle
+jchk=nelem(e2,2)
+*if,jnode,eq,jchk,then
+*msg,warn,enum,e2,jnode,jchk
+The gaps %i and %i have the same j nodes %i and %i
+*endif
+*enddo
+
+*enddo
+parresum

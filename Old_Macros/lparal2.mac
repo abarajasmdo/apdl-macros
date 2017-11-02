@@ -1,0 +1,102 @@
+! $Id: lal.mac,v 1.2 1995/03/28 17:32:00 buyuk Exp $
+! $Log: lal.mac,v $
+!Revision 1.2  1995/03/28  17:32:00  buyuk
+!got rid off *go, replaced it with if-then-else-endif
+!
+!Revision 1.1  1995/01/18  19:55:44  buyuk
+!Initial revision
+!
+/nopr
+/pmacro
+FLAG=0
+! create a line above the given line by amount h
+_nl1=arg1
+_h=arg2
+	*IF,_nl1,LT,1,THEN
+FLAG=1
+CM,_CLIN_,LINE
+LSEL,R,P
+_nl1=LSNEXT(0)
+*ASK,DISTANCE,The distance between the lines (select 1 line only),0
+_h=DISTANCE
+	*endif
+!*get,_coord,active,,csys
+!csys,0
+_x1=lx(_nl1,0)
+_y1=ly(_nl1,0)
+_x2=lx(_nl1,1)
+_y2=ly(_nl1,1)
+_dx=_x2-_x1
+_dy=_y2-_y1
+_adx=abs(_dx)
+_ady=abs(_dy)
+*if,_adx,le,0.0001,then
+! vertical line
+ lgen,2,_nl1,,,(_h),0,0,,1,0
+*else
+ *if,_ady,le,0.0001,then
+! horizantal line
+  lgen,2,_nl1,,,0,(_h),0,,1,0
+ *else
+! line with  nonzero, finite slope
+  _slp=_dy/_dx
+  _slp=-1.0/_slp
+  _cosa=1.0/(sqrt(1+(_slp**2)))
+  _sina=_slp*_cosa
+  _dx=(_h*_cosa)
+  _dy=(_h*_sina)
+  lgen,2,_nl1,,,(-_dx),(-_dy),0,,1,0
+ *endif
+*endif
+!  do other line option
+_h=DISTANCE*(-1)
+!*get,_coord,active,,csys
+!csys,0
+_x1=lx(_nl1,0)
+_y1=ly(_nl1,0)
+_x2=lx(_nl1,1)
+_y2=ly(_nl1,1)
+_dx=_x2-_x1
+_dy=_y2-_y1
+_adx=abs(_dx)
+_ady=abs(_dy)
+*if,_adx,le,0.0001,then
+! vertical line
+ lgen,2,_nl1,,,(_h),0,0,,1,0
+*else
+ *if,_ady,le,0.0001,then
+! horizantal line
+  lgen,2,_nl1,,,0,(_h),0,,1,0
+ *else
+! line with  nonzero, finite slope
+  _slp=_dy/_dx
+  _slp=-1.0/_slp
+  _cosa=1.0/(sqrt(1+(_slp**2)))
+  _sina=_slp*_cosa
+  _dx=(_h*_cosa)
+  _dy=(_h*_sina)
+  lgen,2,_nl1,,,(-_dx),(-_dy),0,,1,0
+ *endif
+*endif
+
+*IF,FLAG,GT,.1,THEN
+CMSEL,A,_CLIN_
+CMDELE,_CLIN_
+*ENDIF
+_x1=
+_x2=
+_y1=
+_y2=
+_dx=
+_dy=
+_adx=
+_ady=
+_sina=
+_cosa=
+_h=
+_slp=
+_nl1=
+!csys,_coord
+_coord=
+/gopr
+L_dele

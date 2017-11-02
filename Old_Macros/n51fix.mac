@@ -1,0 +1,25 @@
+!
+! n51fix  prepares nodes for nwrit by changing sign on zx nodal rotation
+!         before sending to 44a for a cbdsp command  assumes node have been
+!         rotated to global "rotor" cylindrical csys y-axial z-circum
+!
+!/nopr
+csys,0
+!*afun,deg   ! return degrees vs. radian
+*get,anod,node,,num,min
+:lp
+*get,rzx,node,anod,ang,zx
+rxz=(-1)*rzx
+nmod,anod,,,,,,rxz
+*get,anod,node,anod,nxth
+*if,anod,eq,0,:done
+*go,:lp
+:done
+! write node file and resume to assure nodes in model aren't rotated
+nwrit    
+resum
+anod=
+rxz=
+rzx=
+!*afun,rad
+/gopr

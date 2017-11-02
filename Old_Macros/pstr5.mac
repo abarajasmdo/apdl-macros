@@ -1,0 +1,10 @@
+!
+! prst5.mac    does etable command for many common pipe stress in ANSYS 5.0
+!
+etab,smax,nmisc,89  !  seqv max
+etab,fxi,smisc,1
+etab,fyi,smisc,2
+etab,fzi,smisc,3
+etab,mxi,smisc,4
+etab,myi,smisc,5
+etab,mzi,smisc,6

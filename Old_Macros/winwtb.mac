@@ -1,0 +1,10 @@
+/nopr
+!
+!     winwtb.mac     WINdown Wide Tob Bottom
+!
+!                                  This macro sets up the display to have full width
+!                                   windows on the top and bottom of the screen. 
+!
+/win,1,-1,1.67,0,1
+/win,2,-1,1.67,-1,0
+/gopr                                                         

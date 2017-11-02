@@ -1,0 +1,219 @@
+/nopr
+!
+!  ndwrit53.mac  a macro to write a node file in a format identical to
+!                the format used in ANSYS 5.3.
+!
+!  usage:  ndwrit53,filename,ext
+!
+!  where:  filename=the name of the node file being created
+!          ext=the extension of the node file being created
+!
+!  written by: John Crawford  date: 12-4-97
+!
+!  the format of the file written is...
+!
+!   node numbers between 1 and 99999 (i5,3g16.9,3f9.4)
+!   node numbers between 100000 and 999999
+!(i6,4x,3g20.13,10x/10x,3g20.13,10x)
+!   node numbers between 1000000 and higher
+!(i10,4x,3g20.13,6x/14x,3g20.13,6x)
+!
+!
+!  parameter usage
+!
+!  ar21=
+!  ar22=
+!  ar23=
+!  ar24=
+!  ar25=highest node number in the model, below 1000000
+!  ar26=lowest node number of the set of nodes being written (varies for
+!       each segment being written)
+!  ar27=highest node number of the set of nodes being written (varies
+!for
+!       each segment being written)
+!  ar28=node number in the do-loop which writes out nodes > 1000000
+!  ar29=active coordinate system when macro starts running
+!  ar30=active display coordinate system when macro starts running
+!
+!  check to make sure that there are some nodes selected
+*if,ndinqr(0,13),gt,0,then
+!
+!  send a message to the user telling them that the  macro
+!  is running
+*msg,info,ndinqr(0,13)
+*** Starting to write %i nodes in ANSYS 5.3 format *** %/
+*msg,info,ndinqr(0,14)
+*** Highest node number in the model is %i ***
+*msg,info
+*** (Very high node numbers take longer to write out) *** %/
+!
+!  store the currently active coordinate system
+*get,ar29,active,,csys
+*get,ar30,active,,dsys
+!
+!  set the current coordinate system to global
+csys,0
+dsys,0
+!
+!  turn off warning messages
+/uis,msgpop,3
+!  put the originally selected nodes into a component
+cm,_Y2,node
+!
+!  get the highest node number in the model
+ar25=ndinqr(0,14)
+!
+!  if the highest node number is greater than 999999 then
+!  reset ar25 to 999999 because we cannot create a vector
+!  with a length greater than 1000000
+*if,ar25,gt,999999,then
+ar25=999999
+*endif
+!
+*msg,info
+*** Creating array to store nodal data ***
+!  create the array for the nodal data
+_nvect=
+*dim,_nvect,array,ar25,7
+!
+!  write a message telling the user we are loading the nodal data
+*msg,info
+*** Loading nodal data in arrays. ***
+*msg,info
+*** This may take a while for large models. *** %/
+!
+!  divert the output listing to a file to avoid warning messages
+!  when writing nonsequential nodes
+/out,_dummyfile
+!  fill column 1 with dummy node numbers 1 to ar25
+*vfill,_nvect(1,1),ramp,1,1
+!  put the nodal coordinates and angles into columns 2-7
+*vget,_nvect(1,2),node,1,loc,x
+*vget,_nvect(1,3),node,1,loc,y
+*vget,_nvect(1,4),node,1,loc,z
+*vget,_nvect(1,5),node,1,ang,xy
+*vget,_nvect(1,6),node,1,ang,yz
+*vget,_nvect(1,7),node,1,ang,zx
+!
+!  create the array for the mask
+_nmask=
+*dim,_nmask,array,ar25,1
+!
+!  write out the nodes
+*cfopen,nwrit53,node
+!
+!  reselect the nodes with numbers between 1 and 99999
+nsel,r,node,,1,99999
+*get,ar26,node,,num,min
+*get,ar27,node,,num,max
+*if,ar26,ge,1,then
+*if,ar27,le,99999,then
+/out
+*msg,info
+Writing nodal data for nodes between 1 and 99999...
+!  direct output back to the output window
+/out,_dummyfile
+!
+!  create a mask of the currently selected nodes
+*vget,_nmask(1,1),node,1,nsel
+!
+!  write them out
+*vwrite
+(1x,'-888')
+*vmask,_nmask(1,1)
+*vwrite,_nvect(1,1),_nvect(1,2),_nvect(1,3),_nvect(1,4),_nvect(1,5),_nvect(1,6),_nvect(1,7)
+(i5,3g16.9,3f9.4)
+*endif
+*endif
+!
+!  select the originally selected nodes
+cmse,s,_Y2
+!  reselect the nodes with numbers between 100000 and 999999
+nsel,r,node,,100000,999999
+*get,ar26,node,,num,min
+*get,ar27,node,,num,max
+*if,ar26,ge,100000,then
+*if,ar27,le,999999,then
+!
+/out
+*msg,info
+Writing nodal data for nodes between 100000 and 999999...
+!  create a mask of the currently selected nodes
+/out,_dummyfile
+*vget,_nmask(1,1),node,1,nsel
+!
+*vwrite
+(1x,'-999')
+*vmask,_nmask(1,1)
+*vwrite,_nvect(1,1),_nvect(1,2),_nvect(1,3),_nvect(1,4),_nvect(1,5),_nvect(1,6),_nvect(1,7)
+(i6,4x,3g20.13,10x/10x,3g20.13,10x)
+*endif
+*endif
+!
+!  select the originally selected nodes
+cmse,s,_Y2
+!  reselect the nodes with numbers between 1000000 and 1e99
+nsel,u,node,,1,999999
+*get,ar26,node,,num,min
+*get,ar27,node,,num,max
+*if,ar26,ge,1000000,then
+*if,ar27,le,1e30,then
+!
+!  we have to write out each node individually since we can only
+!  create a parameter with 1000000 rows or less
+!
+/out
+*msg,info
+Writing nodal data for nodes 1000000 and higher...
+/out,_dummyfile
+!
+*vwrite
+(1x,'-777')
+ar28=0
+*do,ar24,1,ndinqr(0,13)
+ar28=ndnext(ar28)
+*get,ar21,node,ar28,ang,xy
+*get,ar22,node,ar28,ang,yz
+*get,ar23,node,ar28,ang,zx
+*vwrite,ar28,nx(ar28),ny(ar28),nz(ar28),ar21,ar22,ar23
+(i10,4x,3g20.13,6x/14x,3g20.13,6x)
+*enddo
+*endif
+*endif
+!
+!  close the file
+*cfclose
+!
+!  clean up the parameters
+_nvect=
+_nmask=
+!
+!  remove the temporary component
+cmse,s,_Y2
+cmde,_Y2
+!
+!  set csys back to what it started as
+csys,ar29
+dsys,ar30
+!
+!  direct the output back to the output window
+/out
+!  remove the dummy file we made
+/sys,rm -f _dummyfile
+!
+*msg,info
+%/ *** Finished writing nodal data in ANSYS 5.3 format ***
+!
+!  reset the user interface warning switch
+/uis,msgpop,2
+*else
+*msg,ui
+No nodes are currently selected.  Select nodes and try again.
+*endif
+/gopr
+
+
+
+
+
+

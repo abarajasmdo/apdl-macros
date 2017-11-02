@@ -1,0 +1,174 @@
+From - Thu Oct  8 09:08:20 1998
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2232.9)
+	id 43DRR0R5; Wed, 7 Oct 1998 12:28:24 -0400
+Received: from im.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA09399; Wed, 7 Oct 1998 12:30:15 -0400
+Received: (from majordom@localhost) by im.ge.com (8.6.10/8.6.10) id MAA05628 for xansys-outgoing; Wed, 7 Oct 1998 12:19:41 -0400
+Received: from thomas3.ge.com (thomas3.ge.com [3.47.28.19]) by im.ge.com (8.6.10/8.6.10) with ESMTP id MAA05623 for <xansys@im.ge.com>; Wed, 7 Oct 1998 12:19:38 -0400
+Received: from ns.ge.com (ns.ge.com [192.35.39.24])
+	by thomas3.ge.com (8.8.7/8.8.7) with ESMTP id MAA22908
+	for <xansys@im.ge.com>; Wed, 7 Oct 1998 12:16:24 -0400 (EDT)
+Received: from Hydro.CAM.ORG (Hydro.CAM.ORG [198.168.100.7])
+	by ns.ge.com (8.9.1/8.9.1) with ESMTP id MAA11227
+	for <xansys@im.ge.com>; Wed, 7 Oct 1998 12:16:19 -0400 (EDT)
+Received: from daneel (Dialup-828.HIP.CAM.ORG [199.84.148.133])
+          by Hydro.CAM.ORG (8.8.8/8.8.4) with SMTP
+	  id MAA19515 for <xansys@im.ge.com>; Wed, 7 Oct 1998 12:15:17 -0400 (EDT)
+Received: by localhost with Microsoft MAPI; Wed, 7 Oct 1998 12:15:00 -0700
+Message-Id: <01BDF1EC.1B58EB30.pvido@adams.com>
+From: Philippe Vidori <pvido@adams.com>
+To: "'xansys@im.ge.com'" <xansys@im.ge.com>
+Subject: XANS: Animation macro for multiple load step analysis in ANSYS 5.4
+Date: Wed, 7 Oct 1998 12:14:51 -0700
+Organization: Mechanical Dynamics ltd
+X-Mailer: Microsoft Internet E-mail/MAPI - 8.0.0.4211
+Sender: owner-xansys@im.ge.com
+Precedence: bulk
+Reply-To: xansys@im.ge.com
+X-Mozilla-Status: 8001
+
+Gents,
+
+As promised, please find the attached macro that should
+do the trick.
+
+Regards.
+
+Philippe Vidori
+Mechanical Dynamics Ltee
+(ANSYS ASD)
+pvido@adams.com
+
+
+
+
+!COM *********************************************************
+!COM ANTIME - ANIMATE RESULTS OVER TIME
+!COM
+!COM PARAMETERS:                              
+!COM    ARG1 - NUMBER OF FRAMES (DEFAULT = 5)
+!COM    ARG2 - ANIMATION TIME DELAY (DEFAULT = .10)
+!COM    ARG3 - NUMBER OF CYCLES (DEFAULT = 5) (NON-UI ONLY)
+!COM    ARG4 - AUTO CONTOUR SCALING (DEFAULT = 0, NO)
+!COM
+!COM *********************************************************
+/NOPR
+!COM ************************
+!COM SET ANIMATION PARAMETERS
+!COM ************************
+AR99 = 0
+AR11 = 5
+AR12 = .10
+AR13 = 5
+AR14 = 0
+*IF,ARG1,NE,0,THEN
+  AR11 = ARG1
+*ENDIF
+*IF,ARG2,NE,0,THEN
+  AR12 = ARG2
+*ENDIF
+*IF,ARG3,NE,0,THEN
+  AR13 = ARG3
+*ENDIF
+*IF,ARG4,NE,0,THEN
+  AR14 = ARG4
+*ENDIF
+!COM *****************************
+!COM CHECK FOR PROPER ANSYS MODULE
+!COM *****************************
+*GET,_ANDISP1,ACTIVE,,ROUT
+*IF,_ANDISP1,NE,31,THEN
+  *MSG,WARN
+  This command only operates in ANSYS postprocessing (POST1)
+  AR99 = 1
+*ENDIF
+!COM *********************************************
+!COM CHECK FOR ANIMATION-CAPABLE GRAPHICS PLATFORM
+!COM *********************************************
+*IF,AR99,EQ,0,THEN
+  *GET,AR20,GRAPH,,SEG
+  *GET,AR22,common,,d2com,,int,7   ! ngrtyp (1=graph file)
+  *IF,AR22,EQ,1,THEN
+  *ELSEIF,AR20,EQ,0,THEN
+    *MSG,WARN
+    Your graphics display does not support animation - operation
+terminated.
+    AR99 = 1
+  *ENDIF
+*ENDIF
+!COM *************************************
+!COM CHECK FOR NON-ZERO MAXIMUM TIME VALUE
+!COM *************************************
+*IF,AR99,EQ,0,THEN
+  *GET,_NLS,ACTIVE,,SET,LSTP
+!!!  SET,_NLS,1
+set,1,1
+  *GET,_TMN,ACTIVE,,SET,TIME
+!!!  SET,_NLS,LAST
+set,last
+  *GET,_TMX,ACTIVE,,SET,TIME
+  *IF,_TMX,LE,0.000,THEN
+    *MSG,WARN
+    Maximum time value undefined - operation terminated.
+    AR99 = 1
+  *ENDIF
+*ENDIF
+!COM *****************
+!COM PERFORM ANIMATION 
+!COM *****************
+*IF,AR99,EQ,0,THEN
+  /gsav,xx,gsav,,temp
+ *IF,AR14,EQ,1,THEN
+  *GET,_SMIN,COMMON,,D3COM,,REAL,291
+  *GET,_SMAX,COMMON,,D3COM,,REAL,292
+  _TTT=0.0
+  _TIN=1.0/(AR11-1)
+  *DO,_I,1,AR11
+   _TIM=_TMN + _TTT*(_TMX-_TMN)
+    SET,,,,,_TIM
+    /REPLOT
+    *GET,_SMN,COMMON,,D3COM,,REAL,291
+    *GET,_SMX,COMMON,,D3COM,,REAL,292
+    *IF,_SMN,LT,_SMIN,THEN
+      _SMIN = _SMN
+    *ENDIF
+    *IF,_SMX,GT,_SMAX,THEN
+      _SMAX = _SMX
+    *ENDIF
+    _TTT=_TTT+_TIN
+  *ENDDO
+  *GET,_NUM,GRAPH,1,CONTOUR,NCONT          !  Retrieve number of
+contours
+  /CONT,ALL,_NUM,_SMIN,,_SMAX
+ *ENDIF
+  /SEG,DELETE
+  /SEG,MULTI,,ar12
+  _TTT=0.0
+  _TIN=1.0/(AR11-1)
+  *DO,_I,1,AR11
+    _TIM=_TMN + _TTT*(_TMX-_TMN)
+    SET,,,,,_TIM
+    /REPLOT
+    _TTT=_TTT+_TIN
+  *ENDDO
+  /SEG,OFF
+  ANIM,AR13,,AR12
+  /gres,xx,gsav
+*ENDIF
+/GOPR
+
+Philippe Vidori
+Mechanical Dynamics, Ltd
+35, 111th Ave. W.
+Blainville, QC, J7C 4N8
+Canada
+Tel:(450) 430-0045
+Fax:(450) 430-0997
+Cell:(514) 241-2199
+E-mail: pvido@adams.com
+
+---------------------------------------------------------
+Archived on http://www.tu-chemnitz.de/~thieme/ansys/ansys.html
+To unsubscribe put "UNSUBSCRIBE XANSYS (your email address)"
+in the message body and email to:  MAJORDOMO@IM.GE.COM
+

@@ -1,0 +1,33 @@
+cm,_temp_,line
+!
+! usage:  mkgap,real set number of gap  
+!   
+!zmultipro,'start',2  !  number of params
+!*cset,1,3,XARG1,'GAP number',
+!*cset,4,6,xARG2,'TYPE 40=uy 41=ux',40
+!zmultipro,'end'
+
+xarg1=arg1
+!*ask,xarg2,TYPE 40=uy 41=ux,41
+xarg2=arg2
+cmsel,,gap%XARG1%i
+!ALLSEL,BELOW,AREA
+!narea,1
+nline,1
+cm,nodei,node
+cmsel,,gap%XARG1%j
+!ALLSEL,BELOW,AREA
+!narea,1
+nline,1
+cm,nodej,node
+
+lsgap,xarg1,,xarg2,xarg1,
+)/nopr
+/inp,%xarg1%,inp
+xarg1=
+xarg2=
+cmsel,,_temp_
+cmdele,nodei
+,nodej
+,_temp_
+)/gopr

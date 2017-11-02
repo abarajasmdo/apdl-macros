@@ -1,0 +1,74 @@
+/nopr
+!
+!   cpdist.mac   A macro to check the distance
+!                           between coupled nodes.  This macro
+!                           creates the file "cpcheck", which has a
+!                           listing of coupled node sets and distances.
+!
+!                          Written for ANSYS 5.2
+!
+!  By: Dan Bohlen  Updated:  3/1/96
+!
+!   create components for the currently selected nodes so 
+!   they can be retrieved when the macro is finished running.
+cm,dummyn,node
+!
+*cfopen,cpcheck
+*get,cpmax,active,,cp
+*vwrite
+( ' CP Set Number   Node 1   Node 2   Distance Between Nodes  ')
+!
+!   set initial value for coupled set number to 1
+cp=1
+!  
+!	cycle through coupled sets
+!
+*DO,CP,1,CPMAX
+!
+!	CHECK TO SEE IF COUPLED SET IS SELECTED
+!
+*IF,CPINQR(CP,1),LT,1,*CYCLE
+!
+!   get the nodes which make up coupled set cp
+!
+nsel,s,cp,,cp
+!
+!   get the node number for the two nodes
+!
+*get,n1,node,,num,min
+*get,n2,node,,num,max
+d=distnd(n1,n2)
+!
+!   if the distance is greater than .01, jump down to the 
+!   message that flags this line of output
+!
+*if,d,ge,.01,then
+!
+!   write the line of output with out the flag
+!
+*vwrite,cp,n1,n2,d
+(5x,f4.0,8x,f6.0,3x,f6.0,9x,f8.4,'  <-----')
+*ELSE
+*vwrite,cp,n1,n2,d
+(5x,f4.0,8x,f6.0,3x,f6.0,9x,f8.4)
+*ENDIF
+*ENDDO
+
+!   now that we're finished, close the file cpcheck
+*cfclos
+!   restore nodal data which existed when the macro began
+cmse,s,dummyn
+!   delete this components from the database
+cmde,dummyn
+!   clear this stuff from the database
+*msg,note
+/////////////////////////////////////////////////////////////////// &
+---> THE NODE PAIRS AND DISTANCES BETWEEN AR ON FILE "cpcheck" &
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+cp=
+cpmax=
+n1=
+n2=
+DIST=
+!  all done
+/gopr

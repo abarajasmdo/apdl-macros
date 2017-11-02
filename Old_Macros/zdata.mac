@@ -1,0 +1,15 @@
+!
+!  a macro to display case temp and axial growth
+!
+!  usage:  zdat,zlocation
+
+
+*if,arg1,gt,246.1,:lp  !  check if table 1 or table 2 should
+mpli,1,,,evlt,arg1      !  be used for temperature  if t>246.1 use tab. 2
+mpli,7,,,evlt,arg1
+*go,:end
+:lp
+mpli,2,,,evlt,arg1
+mpli,7,,,evlt,arg1
+:end
+

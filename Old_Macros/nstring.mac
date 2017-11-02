@@ -1,0 +1,20 @@
+!
+! creates a string of nodes from node1 to node2
+!
+/nopr
+/pmacro
+num=3
+cm,_macro_,node
+*msg,info
+Pick starter node,target node
+nsel,r,p
+nstart=ndnext(0)
+ntarget=ndnext(nstart)
+ndup5,ntarget,nstart+100(num+1)
+fill,nstart,nstart+100(num+1),,,,,,.25
+cmsel,s,_macro_
+cmdele,_macro_
+/gopr
+
+
+

@@ -1,0 +1,7 @@
+!
+! macro lists other macros from inside ansys
+!
+!  macs,macro name
+!
+*list,arg1,mac,/users/abmo01t/
+

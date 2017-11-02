@@ -1,0 +1,35 @@
+
+#
+# create zero deflection modal plots
+#
+prefix=pre_modal
+maxmode=12
+
+# create Ansys53 input file
+cat > ${prefix}.xplot <<EOF
+/batch
+resume
+cmsel,,blade
+/post1
+!inres,all
+!file,${prefix},rst
+!/vup,,x
+!/angle,,0
+!/view,1,1,1,1
+!/show,,,1
+!/type,,2
+!rsys,11
+/clabel,,-1 
+/contour,,5,-.0001,.00005
+*do,mode,1,arg1
+subset,1,mode
+/show,mode,zero,1
+plnstr,uz
+*enddo
+fini
+/exit,nosave
+EOF
+
+ansys53 -j ${prefix} -m 650 -db 150  -b ${prefix}.xplot ${prefix}.OuT
+rm ${prefix}.xplot
+

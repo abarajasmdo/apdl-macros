@@ -1,0 +1,52 @@
+!/nopr
+!
+!   vibdisp.mac   a macro to create postprocessing plots
+!                         for the right side of the 14th stage hpt system
+!                         for seismic excitation and print reaction forces
+!
+!                         usage: vibdisp,# of modes
+reset
+!
+cnt=0
+!:lp
+!*stat
+!cnt=cnt+1
+!*if,cnt,gt,arg1,:end
+
+store,disp,real,rforc
+!
+!lclim,10
+!lcabs,1
+!lcase,1
+!set,1,cnt
+!lcase,2
+!set,2,cnt
+!lcase,3
+!set,3,cnt
+!lcsrss,4,1,2,3
+!lcase,4
+set,1,1
+!
+/type,1,
+/show,,,1
+eall
+nall
+/view,-1,1,1,1
+pldi,1
+!
+!  calculate forces and moments
+!
+nsel,,821,822
+nasel,,825,829
+,,831,834
+,,11521
+csys,11
+file=cnt+40
+/outp,file
+prrf
+/outp,6
+
+
+!*go,:lp
+!:end
+

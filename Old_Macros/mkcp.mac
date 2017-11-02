@@ -1,0 +1,23 @@
+/nopr
+!
+!  mkpc.mac   a macro to generate coupled node sets
+!                      in x y and z for two nodes.
+!
+!    usage:    mkpc,n1,n2
+!              where n1= master node
+!                         n2=slave node
+!
+*get,cpn,active,,cp
+cpn1=cpn+1
+cpn2=cpn+2
+cpn3=cpn+3
+cp,cpn1,ux,arg1,arg2
+cp,cpn2,uy,arg1,arg2
+cp,cpn3,uz,arg1,arg2
+cpn1=
+cpn2=
+cpn3=
+cp=
+/gopr
+
+

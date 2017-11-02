@@ -1,0 +1,26 @@
+/nopr
+!      Macro kpli5.mac
+!       
+!      Usage:      kpli5,keypoint i.d.
+!
+!      This macro lists keypoint coordinates with 
+!      greater accuracy than the default ANSYS
+!      command "klist".
+!
+!      The coordinate is listed in the currently
+!       selected CSYS.
+!                                       
+*if,arg1,gt,0,then                                                      
+*get,ar11,kx,arg1                                                                 
+,ar12,ky,arg1                                                                     
+,ar13,kz,arg1                                                                     
+*get,ar14,active,,csys
+*msg,info,arg1,ar11,ar12,ar13,ar14
+Coords. of keypoint %i are %g %g %g %/ in Coordinate System %i
+*ask,enter,key to clear screen
+*else
+*msg,NOTE
+Usage: kpli,keypoint #
+*endif
+/gopr
+

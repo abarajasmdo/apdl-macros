@@ -1,0 +1,12 @@
+/pmacro
+/nopr
+cm,_qtemp_,volu
+vsel,r,p
+ALLSEL,BELOW,VOLU 
+aplo
+vsweep,p
+cmsel,,_qtemp_
+ALLSEL,BELOW,VOLU
+cmdele,_qtemp_
+vplo
+

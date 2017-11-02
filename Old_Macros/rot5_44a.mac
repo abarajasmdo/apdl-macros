@@ -1,0 +1,12 @@
+!
+!  macro  rot5_44a.mac:  changes sign on ZX rotation for 44a to 5 and 5 to 44a
+!			conversions
+!
+*GET,NNDS,NODE,,COUNT
+ND=0
+*DO,LOOP,1,NNDS
+ND=NDNEXT(ND)
+*GET,ANGZX,NODE,ND,ANG,ZX
+NMOD,ND,,,,,,(-1)*ANGZX
+*ENDDO
+

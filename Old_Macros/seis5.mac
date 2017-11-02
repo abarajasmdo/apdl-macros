@@ -1,0 +1,14 @@
+!
+!
+!
+antype,2
+!
+!  spectrum - flat 8G's 2.5% damping in inch-slugs
+!
+freq,1,2
+sv,1,8*20*32.19*12
+! do 20-250Hz , ten modes
+modopt,reduc,10,50,250,10
+*msg,warn,
+HAVE YOU PICKED OUT ALL YOU MDOF'S?
+

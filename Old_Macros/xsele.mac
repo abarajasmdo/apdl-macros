@@ -1,0 +1,17 @@
+!  keeps what's selected dumps everything else
+vlinv
+arinv
+lsinv
+kpinv
+ninv
+einv
+vclear,all
+aclear,all
+lclear,all
+vdele,all
+adele,all
+ldele,all
+kpldele,all
+edele,all
+ndele,all
+

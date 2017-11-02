@@ -1,0 +1,178 @@
+/gsave,temp97,grp
+!
+!   macro to provide side by side or overlayed global vs. local 
+!   submodel plots
+!
+*ask,global,global filename - single quotes -
+!
+*ask,local,local filename - single quotes -
+!
+*ask,typlot,Type of plot <overlay=0> split=1
+!
+parsave,all,temp99,par
+!
+*if,typlot,gt,.1,then
+!!!!!!!!!!!!!!!!!!!!!!!!!!   split plot results !!!!!!!
+fini
+/filename,global
+resume
+/post1
+parres,change,temp99,par
+!
+set,last
+!
+!   get max and min stress from both models
+!
+!
+nsort,s,eqv
+*get,mxgstr,sort,,max
+*get,mingstr,sort,,min
+!
+fini
+parsave,all,temp99,par
+!
+/filename,local
+resume
+/post1
+parres,change,temp99,par
+!
+!   get max and min stress from both models
+!
+!
+set,last
+nsort,s,eqv
+*get,mxstr,sort,,max
+*get,minstr,sort,,min
+!
+*if,mxgstr,gt,mxstr,then
+  mxstr=mxgstr
+*endif
+! 
+*if,mingstr,lt,mnstr,then
+  mnstr=mingstr
+*endif
+!
+! get location for plot
+!
+!
+*get,mxlocx,node,,mxloc,x
+*get,mnlocx,node,,mnloc,x
+!
+*get,mxlocy,node,,mxloc,y
+*get,mnlocy,node,,mnloc,y
+!
+/contour,all,12,minstr,(mxstr-minstr)/11
+/WIN,ALL,DELE   
+/win,1,left
+/win,2,right
+/win,2,off
+/dscale,1,1.e-5
+/gline,all,1
+plnsol,s,eqv
+/noerase
+parsave,all,temp99,par
+finish
+/filename,global
+resume
+/post1
+parres,change,temp99,par
+set,last
+/noerase
+/win,1,ltop
+/win,2,lbot
+/win,3,rtop
+/win,4,rbot
+/win,1,off
+/win,2,off
+!!/ZOOM,  4,  4.6420    ,  1.1213    ,  .00000E+00,  1.0132    
+/focus,4,(mxlocx+mnlocx)/2,(mxlocy+mnlocy)/2
+*if,mxlocx-mnlocx,gt,mxlocy-mnlocy,then
+/dist,4,1.1*(mxlocx-mnlocx)/2
+*else
+/dist,4,1.1*(mxlocy-mnlocy)/2
+*endif
+!
+!/contour,all,12,50000,12000   
+/contour,all,12,minstr,(mxstr-minstr)/11
+/dscale,1,1.e-5
+/gline,all,1
+/plopts,leg3,0
+plnsol,s,eqv
+/erase
+fini
+!
+*else
+fini
+/filename,local
+resume
+parres,change,temp99,par
+/post1
+set,last
+nsort,s,eqv
+*get,mxstr,sort,,max
+*get,minstr,sort,,min
+!
+finish
+parsave,all,temp99,par
+/filename,global
+resume
+/post1
+parres,change,temp99,par
+!
+set,last
+!
+!   get max and min stress from both models
+!
+!
+nsort,s,eqv
+*get,mxgstr,sort,,max
+*get,mingstr,sort,,min
+!
+! set bounding range of stress
+! 
+*if,mxgstr,gt,mxstr,then
+  mxstr=mxgstr
+*endif
+! 
+*if,mingstr,lt,mnstr,then
+  mnstr=mingstr
+*endif
+!
+! get location for plot
+!
+!
+*get,mxlocx,node,,mxloc,x
+*get,mnlocx,node,,mnloc,x
+!
+*get,mxlocy,node,,mxloc,y
+*get,mnlocy,node,,mnloc,y
+!
+/contour,all,12,minstr,(mxstr-minstr)/11
+/WIN,ALL,DELE   
+/win,1,full
+/dscale,1,1.e-5
+/gline,1,1
+plnsol,s,eqv
+/user
+/gsave,temp98,grp
+/noerase
+parsave,all,temp99,par
+finish
+/filename,local
+resume
+/post1
+/gresume,temp98,grp
+parres,change,temp99,par
+set,last
+/noerase
+/plopts,leg3,0
+/edge,1,1
+/contour,all,12,minstr,(mxstr-minstr)/11
+/dscale,1,1.e-5
+plnsol,s,eqv
+*endif
+!
+!   reset settings
+!  
+/erase
+/gresume,temp97,grp

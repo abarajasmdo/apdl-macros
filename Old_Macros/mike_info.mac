@@ -1,0 +1,48 @@
+/post1
+set,1
+DIM_A=UY(15143)-UY(28797)+0.1152500037E+02	! TIEBOLT FWD STOP TO S1DISK C/L
+DIM_B=UY(15143)-UY(28798)+0.1378374992E+02	! TIEBOLT FWD STOP TO S2DISK C/L
+DIM_C=UY(15143)-UY(29056)+0.1551699997E+02	! TIEBOLT FWD STOP TO REAR BEARING STOP
+DIM_D=UX(29129)+0.8858749870
+DIM_E=UX(28835)+0.1720000030E+01
+/nopr
+!tie bolt clamp load
+ESEL,REAL,247
+ETAB,NF2,SMISC,1
+SSUM
+*GET,F2,SSUM,NF2
+DIM_F=abs(f2)
+
+ESEL,REAL,203
+ETAB,NF,SMISC,1
+SSUM
+*GET,F,SSUM,NF
+/gopr
+DIM_F=abs(f2)
+DIM_G=abs(f)
+
+DIM_H=UX(35495)-UX(1268)
+/nopr
+set,1,,1/1000	! to get stresses inksi
+all
+etab,eras
+esel,,,,3294
+esel,a,,,15766
+s=
+etab,srad,s,x   
+ETAB,sax,s,y
+ETAB,shoop,s,z 
+/gopr
+pretab
+/nopr
+etab,eras
+esel,,,,28206
+etab,spar,surf,9
+etab,ssz,surf,11
+/gopr
+pretab
+
+DIM_M=speed
+ 
+
+

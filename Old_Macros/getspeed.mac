@@ -1,0 +1,13 @@
+pi= 3.14159265
+*get,ax,common,,acelcm,,real,31    ! get the omega x at the end of load step
+*get,ay,common,,acelcm,,real,32    ! get the omega y at the end of load step
+*get,az,common,,acelcm,,real,33    ! get the omega z at the end of load step
+*get,dx,common,,acelcm,,real,34    ! get the domega x at the end of load step
+*get,dy,common,,acelcm,,real,35    ! get the domega y at the end of load step
+*get,dz,common,,acelcm,,real,36    ! get the domega z at the end of load step
+speed=ay*60/2/pi
+*msg,info,speed
+Model Omega = %G RPM
+     
+
+

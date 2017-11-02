@@ -1,0 +1,10 @@
+!
+! hprun.mac   sets up for running a static analysis on workstation.
+!
+/fdel,2,1
+/fdel,3,1
+/fdel,4,1
+/fdel,11,1
+/fdel,13,1
+/input,27
+

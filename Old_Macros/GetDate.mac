@@ -1,0 +1,57 @@
+! GetDate.mac
+! 	RETURNS:
+!		zWEEKDAY = 'MON', 'TUE', 'WED', etc
+!		zMONTH   = '01' , '02' , '03' , etc
+!		zDAY     = '01' , '02' , '03' , etc
+!		zMONTHch = 'JAN', 'FEB', 'MAR', etc
+!
+!	Notes:
+!		All RETURNS are character scalar parameters.
+!
+*CFO, SysCmd, mac
+*VWR
+('/SYS,date /t > date.txt')
+*CFC
+SysCmd
+*DEL, date_
+*DIM, date_, CHAR, 1
+*VRE, date_(1), date, txt
+(A3)
+zWEEKDAY = date_(1)
+*VRE, date_(1), date, txt
+(4X, A2)
+zMONTH = date_(1)
+*VRE, date_(1), date, txt
+(7X, A2)
+zDAY = date_(1)
+*VRE, date_(1), date, txt
+(10X, A4)
+zYEAR = date_(1)
+*IF, zMONTH, EQ, '01', THEN
+	zMONTHch = 'JAN'
+*ELSEIF, zMONTH, EQ, '02', THEN
+	zMONTHch = 'FEB'
+*ELSEIF, zMONTH, EQ, '03', THEN
+	zMONTHch = 'MAR'
+*ELSEIF, zMONTH, EQ, '04', THEN
+	zMONTHch = 'APR'
+*ELSEIF, zMONTH, EQ, '05', THEN
+	zMONTHch = 'MAY'
+*ELSEIF, zMONTH, EQ, '06', THEN
+	zMONTHch = 'JUN'
+*ELSEIF, zMONTH, EQ, '07', THEN
+	zMONTHch = 'JUL'
+*ELSEIF, zMONTH, EQ, '08', THEN
+	zMONTHch = 'AUG'
+*ELSEIF, zMONTH, EQ, '09', THEN
+	zMONTHch = 'SEP'
+*ELSEIF, zMONTH, EQ, '10', THEN
+	zMONTHch = 'OCT'
+*ELSEIF, zMONTH, EQ, '11', THEN
+	zMONTHch = 'NOV'
+*ELSEIF, zMONTH, EQ, '12', THEN
+	zMONTHch = 'DEC'
+*ENDIF
+*DEL, date_
+/DEL, date, txt
+/DEL, SysCmd, mac

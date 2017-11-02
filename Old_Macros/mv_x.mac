@@ -1,0 +1,9 @@
+! moves cm data from data kp to given kp in x,y
+!
+!  mvkp_xy,data kp #, given kp #
+!
+!DDX=KX(ARG2)-KX(ARG1)
+!DDY=KY(ARG2)-KY(ARG1)
+kgen,,data,,,arg1,,,,,1
+lkpl
+!

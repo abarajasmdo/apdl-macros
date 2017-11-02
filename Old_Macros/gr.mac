@@ -1,0 +1,6 @@
+/reset
+/vup,1,x
+/type,1,4
+winfull
+/dscal,all,off
+/PLOPTS,LEG2,0 

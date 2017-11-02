@@ -1,0 +1,17 @@
+!/nopr
+parsav,all
+/pmacro
+!cm,_macro_,area
+*get,nl,lsmx
+numstr,line,nl+1
+*msg,info,
+SELECT AREA YOU WANT CHOPPED
+asel,r,p
+*MSG,INFO
+NOW CREATE CHOPPING LINE --> LINE NORMAL TO LINE 
+Fnc_LANG_90
+ASBL,ALL,NL+2,
+PARRESU
+!cmsel,,_macro_
+!cmdele,_macro_
+/GOPR

@@ -1,0 +1,9 @@
+*do,loop,1,200
+lsel,,type,,loop
+*get,numl,line,,count
+*if,numl,gt,0,then
+*msg,info,loop
+doing %i
+cm,cav%loop%,line
+*endif
+*enddo

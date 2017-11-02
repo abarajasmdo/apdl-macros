@@ -1,0 +1,7 @@
+/pmacro
+cm,strt,node
+nsel,r,p
+numm,node,.1,.1,,high
+cmsel,a,strt
+/replo
+

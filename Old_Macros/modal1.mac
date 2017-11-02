@@ -1,0 +1,94 @@
+From: 	Peggy Baehmann[SMTP:Peggy.L.Baehmann@sch.ge.com]
+Sent: 	Friday, June 19, 1998 1:38 PM
+
+Here is a file we use to create 4 views of modal animations.  It is a
+nonbatch, non-gui run, and makes use of ANSYS macros.
+
+You have to set your display first or it will not run.  You also have
+to start it before the screen xlocks.  We have 1 machine we run on
+where we set the display to a secondary display device and that works
+out great.
+
+3 macros are made called mn, up and down.  These are used to 
+move relatively between the animations when viewing.
+
+To view the animations, type:
+
+mn,1
+anim  (you only have to type this once)
+up
+up
+mn,10
+etc.
+
+C*** /show,x11
+/show,x11,,1
+/menu,grph
+parsav
+resume
+parres,change
+/post1
+  
+*create,mn,mac
+mnum=arg1
+/ANFILE,RESUME,mode%mnum%,anim
+*end
+
+*create,up,mac
+mnum=mnum+1
+/ANFILE,RESUME,mode%mnum%,anim
+*end
+
+*create,dn,mac
+mnum=mnum-1
+/ANFILE,RESUME,mode%mnum%,anim
+*end
+
+nsel,all
+esel,all
+
+/wind,1,ltop
+/wind,2,rtop
+/wind,3,lbot
+/wind,4,rbot   
+/view,1,2,.5,2
+/view,2,,1,
+/view,3,1,,
+/view,4,,,1
+C*** /edge,all,0
+/edge,all,1
+/auto,all
+/type,all,basic
+eplot
+
+*do,i,%begmodes%,%endmodes%
+  set,1,i
+  /wind,1,off
+  /wind,2,off
+  /wind,3,off
+  /wind,4,full
+  
+  /dscale,all,auto
+  PLDI, , 
+  *GET,dscale,GRAPH,4,DSCALE,DMULT
+
+  /wind,1,on
+  /wind,2,on
+  /wind,3,on
+  /wind,4,rbot
+  /dscale,all,dscale*2
+
+  ANMODE,5,0.1, ,1
+  
+  /ANFILE,SAVE,mode%i%,anim
+
+*enddo
+
+fini
+/exit,nosave
+
+
+
+---------------------------------------------------------
+To unsubscribe put "UNSUBSCRIBE XANSYS"
+in the message body and email to:  MAJORDOMO@IM.GE.COM

@@ -1,0 +1,69 @@
+!
+! ce_ij  macro makes averaging constraint equation between two sets of
+!		nodes defined by one face being 'i' nodes the other being 'j'
+!
+!               allows any number of nodes on either side and offset
+!
+!  usage: select the gap element at one interface and "nelem"
+!
+!	By:  Dan Bohlen   
+PARSAV
+CM,USERNODE,NODE
+nelem
+!*ASK,ICOMP,FIRST NODE COMP NAME,'COMP_NAME'
+!*ASK,JCOMP,SECOND NODE COMP NAME,'COMP_NAME'
+*ASK,CEDOF,CE DOF (ONLY ONE),'UX'
+*ASK,OFFSET,OFFSET VALUE (offset=AVG(i)-AVG(j)),0.0
+!
+!	CHECK THAT THE COMP'S HAVE EQUAL NUMBER OF NODES
+!
+!CMSEL,,ICOMP
+*GET,NELE,ELEM,,COUNT
+!CMSEL,,JCOMP
+*GET,NNDS,NODE,,COUNT
+NNDS=NNDS/2
+!
+! GET STARTING CE NUMBER
+!
+CENUM=CEINQR(,14)+1
+!
+!	DO POSITIVE COEFF
+!
+!CMSEL,,ICOMP
+E=0
+*DO,I,1,NELE
+*IF,JUMP,EQ,1,:END
+E=ELNEXT(E)
+N=NELEM(E,1)
+CHK=NELEM(E,3)
+*IF,CHK,GT,0,THEN
+*MSG,ERROR,
+YOU HAVE NON GAP ELEMENT SELECTED!
+*ELSE
+CE,CENUM,0,N,CEDOF,1/NNDS
+*ENDIF
+*IF,CHK,GT,0,:END
+*ENDDO
+!
+!	NOW DO NEGATIVE COEFF
+!
+!CMSEL,,JCOMP
+E=0
+*DO,I,1,NELE
+E=ELNEXT(E)
+N=NELEM(E,2)
+CE,CENUM,0,N,CEDOF,-1/NNDS,
+*ENDDO
+!
+!       SET OFFSET VALUE
+!
+CECMOD,CENUM,OFFSET
+!
+!	CLEAN UP
+!
+!CELIST,CENUM
+:END
+CMSEL,,USERNODE
+CMDE,USERNODE
+PARRES
+

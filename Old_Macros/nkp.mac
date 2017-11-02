@@ -1,0 +1,35 @@
+/nopr
+!      Macro nkp.mac
+!       
+!      Usage:      nkp,keypoint i.d,node i.d.
+!
+!      This macro creates a node where a keypoint is.
+!       If a node i.d. is not provide, it is assigned nmax+1.
+!   
+!
+!      The coordinate is listed in the currently
+!       selected CSYS.
+!
+x=
+y=
+z=
+
+*get,nmax,mxnd
+nmax=nmax+1
+*if,arg2,lt,0.5,:lp1
+nmax=arg2
+csys,0
+:lp1
+*get,x,kx,arg1                                                                 
+,y,ky,arg1                                                                     
+,z,kz,arg1    
+csys,0                                                                 
+n,nmax,x,y,z
+*msg,note,nmax,x,y,z
+('Node ',f6.0,' Created at x =',f10.5,' y = ',f10.5,' z = ',f10.5)
+nmax=
+x=
+y=
+z= 
+/gopr
+

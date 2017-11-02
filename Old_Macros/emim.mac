@@ -1,0 +1,35 @@
+
+/nopr
+/pmacro
+!
+!
+!                    EMIM,Element
+!
+!                    This macro sets REAL, MAT, and TYPE to
+!                     mimic those of Element.
+!
+/nopr
+*if,arg1,lt,1,then
+cm,_temp_,elem
+esel,r,p
+arg1=elnext(0)
+cmsel,,_temp_
+cmdel,_temp_
+*endif
+*get,r1,elem,arg1,attr,real
+*get,m1,elem,arg1,attr,mat
+*get,t1,elem,arg1,attr,type
+!
+real,r1
+mat,m1
+type,t1
+*msg,note,m1,t1,r1
+Mat = %I  Type =  %I   Real = %I
+r1=
+m1=
+t1=
+
+/gopr
+
+
+

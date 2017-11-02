@@ -1,0 +1,15 @@
+/nopr
+!          elpl.mac   Plots Elements and Lines Simultaneously
+!
+! USAGE:     elpl   (no arguments)
+!
+
+lplo                                                                            
+/noer                                                                           
+/ploff,1,1,1,1
+
+eplo                                                                            
+/erase                                                                          
+/ploff
+
+/gopr

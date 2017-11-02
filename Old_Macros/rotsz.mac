@@ -1,0 +1,39 @@
+/nopr
+!
+!    rotsz.mac   A macro to make a series of screen plot for
+!                       rotating the model on screen
+!                             
+!
+!                 usage:   rotsz,n1,n2
+!
+!                     where:  n1=number of steps per revolution
+!                                  n2=number of revolutions    
+!                                  
+!                                  
+!                                                       
+!
+/gsave,startvw
+/user,1
+/seg,dele
+/seg,multi
+
+*if,arg1,eq,0,then
+     arg1=30
+*endif
+
+*if,arg2,eq,0,then
+     arg2=10
+*endif
+inc=360/arg1
+
+*do,i,0,arg1-1
+/angle,1,inc,zs,1
+/repl
+*enddo
+
+/seg,off
+anim,arg2,1
+/gresume,startvw
+/repl
+/gopr
+

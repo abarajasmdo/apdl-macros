@@ -1,0 +1,193 @@
+!  used to cut boundary conditions for 3d cert cf34 bolted joint model
+!
+!
+!          ###    #####
+!  ####   #   #  #     #
+! #    # #     #       #
+! #      #     #  #####
+! #  ### #     #       #
+! #    #  #   #  #     #
+!  ####    ###    #####
+!
+! #####    ###     ###    #####
+!#     #  #   #   #   #  #     #
+!      # #     # #     #       #
+! #####  #     # #     #  #####
+!#       #     # #     #       #
+!#        #   #   #   #  #     #
+!#######   ###     ###    #####
+!
+! #    #  ######  #####    ####      #     ####   #    #
+! #    #  #       #    #  #          #    #    #  ##   #
+! #    #  #####   #    #   ####      #    #    #  # #  #
+! #    #  #       #####        #     #    #    #  #  # #
+!  #  #   #       #   #   #    #     #    #    #  #   ##
+!   ##    ######  #    #   ####      #     ####   #    #
+!
+!
+!/post1
+!set,list
+!
+! get cut displacements
+!
+ti_me=arg1
+*if,ti_me,eq,0,then
+*ask,ti_me,input ti_me please,1
+*endif
+*cfopen,TiMe
+*cfwrit,*set,ti_me,%ti_me%
+*cfclos
+
+resume,T%ti_me%,db,
+/inp,TiMe
+/sys,rm TiMe
+getspeed
+/POST1  
+INRES, 
+!ti_me=arg1 
+FILE,T%ti_me%,rst,
+set,last
+/POST1  
+INRES, 
+!ti_me=arg1 
+FILE,T%ti_me%,rst,
+set,last
+rsys,0
+nall
+eall
+CBDOF,cut_forces,nodes,,cut_force,cbdo,,0, ,0 
+/sys,grep -i UX  cut_force.cbdo > s2_s1_ux.cbdo
+CBDOF,s1web,nodes,,s1web,cbdo,,0, ,0
+!
+!  cut forces
+!
+*cfopen,cut_forces
+*cfwrit,ti_me=%ti_me%
+*cfwrit,TIME,%ti_me%
+*cfwrit,omega,,ay
+parsave,scalar,cav,press
+/sys,grep "*SET,P" cav.press > pressure.inp
+
+
+/wait,10
+!   s2 arm 
+esel,,,,55947
+ESEL,a,,,55965  
+ESEL,a,,,55983 
+esel,a,,,56001 
+nsel,,,,60127
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,       !  axisym forc / sector size / # of nodes
+*cfwrit,F,s2_1,fy,NFORC/52/11	  
+nsel,,,,60197
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,       !  axisym forc / sector size / # of nodes
+*cfwrit,F,s2_2,fy,NFORC/52/11	
+nsel,,,,60196
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,       !  axisym forc / sector size / # of nodes
+*cfwrit,F,s2_3,fy,NFORC/52/11	
+nsel,,,,60195
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,       !  axisym forc / sector size / # of nodes
+*cfwrit,F,s2_4,fy,NFORC/52/11	
+nsel,,,,60121
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,       !  axisym forc / sector size / # of nodes
+*cfwrit,F,s2_5,fy,NFORC/52/11
+! 
+!   s1 disk web
+!
+esel,,,,45910,45917
+nsel,,,,47900
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,
+*cfwrit,F,s1_1,fy,NFORC/52/6	!  axisym forc / sector size / # of nodes
+nsel,,,,48047
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,
+*cfwrit,F,s1_2,fy,NFORC/52/6	!  axisym forc / sector size / # of nodes
+nsel,,,,48046
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,
+*cfwrit,F,s1_3,fy,NFORC/52/6	!  axisym forc / sector size / # of nodes
+nsel,,,,48045
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,
+*cfwrit,F,s1_4,fy,NFORC/52/6	!  axisym forc / sector size / # of nodes
+nsel,,,,48044
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,
+*cfwrit,F,s1_5,fy,NFORC/52/6	!  axisym forc / sector size / # of nodes
+nsel,,,,48043
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,
+*cfwrit,F,s1_6,fy,NFORC/52/6	!  axisym forc / sector size / # of nodes
+nsel,,,,48042
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,
+*cfwrit,F,s1_7,fy,NFORC/52/6	!  axisym forc / sector size / # of nodes
+nsel,,,,48041
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,
+*cfwrit,F,s1_8,fy,NFORC/52/6	!  axisym forc / sector size / # of nodes
+nsel,,,,48036
+fsum
+*GET,NFORC,FSUM,,ITEM,fy,
+*cfwrit,F,s1_9,fy,NFORC/52/6	!  axisym forc / sector size / # of nodes
+
+*cfclos
+
+
+/sys, echo "*DO,LOOP,1,740"  >> pressure.inp
+/sys, echo "*get,check,comp,cav%loop%,type"  >> pressure.inp  
+/sys, echo "*if,check,eq,0,*cycle"   >> pressure.inp
+/sys, echo "*endif  "   >> pressure.inp
+/sys, echo "sf,cav%loop%,pres,P%loop%"   >> pressure.inp 
+/sys, echo "pchk=P %loop%"   >> pressure.inp
+/sys, echo "*if,pchk,lt,1,then"   >> pressure.inp
+/sys, echo "*msg,warning,%loop%,pchk"   >> pressure.inp
+/sys, echo "The pressure for cavity %I is %G"   >> pressure.inp
+/sys, echo "*endif"   >> pressure.inp
+/sys, echo "*enddo"    >> pressure.inp
+
+
+/sys, cat pressure.inp s2_s1_ux.cbdo s1web.cbdo cut_forces  > junk
+/sys, grep -v EOF junk > bcs_3d
+!/syp,mv bcs_3d,%ti_me%
+/rename,bcs_3d,,,bcs_3d_%ti_me%
+/outp,duh
+!
+!  GET 2D axisymm temperatures
+!
+!cmsel,,s2disk
+!bfint,stg2,node,,bf_%ti_me%,temps,,,:s2disk,,1
+
+!cmsel,,ibp
+!,a,obp
+!easel,mat,80
+!nelem
+!bfint,ibp,node,,bf_%ti_me%,temps,,1,:ibp,,1
+!bfint,obp,node,,bf_%ti_me%,temps,,1,:obp,,1
+
+!cmsel,,stud
+!cmsel,a,nuts
+!bfint,stud,node,,bf_%ti_me%,temps,,1,:stud,,1
+
+!cmsel,,tube
+!bfint,tube,node,,bf_%ti_me%,temps,,1,:tube,,2
+
+!cmsel,,s1disk
+!bfint,s1disk,node,,bf_%ti_me%,temps,,1,:s1disk,,
+
+!cmsel,,spacer
+!bfint,spacer,node,,bf_%ti_me%,temps,,1,:spacer,,
+
+
+!/outp,
+!/rename,bf_%ti_me%,temps,,junk,temps,,
+!/sys, grep -v EOF junk.temps > junk2
+!/rename,junk2,,,bf_%ti_me%,temps
+/sys, rm junk cut_forces cut_force.cbdo 
+/outp,
+beep

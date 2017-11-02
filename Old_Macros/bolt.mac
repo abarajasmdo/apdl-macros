@@ -1,0 +1,474 @@
+!
+!    save parameters to file for restart
+!
+!
+/nopr
+/nerr,0,0
+!
+!    This macro Performs Automatic 3-d Bolt Modeling
+!
+!          By: PRB         Date:  9/6/94
+!    Revised : Larry L Durocher CAE Associates         Date: 12/10/94
+!
+!    Macro will bill and optionally mesh a full or half-symmetry model
+!    of a hex bolt with or without a nut at the other end
+!
+!    The most common application is two bolted flanges connected by a
+!    hex bolt and nut.  The upper flange thickness is uflt(prompted),
+!    the lower flange thickness is lflt(prompted).  If the lower
+!    flange thickness is given as zero(0), the macro assumes that no
+!    nut is needed(bolt only).
+!
+!
+!    The macro also defines as components the contact areas for the hex head
+!    and nut that would be in contact with the flanges and calculates an
+!    approximate contact stiffness.  The following components and parameters
+!    are defined:
+!
+!                    hexaup - component(areas) which defines areas at hex base
+!                             where contact nodes will be needed
+!                    hexalw - component(areas) which defines areas at nut base
+!                             where contact nodes will be needed
+!                    contactk - contact stiffness based on E=30.e6 for flanges
+!
+!    Another macro contact will automatically put in the contac49 elements after
+!    the flanges have been meshed.  Also puts in the contact elements between the
+!    two flanges.
+!
+!    If the macro drills the bolt hole, it also sets up components defining
+!    keypoints that might be coupled to connect the bolt to the upper and
+!    lower flanges.  The component names are given below:
+!
+!                 kcpup - keypoints to couple to connect the upper flange
+!                         to the bolt
+!
+!              kcplower - keypoints to couple to connect the lower flange
+!                         to the bolt
+!
+!
+!
+!    The macro assumes that the working plane has been positioned such
+!    that the z-axis is aligned with the desired bolt axis, the working
+!    x-y plane is positioned at the base of the head of the hex, and the
+!    x-axis passes thru the center of the bolt and thru a set of hex vertices
+!
+!
+!
+!                Z-axis
+!                 |
+!                 |
+!           .............
+!           .bolt head  .
+!           .............  -------> X working plane
+!              .     .
+!              .     .
+!              .     .
+!
+!!
+!
+!
+!
+!
+!
+!
+finish
+/prep7
+immed,0
+!
+*msg,note
+  Bolt Gener. Macro - Volumes to Join must be Active
+!
+!    define defaults to return to at end of macro
+!
+*get,coors,active,,csys
+!
+!prompt user for half or full bolt model
+!
+*ask,fbolt,Full/Half Bolt <Full=0> Half=1,0
+!
+*ask,hsize,Bolt Head Width Across Flats 
+!
+rcontk=hsize*1.2/.866
+!
+hsize=hsize*.57735
+!
+*ask,hthk,Hex Head Thickness
+!
+*ask,bdia,Bolt Diameter
+!
+cswpla,40,0 
+!                                                                    
+*get,mizloc,kp,0,mnloc,z  
+!  
+*ask,uflt,Upper Flange Thickness <curves>
+!
+*ask,lflt,Lower Flange Thickness <curves>
+!
+*ask,qhole,Drill Hole? <No=0> Yes =1,0
+!
+*if,qhole,eq,1,then
+  *ask,bclear,Diametral Clearance,0.0
+*endif
+!
+!     ask for default meshing ???
+!  
+*ask,dfmesh,Default Meshing ? <No=0> Yes=1,0
+!
+*if,dfmesh,gt,.001,then
+!
+ *ask,tnum,Element Type Num <1>,1
+  *if,tnum,lt,.01,then
+   tnum=1
+  *endif
+!
+ *ask,rnum,Real Constant Num <1>,1
+  *if,rnum,lt,.01,then
+   rnum=1
+  *endif
+!
+ *ask,mnum,Material Property Num <1>,1
+  *if,mnum,lt,.01,then
+   mnum=1
+  *endif
+*endif
+!
+ mizloc=-(uflt+lflt)
+!
+!   Turn off boolean warnings
+!
+bopt,numb,off
+*if,qhole,eq,1,then
+!
+! Create coordinate system on working plane
+!
+zlen=-mizloc                                                                                                                          
+zfact=zlen*.3                                                                                                                                   
+cm,vtemp,volu
+vsel,none                                                                       
+drillr=(bdia+bclear)/2
+cylinder,,drillr,mizloc-zlen,zlen                     
+!
+*get,vnum,volu,,num,max
+!
+!
+cmsel,a,vtemp                                                        
+!                                                                
+! Perform Volume Subtractions
+!
+vsbv,vtemp,vnum
+!
+*endif
+cm,vrest,volu
+!
+vsel,none
+!
+!!  create cylinder for bolt
+!
+cylinder,,bdia/2,mizloc-hthk,hthk  
+!
+!  create hex heads
+!
+rprism,mizloc,mizloc-hthk,6,hsize
+rprism,0,hthk,6,hsize
+!
+! overlap the volumes
+!
+vovlap,all
+!
+!      Slice Volume into quarters
+!
+wprotat,,90
+!    This Macro slices the current volume at the working plane                 
+!!                                                                              
+cm,temp99,volu
+cswpla,41,0                                                                     
+*get,mxxloc,kp,0,mxloc,x                                                        
+*get,mxyloc,kp,0,mxloc,y                                                        
+*get,mixloc,kp,0,mnloc,x                                                        
+*get,miyloc,kp,0,mnloc,y                                                        
+xlen=mxxloc-mixloc                                                              
+ylen=mxyloc-miyloc                                                              
+xfact=xlen*.3                                                                   
+yfact=ylen*.3                                                                   
+asel,none                                                                       
+rectang,mixloc-xfact,mxxloc+xfact,miyloc-yfact,mxyloc+yfact                     
+*get,arnum,area,,num,max                                                        
+vsba,temp99,arnum  
+!
+cm,temp98,volu
+!
+! check to see if 1/2 or whole model
+!
+*if,fbolt,gt,.1,then
+!
+   csys,40
+   vsel,r,loc,y,-3*hsize,.01,1
+   lsel,u,loc,y,0.0
+   asll,s,1
+   vdele,all,,,1
+   adele,all,,,1
+   cmsel,s,temp98
+   aslv,s,1
+*endif
+!
+!   split in other direction
+!
+wprotat,,-90
+wprotat,,,90
+!    This Macro slices the current volume at the working plane                 
+!!                                                                              
+cm,temp99,volu
+cswpla,42,0                                                                     
+*get,mxxloc,kp,0,mxloc,x                                                        
+*get,mxyloc,kp,0,mxloc,y                                                        
+*get,mixloc,kp,0,mnloc,x                                                        
+*get,miyloc,kp,0,mnloc,y                                                        
+xlen=mxxloc-mixloc                                                              
+ylen=mxyloc-miyloc                                                              
+xfact=xlen*.3                                                                   
+yfact=ylen*.3                                                                   
+asel,none                                                                       
+rectang,mixloc-xfact,mxxloc+xfact,miyloc-yfact,mxyloc+yfact                     
+*get,arnum,area,,num,max                                                        
+vsba,temp98,arnum  
+!
+cm,boltv,volu
+!
+!
+! concatenate areas to brick mesh
+!
+!
+!  ---- first do top nut ---
+csys,40
+clocal,43,1
+!
+!      select top nut and areas
+!
+vsel,r,loc,z,-.01,hthk*1.1
+vsel,r,loc,x,bdia/2*.99,bdia
+aslv,s,1
+asel,r,loc,x,.84*hsize,1.1*hsize
+cm,atop,area
+!
+!   perform accat
+!
+asel,r,loc,y,1,89
+!
+*if,dfmesh,gt,.001,then
+ lsla,s,1
+ lesize,all,,,2
+*endif
+!
+accat,all
+cmsel,s,atop
+asel,r,loc,y,91,179
+!
+*if,dfmesh,gt,.001,then
+ lsla,s,1
+ lesize,all,,,2
+*endif
+!
+accat,all
+!
+*if,fbolt,lt,.1,then
+ cmsel,s,atop
+ asel,r,loc,y,-179,-91
+!
+*if,dfmesh,gt,.001,then
+ lsla,s,1
+ lesize,all,,,2
+*endif
+!
+ accat,all
+ cmsel,s,atop
+ asel,r,loc,y,-89,-1
+!
+*if,dfmesh,gt,.001,then
+ lsla,s,1
+ lesize,all,,,2
+*endif
+!
+ accat,all
+*endif
+!
+!
+!  ---- next do bottom nut--
+!      select nut volume and areas
+!
+cmsel,s,boltv
+!
+vsel,r,loc,z,mizloc-hthk*1.1,mizloc+.01
+!                        *if,qhole,eq,1,then
+!                         if to avoid slicing and meshing bottom nut
+*if,lflt,gt,uflt*0.0001,then
+vsel,r,loc,x,bdia/2*.99,bdia
+aslv,s,1
+asel,r,loc,x,.84*hsize,1.1*hsize
+cm,atop,area
+!
+!   perform accat
+!
+asel,r,loc,y,1,89
+!
+*if,dfmesh,gt,.001,then
+ lsla,s,1
+ lesize,all,,,2
+*endif
+!
+accat,all
+cmsel,s,atop
+asel,r,loc,y,91,179
+!
+*if,dfmesh,gt,.001,then
+ lsla,s,1
+ lesize,all,,,2
+*endif
+!
+accat,all
+!
+*if,fbolt,lt,.1,then
+ cmsel,s,atop
+ asel,r,loc,y,-179,-91
+!
+   *if,dfmesh,gt,.001,then
+     lsla,s,1
+     lesize,all,,,2
+   *endif
+!
+ accat,all
+ cmsel,s,atop
+ asel,r,loc,y,-89,-1
+!
+  *if,dfmesh,gt,.001,then
+    lsla,s,1
+    lesize,all,,,2
+  *endif
+!
+ accat,all
+*endif
+!
+!      make components of areas for contacts
+!
+allsel
+cmsel,s,boltv
+aslv
+asel,r,loc,z,
+asel,r,loc,x,bdia/2,2*bdia
+cm,hexaup,area
+!
+aslv
+asel,r,loc,z,mizloc
+asel,r,loc,x,bdia/2,2*bdia
+cm,hexalw,area
+!
+!   compute stiffnesses for
+!   contact properties
+!
+barea=3.14159/4*bdia**2
+ebolt=30.e6
+boltk=barea*ebolt/(-mizloc)
+!
+flarea=.866*3*hsize**2
+flnet=flarea-barea
+eflan=30.e6
+flangk=flnet*eflan/(-mizloc)
+!
+! define contact stiffness as 10 times avg
+!
+contactk=10*(boltk+flangk)/2
+!
+!
+*endif
+!               *if,qhole,eq,0,then
+*if,lflt,lt,uflt*0.0001,then
+   vdel,all,,,1
+*endif
+fini
+/prep7
+*if,dfmesh,gt,.001,then
+  cmsel,s,boltv
+  vatt,mnum,rnum,tnum
+!
+!     define mesh size on legs
+!
+  aslv,s,1
+  lsla,s,1
+  lsel,r,loc,z,mizloc/3,mizloc*2/3
+  lesize,all,,,4
+  lsel,all
+!
+  vmesh,all
+*if,qhole,eq,1,then
+  cmsel,s,hexaup
+  nsla,s,1
+  cm,hexnodup,node
+  cmsel,s,hexalw
+  nsla,s,1
+  cm,hexnodlw,node
+*endif
+*endif
+!!!!!!!!!! 
+!
+! define couple sets for analysis
+!
+*if,qhole,eq,1,then
+csys,43
+ksel,s,loc,z,0
+ksel,r,loc,x,bdia/2,drillr
+ksel,r,loc,y,180
+cm,kcpup,kp
+!
+!
+csys,43
+ksel,s,loc,z,mizloc
+ksel,r,loc,x,bdia/2,drillr
+ksel,r,loc,y,180
+cm,kcplower,kp
+*endif
+!
+immed,1
+/gopr
+/nerr
+csys,coors
+allsel
+allsel,below,volu
+!
+!! delete all parameters that are not required
+!
+!
+cmdele,atop
+cmdele,vtemp
+cmdele,vrest
+!
+!
+arnum=
+barea=
+bclear=
+boltk=
+coors=
+dfmesh=
+drillr=
+ebolt=
+eflan=
+fbolt=
+flangk=
+flarea=
+flnet=
+hthk=
+mnum=
+mat=
+qhole=
+real=
+rnum=
+tnum=
+type=
+vnum=
+xfact=
+xlen=
+yfact=
+ylen=
+zfact=
+zlen=
+!
+*msg,note
+  Macro Complete: hexaup, hexalw, rcontk, and contactk defined

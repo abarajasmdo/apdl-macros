@@ -1,0 +1,15 @@
+!
+! macro plots pressure face pressure profile
+!
+/pmacro
+cm,c,node
+*do,loop,1,arg1
+/gopr
+!cmsel,,c
+npick
+cm,b,node
+prnl
+cmsel,,c
+cmsel,u,b
+cm,c,node
+*enddo

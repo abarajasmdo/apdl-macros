@@ -1,0 +1,38 @@
+!parsav
+!csys,11
+!*get,nnds,node,,count
+!ndd=0
+!m=(4.76478312540 - 4.84076760435)/(199.2842 - 199.075434360)
+!
+!*do,fix,1,nnds
+!ndd=ndnext(ndd)
+
+!xnd= m*nz(ndd)+72.533517+4.76478312540
+!nmodif,ndd,xnd
+!*enddo
+!parres
+/pmacro,
+parsav
+csys,11
+cm,blah,kp
+ksel,r,p
+*get,nkps,kp,,count
+*if,nkps,eq,2,then
+kp1=kpnext(0)
+kp2=kpnext(kp1)
+m=(kx(kp2)-kx(kp1))/(kz(kp2)-kz(kp1))
+b=kx(kp1)-m*kz(kp1)
+ndd=0
+imme,0
+*get,nnds,node,,count
+*do,fix,1,nnds
+ndd=ndnext(ndd)
+
+xnd= m*nz(ndd)+b
+nmodif,ndd,xnd
+*enddo
+imme,1
+*endif
+cmsel,,blah
+cmdele,blah
+parres

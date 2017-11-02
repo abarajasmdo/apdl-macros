@@ -1,0 +1,50 @@
+!/nopr
+!
+!   stg14disp.mac   a macro to create postprocessing plots
+!                         for the s=14th stage system of cf6-50
+!                         for seismic excitation and print reaction forces
+!
+!                         usage: stg14disp,# of modes
+/nopr
+cnt=0
+:lp
+reset
+!*stat
+cnt=cnt+1
+*if,cnt,gt,arg1,:end
+
+store,stress,real
+!
+stress,sigi,16,27
+,sigj,16,31
+,sigi,18,27
+,sigj,18,31
+!
+lclim,10
+lcabs,1
+lcase,1
+set,1,cnt
+lcase,2
+set,2,cnt
+lcase,3
+set,3,cnt
+lcsrss,4,1,2,3
+lcase,4
+!
+!  get link brackets
+
+esel,type,8,9
+eusel,mat,6
+eusel,real,45,48
+!ersel,stif,16
+nelem
+/reset
+/view,1,1,1,1
+!ploff,,,2,
+/gopr
+plls,sigi,sigi
+plls,sigj,sigj
+/nopr
+*go,:lp
+:end
+

@@ -1,0 +1,23 @@
+!
+!   block,node(@mass),node(@end of massless beam support)
+!
+! macro puts a massles volume element at point mass for graphical display
+!
+nall
+*get,nmin,ndmn
+cs,40,,arg1,arg2,nmin
+*get,nx,xc,40
+*get,ny,yc,40
+*get,nz,zc,40
+*get,nmax,ndmax
+n,nmax+1,nx+.1,ny+.1,nz+.1
+n,nmax+2,nx-.1,ny+.1,nz+.1
+n,nmax+3,nx-.1,ny-.1,nz+.1
+n,nmax+4,nx+.1,ny-.1,nz+.1
+n,nmax+5,nx+.1,ny+.1,nz-.1
+n,nmax+6,nx-.1,ny+.1,nz-.1
+n,nmax+7,nx-.1,ny-.1,nz-.1
+n,nmax+8,nx+.1,ny-.1,nz-.1
+e,nmax+1,nmax+2,nmax+3,nmax+4,nmax+5,nmax+6,nmax+7,nmax+8
+
+

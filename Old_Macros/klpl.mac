@@ -1,0 +1,12 @@
+!   klpl.mac   Plots lines and keypoints simultaneously.
+!
+! USAGE:     klpl   (no arguments)
+!
+/nopr
+lplo                                                                            
+/noer                                                                           
+/ploff,1,1,1,1
+kplo                                                                            
+/erase                                                                          
+/ploff
+/gopr

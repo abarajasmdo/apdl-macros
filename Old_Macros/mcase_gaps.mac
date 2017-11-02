@@ -1,0 +1,45 @@
+!  makes siesta "lists" of model gaps
+/nopr
+PARSAV
+*IF,ARG1,LT,1,THEN
+*ASK,GAP_TYPE,INPUT GAP STIF YOU WANT UIF FILE FOR,40
+*ELSE
+GAP_TYPE=ARG1
+*ENDIF
+EALL
+RMAX=RLINQR(0,14)
+*CFOPEN,GAPS,UIF
+*vwrit
+('$ Use this file under SIESTA edit siesta>1>7>{.rdb name} > GAPS.UIF') 
+!*VWRIT
+!('LIST')
+*DO,LOOP,1,RMAX
+*IF,RLINQR(LOOP,1),EQ,0,*CYCLE	! DOES REAL EXIST?
+ESEL,REAL,LOOP
+*GET,NELES,ELEM,,COUNT
+*IF,NELES,EQ,0,*CYCLE
+EL=ELNEXT(0)
+*get,ename,elem,EL,attr,enam	!  get the type
+*IF,ENAME,NE,GAP_TYPE,*CYCLE		! IS IT A GAP 40?
+*VWRIT,%LOOP%
+( 'LIST ' , I6  )
+*DO,TOO,1,NELES
+*IF,TOO,EQ,NELES,THEN
+*VWRIT,EL
+(I9)
+*ELSE
+*VWRIT,EL
+(I9,' & ')
+*ENDIF
+EL=ELNEXT(EL)
+*ENDDO
+*VWRIT
+('LNAM')
+*VWRIT,LOOP
+(' GAPS REAL= ', I9)
+*ENDDO
+*CFCLOS
+
+PARRES
+/gopr
+

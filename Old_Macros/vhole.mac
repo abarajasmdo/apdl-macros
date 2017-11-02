@@ -1,0 +1,299 @@
+!
+!  vhole.mac  macro to automate the -400 shaft vent hole 3d model
+!
+/nopr
+resume,start.db
+/prep7
+/uis,msgpop,3
+/uis,replot,0
+/uis,abort,off
+!	create hole volumes
+! hole 1
+CSWPLA,21,1,1,1,	! create cs for hole #1 for post processing
+csys,11
+*ask,case_num,Case Number,'case'
+/output,%case_num%,out
+*ask,Dia_1,#1 Hole Diameter,.316
+cyl4,0,0,dia_1/2,,,,1	! create hole #1
+*ask,Dia_2,#2 Hole Diameter,.316
+*ask,A_dim,(A) Hole #2 Axial drop from #1,0
+*ask,B_dim,(B) Circum rotation from datum to hole 2 (in),1.452986603
+*ask,Dia_3,#3 Hole Diameter,.316
+*ask,C_dim,(C) Hole #3 Axial drop from #1,.68
+*ask,D_dim,(B) Circum rotation from datum to hole #3 (in),.726493302
+OD=1.3875*2
+M_angle=360*(B_dim/3.14159265/OD)*(-1)	! 360 deg x B/pi D (neg for csys,11)
+H3_ang=360*(D_dim/3.14159265/OD)*(-1)	! 360 deg x D/pi D (neg for csys,11)
+!
+! create hole 2
+!
+lgen,2,34,,,,M_angle,(-1)*A_dim,,,1 	! move centerline and wp
+lwpl,-1,34,
+cyl4,0,0,Dia_2/2,,,,1	! create hole #2
+CSWPLA,22,1,1,1,	! create cs for hole #2 for post processing
+csys,11
+lgen,2,34,,,,(-1)*M_angle,A_dim,,,1	! move centerline back
+!
+! create hole 3
+!
+lgen,2,34,,,,H3_ang,(-1)*C_dim,,,1 	! move centerline and wp
+lwpl,-1,34,
+cyl4,0,0,Dia_3/2,,,,1	! create hole #2
+CSWPLA,23,1,1,1,	! create cs for hole #2 for post processing
+csys,11
+lgen,2,34,,,,(-1)*H3_ang,C_dim,,,1	! move centerline back
+!
+!ASLV
+!LSLA
+!lesize,all,,,12,1,	! set hole element div
+cm,drill,volu
+vlinv
+!	create shaft volumes + drill holes
+aral
+kpal
+type,1
+vrotat,1 ,8 ,,,,,3,2,H3_ang,2
+vrotat,31,35,,,,,3,2,M_angle-H3_ang,2
+cm,shaft,volu
+ASLV
+LSLA
+lesize,all,,,6,1,	! set hole element div
+vlal
+vsbv,shaft,drill
+!		set more element divisions
+ASLV
+LSLA
+lsel,r,ndiv,,0 
+cm,resize,line
+lsel,r,loc,x,1,1.2 
+lesize,all,,,6,1,
+cmsel,,resize 
+lsel,r,ndiv,,0
+cm,resize,line
+lsel,r,loc,y,0
+lesize,all,,,10,.25,	! # of divisons out from hole
+cmsel,,resize 
+lsel,r,loc,y,H3_ang
+lesize,all,,,10,.25,
+cmsel,,resize 
+lsel,r,loc,y,M_angle
+lesize,all,,,10,.25,
+cmsel,,resize 
+lsel,r,ndiv,,0
+lesize,all,,,12,1,
+!lesize,all,,,6,1,2
+!		concatenate and mesh?
+all
+FLST,2,3,5,ORDE,3   
+FITEM,2,19  
+FITEM,2,21  
+FITEM,2,-22 
+ACCAT,P51X  
+FLST,2,3,5,ORDE,3   
+FITEM,2,26  
+FITEM,2,28  
+FITEM,2,33  
+ACCAT,P51X  
+FLST,2,3,5,ORDE,3   
+FITEM,2,37  
+FITEM,2,42  
+FITEM,2,44  
+ACCAT,P51X  
+FLST,2,3,5,ORDE,3   
+FITEM,2,40  
+FITEM,2,46  
+FITEM,2,48  
+ACCAT,P51X  
+FLST,2,2,5,ORDE,2   
+FITEM,2,56  
+FITEM,2,-57 
+ACCAT,P51X  
+FLST,2,2,5,ORDE,2   
+FITEM,2,62  
+FITEM,2,-63 
+ACCAT,P51X  
+FLST,2,2,5,ORDE,2   
+FITEM,2,66  
+FITEM,2,-67 
+ACCAT,P51X  
+FLST,2,2,5,ORDE,2   
+FITEM,2,72  
+FITEM,2,-73 
+ACCAT,P51X  
+FLST,2,2,4,ORDE,2   
+FITEM,2,114 
+FITEM,2,117 
+LCCAT,P51X  
+FLST,2,2,4,ORDE,2   
+FITEM,2,113 
+FITEM,2,116 
+LCCAT,P51X  
+FLST,2,3,4,ORDE,3   
+FITEM,2,55  
+FITEM,2,59  
+FITEM,2,-60 
+LCCAT,P51X  
+FLST,2,3,4,ORDE,3   
+FITEM,2,57  
+FITEM,2,61  
+FITEM,2,-62 
+LCCAT,P51X  
+FLST,2,3,4,ORDE,3   
+FITEM,2,65  
+FITEM,2,73  
+FITEM,2,80  
+LCCAT,P51X  
+FLST,2,3,4,ORDE,3   
+FITEM,2,63  
+FITEM,2,74  
+FITEM,2,79  
+LCCAT,P51X  
+FLST,2,2,4,ORDE,2   
+FITEM,2,124 
+FITEM,2,128 
+LCCAT,P51X  
+FLST,2,2,4,ORDE,2   
+FITEM,2,129 
+FITEM,2,133 
+LCCAT,P51X  
+FLST,2,2,4,ORDE,2   
+FITEM,2,130 
+FITEM,2,132 
+LCCAT,P51X  
+FLST,2,3,4,ORDE,3   
+FITEM,2,86  
+FITEM,2,91  
+FITEM,2,93  
+LCCAT,P51X  
+FLST,2,3,4,ORDE,3   
+FITEM,2,87  
+FITEM,2,89  
+FITEM,2,92  
+LCCAT,P51X  
+FLST,2,3,4,ORDE,3   
+FITEM,2,81  
+FITEM,2,98  
+FITEM,2,-99 
+LCCAT,P51X  
+FLST,2,3,4,ORDE,3   
+FITEM,2,83  
+FITEM,2,100 
+FITEM,2,-101
+LCCAT,P51X  
+FLST,2,2,4,ORDE,2   
+FITEM,2,140 
+FITEM,2,143 
+LCCAT,P51X  
+type,1
+vmesh,all
+catdele
+FLST,8,4,4  
+FITEM,8,66  
+FITEM,8,79  
+FITEM,8,92  
+FITEM,8,105 
+FLST,2,2,5,ORDE,2   
+FITEM,2,3   
+FITEM,2,9   
+FLST,8,4,4  
+FITEM,8,62  
+FITEM,8,75  
+FITEM,8,88  
+FITEM,8,101 
+! drag other areas
+FLST,2,2,5,ORDE,2   
+FITEM,2,3   
+FITEM,2,9   
+FLST,8,4,4  
+FITEM,8,62  
+FITEM,8,75  
+FITEM,8,88  
+FITEM,8,101 
+VDRAG,P51X, , , , , ,P51X   
+FLST,8,4,4  
+FITEM,8,66  
+FITEM,8,79  
+FITEM,8,92  
+FITEM,8,105 
+!/eof
+VDRAG,       2, , , , , ,P51X 
+!		apply bc's
+nsel,ext
+nrotat,all
+sf,all,press,1e-9	! pressures for surface stress
+omega,,13500*2*3.141592654/60	! speed
+nsel,r,loc,z,-10.1573700000
+d,all,uy,0,,,,uz
+nsel,,loc,z,-5.81000000000
+cm,end,node
+nsel,r,loc,x,1.22525000000
+cp,next,ux,all  
+cp,next,uy,all  
+cp,next,uz,all  
+cmsel,,end
+nsel,r,loc,x,1.07387500000
+cp,next,ux,all  
+cp,next,uy,all  
+cp,next,uz,all  
+cmsel,,end
+nsel,r,loc,x,0.922500000000
+cp,next,ux,all  
+cp,next,uy,all  
+cp,next,uz,all  
+nall
+! 	axial load  15,000# * 1/6 of full 360
+f,1 ,fz,15000*(B_dim/8.717919618)/4
+f,12,fz,15000*(B_dim/8.717919618)/4
+f,20,fz,15000*(B_dim/8.717919618)/2
+! 	torsion  7500 ft # (12 in/ft) * 1/6 model *
+f,1 ,fy,7500*12*(B_dim/8.717919618)/4/1.22525000000
+f,20,fy,7500*12*(B_dim/8.717919618)/2/1.07387500000
+f,12,fy,7500*12*(B_dim/8.717919618)/4/0.922500000000
+! clean up model
+asel,,type,,2
+aclear,all	!clear stif 63
+all
+numm,kpoi
+numm,node
+numm,kpoi
+!	do cyc symm bc's
+nsel,,loc,y,0
+nsel,a,loc,y,M_ANGLE	! unselect ends
+nsel,u,loc,z,-10.1573700000
+nsel,u,loc,z,-5.81000000000
+cycsymm
+/uis,msgpop,2
+/uis,replot,1
+/uis,abort,on
+all
+!	create hole components
+csys,21
+asel,,loc,x,.01,(Dia_1/2)+.01,,1
+csys,11
+asel,u,loc,x,0.922500000000
+asel,u,loc,x,1.38750000000
+cm,hole1,area
+csys,22
+asel,,loc,x,.01,(Dia_1/2)+.01,,1
+csys,11
+asel,u,loc,x,0.922500000000
+asel,u,loc,x,1.38750000000
+cm,hole2,area
+csys,23
+asel,,loc,x,.01,(Dia_1/2)+.01,,1
+csys,11
+asel,u,loc,x,0.922500000000
+asel,u,loc,x,1.38750000000
+cm,hole3,area
+all
+pbof
+ok
+/gopr
+
+
+
+
+
+
+
+

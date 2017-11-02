@@ -1,0 +1,45 @@
+/nopr
+!
+!      ndup.mac  A macro to create duplicate nodes
+!                (great for coupling).
+!
+!         usage:  ndup,node,newn
+!
+!            where   node=node number to be duplicated
+!                    newn=new node number (optional)
+!
+!                if newn is not given, the highest
+!                available node number will be used.
+!
+*get,nx,nx,arg1
+*get,ny,ny,arg1
+*get,nz,nz,arg1
+*get,ntxy,ntxy,arg1
+*get,ntyz,ntyz,arg1
+*get,ntxz,ntxz,arg1
+!
+!  check if arg2 is provided
+!
+*if,arg2,gt,0,:lp1
+*get,mxnd,mxnd
+newn=mxnd+1
+*go,:lp2
+:lp1
+newn=arg2
+:lp2
+!
+!  create the node
+!
+n,newn,nx,ny,nz,ntxy,ntyz,ntxz
+*msg,info,newn,nx,ny,nz
+ Node ,f7.0, created at x=,f8.3, y=,f8.3 z=,f8.3
+nx=
+ny=
+nz=
+ntxy=
+ntyz=
+ntxz=
+mxnd=
+newn=
+/gopr
+

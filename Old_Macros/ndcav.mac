@@ -1,0 +1,13 @@
+!  make nd cavity
+/pmacro
+cm,temp,node
+*msg,info
+select cavity nodes
+nsel,r,p
+*ask,cavnum,enter cavity number,0
+cm,cav%cavnum%,node
+cmsel,,temp
+cmsel,u,cav%cavnum%
+cm,temp,node
+cavnum=
+nplo

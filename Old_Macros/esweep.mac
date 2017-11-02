@@ -1,0 +1,104 @@
+et!
+!  esweep.mac - extrudes stif 63's into a series of stif 45's w/ a specified 
+!		node numbering
+!           
+!Usage: etwist,x,y,z,node increment,# of layers of elem
+!
+
+*if,arg4,gt,0,then
+*get,nnmax,ndmx
+nelem
+_NINC_=arg4*arg5
+ninc=arg4*arg5
+cm,mac_node,node
+cm,mac_elem,elem
+!
+*if,arg5,le,.9,then
+nelem=1
+*else
+nelem=arg5
+*endif
+*get,nod,node,,num,max
+*get,ele,elem,,num,max
+*get,nofn,node,,count
+*get,nofe,elem,,count
+!
+!  generate nodes from given set to far end
+!
+ngen,2,_NINC_,all,,,arg1,arg2,arg3
+cm,mac_nds,nodes
+!
+! generate intermediate nodes (fill)
+!
+*if,nelem,gt,1,then
+cmsel,s,mac_node
+*get,nod,node,,num,max
+*do,nq,1,nofn,1
+cmsel,s,mac_nds
+fill,nod,nod+ninc,nelem-1,,,
+cmsel,s,mac_node
+*get,nod,node,nod,nxtl
+*if,nod,eq,0,*exit
+*enddo
+*endif
+!
+! make bricks
+!
+eall
+cmsel,s,mac_elem
+nall
+*get,ele,elem,,num,max
+numstr,elem,ele+1
+type,1
+cmsel,s,mac_elem
+*get,ele,elem,,num,max
+!
+!  first layer
+!
+*do,layer,1,nofe,1
+n1=nelem(ele,1)
+n2=nelem(ele,2)
+n3=nelem(ele,3)
+n4=nelem(ele,4)
+e,n1,n2,n3,n4,n1+ninc/nelem,n2+ninc/nelem,n3+ninc/nelem,n4+ninc/nelem
+*get,ele,elem,ele,nxtl
+*if,ele,eq,0,*exit
+*enddo
+esel,r,stif,,45
+cm,bricks,elem
+!
+! the remaining bricks
+!
+*if,nelem,gt,1,then
+!esel,s,,,ele+1,1e7
+cmsel,s,bricks
+egen,nelem,ninc/nelem,all,,,
+*endif
+ninc=
+nnmax=
+nchk=
+nofe=
+nofn=
+ele=
+nod=
+nelem=
+n1=
+n2=
+n3=
+n4=
+x1=
+y1=
+z1=
+cmdele,mac_node
+cmdele,mac_elem
+cmdele,bricks
+cmdele,mac_nds
+*else
+*msg,warn
+Usage: esweep,x,y,z(in active csys),node increment,# of layers of elem
+*endif
+
+
+
+
+

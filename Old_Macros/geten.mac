@@ -1,0 +1,24 @@
+!
+/nopr
+!     geten.mac    A macro to loop through the enode$nele
+!                  commands to select related nodes/elements
+!
+!              Usage:  geten,n  
+!                    where n=the number of loops
+!
+nelem
+n=arg1
+*if,arg1,lt,1,then
+n=1
+*endif
+*do,num,1,n
+enode
+nelem
+*enddo
+/replo
+num=
+n=
+/gopr
+
+
+

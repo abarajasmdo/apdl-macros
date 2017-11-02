@@ -1,0 +1,17 @@
+/wind,2,dele
+/wind,3,dele
+/wind,4,dele
+/wind,5,dele
+/plop,defa
+/wind,1,square
+/PLOPTS,INFO,1  
+/PLOPTS,LEG1,1  
+/PLOPTS,LEG2,0  
+/PLOPTS,LEG3,1  
+/PLOPTS,FRAME,1 
+/PLOPTS,TITLE,1 
+/PLOPTS,MINM,1  
+/PLOPTS,LOGO,0  
+/PLOPTS,WINS,1  
+/PLOPTS,WP,0
+/replot

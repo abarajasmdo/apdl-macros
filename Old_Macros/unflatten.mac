@@ -1,0 +1,6 @@
+imme,0
+csys,11
+*do,jj,1,nnodes
+nmod,angle(jj,1),,angle(jj,2),,,
+*enddo
+imme,1

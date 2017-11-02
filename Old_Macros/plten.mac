@@ -1,0 +1,7 @@
+!
+!macro plten   plots nodes and elems
+!
+nplo
+/noeras
+eplo
+/eras

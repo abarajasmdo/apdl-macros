@@ -1,0 +1,9 @@
+/prep7
+CDREAD,COMB,error,arc,, , ,   
+lplo
+/VIEW, 1 ,1,1,1 
+/ANG, 1 
+/REP
+/face,norm
+al,2,4,1,3
+aplo

@@ -1,0 +1,28 @@
+! ne                                                                             
+!!    This Macro slices the current volume at the working plane                 
+cswpla,40,0                                                                     
+*get,mxxloc,kp,0,mxloc,x                                                        
+*get,mxyloc,kp,0,mxloc,y                                                        
+*get,mixloc,kp,0,mnloc,x                                                        
+*get,miyloc,kp,0,mnloc,y                                                        
+xlen=mxxloc-mixloc                                                              
+ylen=mxyloc-miyloc                                                              
+xfact=xlen*.3                                                                   
+yfact=ylen*.3                                                                   
+/user,1
+cm,tarea,area
+cmsel,u,tarea
+*ask,numst,'number of volumes to slice',1
+rectang,mixloc-xfact,mxxloc+xfact,miyloc-yfact,mxyloc+yfact   
+agen,numst,all,,,0,0,0
+/pnum,area,1
+/noerase
+aplot
+/erase
+/pnum,area,0
+cmsel,a,tarea
+csys,0
+/auto
+goto,vsba
+
+

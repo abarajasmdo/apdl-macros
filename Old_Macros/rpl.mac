@@ -1,0 +1,20 @@
+/nopr
+!
+!          rpl.mac
+
+!          This macro plots elements for each real property table entry
+
+!           so it can be seen if there are any real property entries which
+
+!           are not in use.
+
+!           SYNTAX :  rpl,starttab,endtab
+
+a=arg1                                                
+:lb1                                                                            
+esel,real,a                                                                 
+eplo                                                                            
+a=a+1                                   
+*if,a,le,arg2,:lb1
+a=
+/gopr                                     

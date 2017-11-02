@@ -1,0 +1,38 @@
+! fixnode - fixes pressure face nodes, rotates and couples to blade
+!
+/gopr
+modmsh,nocheck
+*cfopen,cp,file
+cmsel,s,_blade
+*get,nd,node,,num,max
+*get,loops,node,,count
+*do,es,1,loops
+!nsel,a,,,nd
+!
+!  find appropriate node on disk
+!
+csys,21   * get x,y,z in blade csys
+nrotat,nd
+x=nx(nd)
+y=ny(nd)
+z=nz(nd)
+csys,20
+cmsel,s,_disk
+disk_nd=node(x,y,z)
+*msg,note,nd,disk_nd
+Doing nodes %I - %I
+nrotat,disk_nd
+nsel,a,,,nd
+cp,nd,uz,nd,disk_nd
+*cfwrit,cp,nd,uz,nd,disk_nd
+cmsel,s,_blade
+*get,nd,node,nd,nxtl
+*if,nd,eq,0,*cycle
+*enddo
+*cfclos
+*msg,warn
+YOUR CP COMMANDS ARE ON CP.FILE --> RESAVE
+modmsh,check
+csys,0
+/gopr
+

@@ -1,0 +1,14 @@
+!	couples nodes in "arc". ie 3D model node row
+!
+/pmacro
+parsav
+cm,_temp,node
+*msg,info
+Select master node
+nsel,r,p
+csys,11
+ndmast=ndnext(0)
+cmsel,,
+nsel,r,loc,x,nx(ndmast)
+nsel,u,,,ndmast
+cm,

@@ -1,0 +1,14 @@
+!  walks you through subtracting two timwpoints
+!  file,a,rst  lcdef
+parsav
+*ask,first,First T.P.  First - second,'file'
+file,%first%,rst
+lcdef,1,1,1
+lcase,1
+*ask,second,Second T.P.  First - second,'file'
+file,%second%,rst
+lcdef,2,1,1
+lcdef,stat
+lcoper,sub,2
+
+

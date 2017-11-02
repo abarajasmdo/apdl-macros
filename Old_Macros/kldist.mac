@@ -1,0 +1,65 @@
+! $Id: kldist.mac,v 1.3 1996/03/18 17:38:30 buyuk Exp $
+! $Log: kldist.mac,v $
+/com,Revision 1.3  1996/03/18  17:38:30  buyuk
+/com,added author/comments
+/com,
+/com,Revision 1.2  1996/03/18  17:37:19  buyuk
+/com,added author/comments
+/com,
+/com,Revision 1.1  1996/03/18  17:34:16  buyuk
+/com,Initial revision
+/com,
+/com,Osman Buyukisik  243-4282
+!
+/nopr
+! distance between kp and line returned in _dist
+! good only in the xy plane
+_nk1=arg1
+_nl1=arg2
+*get,_coord,active,,csys
+csys,0
+_x1=lx(_nl1,0)
+_y1=ly(_nl1,0)
+_x2=lx(_nl1,1)
+_y2=ly(_nl1,1)
+_x3=kx(_nk1)
+_y3=ky(_nk1)
+_dx=_x1-_x2
+_dy=_y1-_y2
+*if,_dx,eq,0.0,then
+ _dist=abs(_x1-_x3)
+*else
+ *if,_dy,eq,0.0,then
+   _dist=abs(_y1-_y3)
+ *else
+   _m1=_dy/_dx
+   _m2=(-1.0)/_m1
+   _x0=((_y3-_y1)+(_m1*_x1))-(_m2*_x3)
+   _x0=_x0/(_m1-_m2)
+   _y0=_y1+(_m1*(_x0-_x1))
+   _dx=_x3-_x0
+   _dy=_y3-_y0
+   _dz=0
+   _dist=sqrt((_dx**2)+((_dy**2)+(_dz**2)))
+ *endif
+*endif
+*msg,info,_dx,_dy,arg1,arg2
+DX= %G DY= %G between point %I and line %I
+!_dx=
+!_dy=
+_dz=
+_x1=
+_x2=
+_y1=
+_y2=
+_z1=
+_z2=
+_nl1=
+_nk1=
+_x3=
+_y3=
+csys,_coord
+_coord=
+/gopr
+*msg,info,arg1,arg2,_dist
+Distance between point %I and line %I is %G .

@@ -1,0 +1,39 @@
+/nopr
+!
+!     eskin.mac   A macro to add a skin of elements on top of the 
+!                           elements in the currently selected set.
+!           usage:
+!                        eskin,mat,real,type              
+!
+:top
+*get,nlft,esel
+*msg,info,nlft
+('Elements left to be skinned =  ',f6.0)
+*if,nlft,lt,1.0,:bot
+*get,emx1,elmx
+nelem
+!      get node numbers
+*get,nn1,en1,emx1
+*get,nn2,en2,emx1
+*get,nn3,en3,emx1
+*get,nn4,en4,emx1
+!       set default mat,real,type values
+real,arg2
+type,arg3
+mat,arg1
+!       create the skin element
+e,nn1,nn2,nn3,nn4
+eusel,,emx1
+!   get the now highest element number, the skin
+!   element which was just created.
+*get,emx2,elmx
+eusel,,emx2
+*go,:top
+:bot
+*msg,info
+('  All done....! ')
+
+
+
+
+

@@ -1,0 +1,27 @@
+!
+!  amsh - meshes area w/o solid model connectivity
+!
+/nop
+nall
+*get,nnmax,node,,num,max
+*msg,note,nnmax
+MAX. NODE # IN MODEL IS %G
+*ASK,NSTR,STARTING NODE VALUE?,NNMAX+1
+NUMST,NODE,NSTR
+cm,xxx,area
+amesh,arg1
+asel,s,,,arg1
+earea
+nelem
+*GET,NNDS,NODE,,COUNT
+*MSG,NOTE,NNDS
+AREA HAS %I NODES
+*ASK,NINC,NODE # OFFSET FOR MESHED NODES?,NNMAX+1+NNDS
+ngen,2,ninc,all,,,
+!egen,2,ninc,all,,,
+aclear,arg1
+NPLO
+cmsel,a,xxx
+cmdele,xxx
+/gopr
+

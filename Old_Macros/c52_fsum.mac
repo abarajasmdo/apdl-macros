@@ -1,0 +1,4 @@
+FILE,T%arg1%,rst
+set,last
+c52_fsum_node_real 
+/syp,rename contac52_fsum_node_real , arg1

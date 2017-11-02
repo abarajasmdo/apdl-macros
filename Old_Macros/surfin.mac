@@ -1,0 +1,18 @@
+!
+! surfin.mac  reads file of surface stresses and puts into etable
+!
+!  usage: surfin,number of elements  (stress should be on file 
+!		stress.file w/ elem  stress format		
+!
+!  surface stress elements selected
+!
+*get,_num,elem,,count
+etable,surfstrs,smisc,2  !sets up empty etable
+*dim,surf,array,_num,2  !array to have elem, stress columns
+*vread,surf(1,1),stress,file !reads in elems
+(F8.0)
+*vread,surf(1,2),stress,file ! reads in stresses
+(9X,F10.0)
+*do,ele,1,_num
+detab,surf(ele,1),surfstrs,surf(ele,2)
+*enddo

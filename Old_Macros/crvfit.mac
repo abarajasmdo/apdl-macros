@@ -1,0 +1,202 @@
+!
+!  crvfit.mac - macros performs a polnominal curve fit on the selected
+!		keypoints and generates a 50th order bspline using the equation.
+!		The macro also allows you to select points beyond the range of
+!		of the plotted curve in order to improve the end slopes. This
+!		Is done by plotted less than a given percentage of the Xmin to 
+!		Xmax distance.
+!
+!	BY: Dan Bohlen  7/12/96  Curve fit equations from "Applied Numerical
+!	Analysis", Curtis Gerald 1980.
+!
+!  Get basic info do set up
+/nopr
+/pmacro
+lsal
+lsinv
+CM,ZZZZ,KP
+beep
+/com, SELECT KPOINTS TO BE FIT
+ksel,r,p
+cm,data2fit,kp
+PARSAV,ALL,CRVPLT,TEMP
+*ASK,NDEG,DEGREE OF FIT (0 TO EXIT),0
+*GET,NKPS,KP,,COUNT
+!
+!	DIMENSION KPOINT NUMBER ARRAYS
+!
+*DIM,TEMP1,ARRAY,NKPS
+,TEMP2,ARRAY,NKPS
+,XCOORD,ARRAY,NKPS
+,YCOORD,ARRAY,NKPS
+,YCALC,ARRAY,NKPS
+,YERROR,ARRAY,NKPS
+!
+*DO,TIMES,1,999   	 !	MAIN LOOP
+!
+NDEG2=2*NDEG
+*ask,LOFF,% of low end NOT to generate (10% ~ .1),0
+*ask,hOFF,% of high end NOT to generate (10% ~ .1),0
+
+!
+!	DIMENSION ARRAYS
+!
+*DIM,MAIN,ARRAY,NDEG+1,NDEG+1
+,RSIDE,ARRAY,NDEG+1
+,A,ARRAY,NDEG+1
+,MNFILL,ARRAY,NDEG2
+
+*IF,NDEG,GT,NKPS,THEN
+*MSG,ERROR,NDEG,NDEG+1,NKPS
+POLYNOMIAL FIT OF DEGREE %I REQUIRES AT LEAST %I KEYPOINTS. %/ &
+YOU HAVE ONLY %I SELECTED! 
+*EXIT
+*ENDIF
+!
+!	FILL COORDINATE ARRAYS
+!
+KPT=KPNEXT(0)
+*DO,I,1,NKPS
+XCOORD(I)=KX(KPT)
+YCOORD(I)=KY(KPT)
+KPT=KPNEXT(KPT)
+*ENDDO
+!
+!	CALC THE SUM OF THE X VALUES TO THE K POWER [X**K]
+!
+*DO,K,1,NDEG2
+*VFUN,TEMP1(1),PWR,XCOORD(1),K	!  TEMP1=X**K
+*VSCFUN,MNFILL(K),SUM,TEMP1(1)	!  SUM VALUES OF TEMP1 [X**K] PUT IN MAIN FILL ARRAY
+*ENDDO
+!
+!	FILL THE RIGHT SIDE ARRAY  SUMM X**N*(Y)
+!
+*VSCFUN,RSIDE(1),SUM,YCOORD(1)	! 1ST ROW SPECIAL  SUMM X**0*(Y)
+*DO,L,1,NDEG
+*VFUN,TEMP1(1),PWR,XCOORD(1),L	!  TEMP1=X**L
+*VOPER,TEMP2(1),TEMP1(1),MULT,YCOORD(1)
+*VSCFUN,RSIDE(L+1),SUM,TEMP2(1)
+*ENDDO
+!
+!	FILL MAIN ARRAY
+!
+MAIN(1,1)=NKPS	! FIRST COLUMN SPECIAL
+!
+*DO,M,1,NDEG
+MAIN(M+1,1)=MNFILL(M)
+*ENDDO
+!	FILL THE REST OF THE MATRIX COL 2 TO COL NDEG+1
+*DO,COL,2,NDEG+1
+*DO,ROW,1,NDEG+1
+MAIN(ROW,COL)=MNFILL(COL-2+ROW)
+*ENDDO
+*ENDDO
+!
+!	SOLVE IT
+!
+*MOPER,A(1),MAIN(1,1),SOLV,RSIDE(1)
+/COM,
+/com,FIT CONSTANT INFO: Y= A(1) + A(2)*X**1 + A(3)*X**2 + .... + A(n+1)*X**n
+*DO,P,1,NDEG+1
+*MSG,INFO,p,A(P)
+A( %I )= %G 
+*ENDDO
+!
+!		ERROR CHECKING
+!
+!	PLOT IT UP
+!
+*get,xmin,kp,,mnloc,x
+*get,xmax,kp,,mxloc,x
+dist=xmax-xmin
+dist=dist-loff*dist-hoff*dist	!shorten distance of new curve generation
+kpal
+*get,kpmax,kp,,num,max
+kstart=kpmax
+kpinv
+*do,i,1,51
+x1=((I-1)/50)*dist+xmin+loff*dist
+YFIT=A(1)
+*DO,Q,2,NDEG+1
+YFIT=YFIT+A(Q)*X1**(Q-1)
+*ENDDO
+k,kstart+i,x1,yfit
+*enddo
+cm,fit,kp
+flst,3,51,3
+*do,j,1,51
+fitem,3,kpmax+j
+*enddo
+bsplin,,p51x
+cmsel,,data2fit
+kplo
+/noeras
+lplo
+/eras
+lkpl
+!
+!
+!		ERROR CHECKING
+!
+*DO,E,1,NKPS
+YFIT=A(1)
+*DO,E2,2,NDEG+1
+YFIT=YFIT+A(E2)*XCOORD(E)**(E2-1)
+*ENDDO
+YCALC(E)=YFIT
+*ENDDO
+*VOPER,TEMP1(1),YCOORD(1),SUB,YCALC(1)
+*VFUN,YERROR(1),PWR,TEMP1(1),2
+*VSCFUN,SE2,SUM,YERROR(1)
+TEST=NDEG+1
+*IF,NKPS,GT,TEST,THEN
+VARIANCE=SE2/(NKPS-NDEG-1)
+*ELSE
+VARIANCE=0
+*ENDIF
+*VSCFUN,ERRMAX,MAX,YERROR(1)
+ERRMAX=SQRT(ERRMAX)
+/COM,
+*MSG,INFO,VARIANCE,ERRMAX,NKPS,NDEG
+VARIANCE= %G   ->  MAX Ycalc ERROR= %G %/ &
+(# OF DATAPOINTS= %I  ORDER OF FIT= %I)
+!
+*ASK,NDEG,NEW DEGREE OF FIT? (0 STOP),0
+*IF,NDEG,EQ,0,THEN
+*EXIT
+*ELSE
+LDEL,ALL
+kpal
+kpinv
+lsal
+kpls
+lsinv
+cm,kp_ls,kp
+cmsel,,fit
+cmdele,fit
+cmsel,u,kp_ls
+kdele,all
+cmdel,kp_ls
+CMSEL,,DATA2FIT
+KPLO
+!PARRES,NEW,CRVPLT,TEMP
+MAIN=
+RSIDE=
+A=
+MNFILL=
+*ENDIF
+*ENDDO
+!	CLEAN UP
+PARRES,NEW,CRVPLT,TEMP
+kpal
+kpinv
+kpls
+cm,kp_ls,kp
+cmsel,,fit
+cmdele,fit
+cmsel,u,kp_ls
+kdele,all
+cmdel,kp_ls
+CMSEL,,ZZZZ
+CMDEL,ZZZZ
+/gopr

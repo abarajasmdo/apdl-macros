@@ -1,0 +1,10 @@
+/NOPR
+/PMACRO
+*get,_nkps_,kp,,count
+*if,_nkps_,gt,1,then
+Fnc_KDIS
+*else
+!*MSG,WARN, NO KEYPOINTS SELECTED
+*ENDIF
+_nkps_=
+/GOPR

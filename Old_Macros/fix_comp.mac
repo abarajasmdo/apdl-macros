@@ -1,0 +1,7 @@
+!  macro filters out unused/deleted lines from a component
+*DO,LOOP,1,999
+*get,check,comp,cav%loop%,type
+*if,check,eq,0,*cycle
+cmsel,,cav%loop%
+cm,cav%loop%,line
+*ENDDO

@@ -1,0 +1,31 @@
+/nopr
+!
+!     eflip.mac   A macro to flip elements from top-bot to bot-top.
+!                         This macro will flip elements currently selected.
+!
+:top
+*get,nlft,esel
+*msg,note,nlft
+('Elements left to flip =  ',f6.0)
+*if,nlft,lt,1.0,:bot
+*get,emx,elmx
+nelem
+*get,nn1,en1,emx
+*get,nn2,en2,emx
+*get,nn3,en3,emx
+*get,nn4,en4,emx
+*get,r1,real,emx
+*get,t1,type,emx
+*get,m1,mat,emx
+real,r1
+type,t1
+mat,m1
+en,emx,nn2,nn1,nn4,nn3
+eusel,,emx
+*go,:top
+:bot
+
+
+
+
+

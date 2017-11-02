@@ -1,0 +1,16 @@
+/nopr
+! does a weighted average temperature 
+*get,numele,elem,,count
+etab,temps,bfe,temp
+etab,volume,volu
+smult,tempxvol,temps,volume
+ssum
+*get,tot_vol,ssum,volume,
+*get,txvolsum,ssum,tempxvol
+t_avg=txvolsum/tot_vol
+/gopr
+*msg,warn,t_avg
+The avg. temperature of the selected elements is %G  deg.
+)t_avg=
+)etab,temps,erase
+etab,eras

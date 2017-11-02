@@ -1,0 +1,419 @@
+!   lespace.mac  - macro for putting element divisions on a line with a 
+!	specific min element length.  Good for matching up a transition
+!	mesh with a given mesh size
+!
+! Author: R Ziegler    Commented and spruced up:  D Bohlen  8/13/96
+!
+*get,AR21,line,ARG1,LENG
+AR10=ARG2*AR21/ARG3
+*DO,I,1,1000,1
+AR29=(1-AR10**ARG2)+(AR10-1)*(AR21/ARG3)
+AR28=(AR21/ARG3)-ARG2*(AR10**(ARG2-1))
+AR11=AR10-(AR29/AR28)
+AR12=abs(AR10-AR11)
+*IF,AR12,LE,1E-6,*EXIT
+AR10=AR11
+*ENDDO
+!
+! Check to see if number of divisions is possible with spacing
+!
+*IF,AR11,NE,1,THEN
+AR22=AR11**(ARG2-1)
+SPACE=AR22
+NDIV=ARG2
+LESIZE,ARG1,,,NDIV,SPACE
+*ASK,FLIP,REVERSE SPACING (YES:10)?,0
+*IF,FLIP,NE,0,THEN
+LESIZE,ARG1,,,NDIV,(1/SPACE)
+*ENDIF
+*ELSE
+*MSG,ERROR,ARG1,AR21,NDIV,ARG3
+CANNOT MESH!   CHECK INPUTS... CAN LINE %I (LENGTH= %G ) BE DIVIDED &
+INTO %I SEGMENTS WITH A MIN SIZE OF %G?
+*ENDIF
+From - Thu Jun 17 12:26:46 1999
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2448.0)
+	id J3ASCRKR; Thu, 29 Apr 1999 10:21:58 -0400
+Received: from thomas3.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA03487; Thu, 29 Apr 1999 10:16:14 -0400
+Received: from ns.ge.com (ns-i.ge.com [10.35.39.24])
+	by thomas3.ge.com (8.9.3/8.9.3) with ESMTP id KAA29190
+	for <dan.bohlen@ae.ge.com>; Thu, 29 Apr 1999 10:18:39 -0400 (EDT)
+Received: from onelist.com (pop.onelist.com [209.207.164.205])
+	by ns.ge.com (8.9.3/8.9.3) with SMTP id KAA21605
+	for <dan.bohlen@ae.ge.com>; Thu, 29 Apr 1999 10:18:38 -0400 (EDT)
+Received: (qmail 13932 invoked by alias); 29 Apr 1999 14:18:16 -0000
+Received: (qmail 13924 invoked from network); 29 Apr 1999 14:18:14 -0000
+Received: from unknown (HELO nacg.trane.com) (198.80.4.66) by pop.onelist.com with SMTP; 29 Apr 1999 14:18:14 -0000
+Received: by nacg.trane.com id JAA10369 (InterLock SMTP Gateway 3.0 for xansys@onelist.com); Thu, 29 Apr 1999 09:16:12 -0500
+Received: by nacg.trane.com (Internal Mail Agent-1); Thu, 29 Apr 1999 09:16:12 -0500
+Message-Id: <199904291416.JAA10369@nacg.trane.com>
+From: "Weathers, Bob" <bweathers@trane.com>
+To: "'xansys@onelist.com'" <xansys@onelist.com>
+Date: Thu, 29 Apr 1999 09:22:24 -0500
+X-Mailer: Internet Mail Service (5.5.2232.9)
+Mailing-List: list xansys@onelist.com; contact xansys-owner@onelist.com
+Delivered-To: mailing list xansys@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@ONElist.com>
+Reply-To: xansys@onelist.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Subject: [xansys] Re: auto calculated NDIV in LESIZ commend
+X-Mozilla-Status: 8001
+X-Mozilla-Status2: 00000000
+X-UIDL: AAw5PyiAAAwNGbACgBg3YGR0aMGXHKwA
+
+From: "Weathers, Bob" <bweathers@trane.com>
+
+A macro I wrote some time ago follows.  At the time, it replicated the ANSYS
+logic correctly.  I don't know if it still does.
+
+Some error checking I do using parameters I define in my 'MyStart.ans' file
+that you don't have will probably cause this MAC to abort.  Nonetheless, you
+should be able to extract the crux of the algorithm for your purposes.
+
+!  bgn LESP.mac
+
+!  LESPace, NL1, NDIV, DL1
+!
+!     Given a division size and number of divisions, specifies the spacing
+!     ratio on unmeshed lines.
+!
+!        NL1
+!           Number of line to be modified. If 'myALL', modify all selected
+lines.
+!           If NL1 is undefined, a fatal error occurs.
+!
+!        NDIV
+!           Integer number of divisions per line.
+!           If negative(NDIV<-2), sign of DL1 determines whether middle
+!              division size or both end division sizes are given.
+!           If positive(NDIV>+1), sign of DL1 determines which end division
+is
+!              specified.
+!           If NDIV is undefined, a fatal error occurs.
+!
+!        DL1
+!           If NDIV>+1, then
+!              If positive, length of last division size.
+!              If negative, length of first division size.
+!           If NDIV<-2, then
+!              If positive, length of end division size.
+!              If negative, length of middle division size.
+!           If DL1 is undefined or zero, the LESP command is equivalent to:
+!              LESI, NL1, , , |NDIV|, , 1
+!
+!     If a very small (<0.001) or very large (>1000) spacing ratio is
+!     calculated, uniform spacing is used instead.
+!
+/NOP
+
+!  argument validation
+
+*GET, routine_, ACTIVE, , ROUT
+*IF, routine_, NE, PREP7,THEN
+   *MSG, ERRO
+   LESPace command only valid in PREP7.
+   routine_ =
+   /EOF
+*ENDIF
+routine_ =
+
+ERROR_ = FALSE
+
+nl1_ = ARG1
+
+*GET, x_, PARM, nl1_, TYPE
+
+*IF,  x_, EQ, csTYPE,THEN
+
+   *IF, nl1_, EQ, myALL,THEN
+
+      *GET, lnCOUNT_, LINE, , COUN
+
+      *IF,  lnCOUNT_, EQ, 0,THEN
+         ERROR_ = TRUE
+         *MSG, ERRO
+         No lines selected.
+      *ENDIF
+
+   *ENDIF
+
+*ELSEIF, x_, EQ, scTYPE,THEN
+
+   *IF, LSEL(nl1_), NE, 1,THEN
+
+      ERROR_ = TRUE
+
+      *IF, LSEL(nl1_), EQ, -1,THEN
+         *MSG, ERRO, ARG1
+         Line %I not selected.
+      *ELSEIF, LSEL(nl1_), EQ, 0,THEN
+         *MSG, ERROR_, ARG1
+         Line %I not defined.
+      *ENDIF
+
+   *ELSE
+
+      lnCOUNT_ = 1
+
+   *ENDIF
+
+*ELSE
+   ERROR_ = TRUE
+   *MSG, ERRO
+   NL1 <ARG1> must be a scalar or 'myALL'.
+
+*ENDIF
+
+
+ndiv_ = ARG2
+
+*GET, x_, PARM, ndiv_, TYPE
+
+*IF,  x_, NE, scTYPE,THEN
+   ERROR_ = TRUE
+   *MSG, ERRO
+   NDIV <ARG2> must be a scalar.
+
+*ELSEIF, ndiv_, LE, +1,THEN
+   *IF,  ndiv_, GE, -2,THEN
+      ERROR_ = TRUE
+      *MSG, ERRO
+      NDIV <ARG2> must be less than -2 or greater than +1.
+   *ENDIF
+
+*ENDIF
+
+
+dl1_ = ARG3
+
+*GET, x_, PARM, dl1_, TYPE
+
+*IF,  x_, NE, scTYPE,THEN
+   *MSG, ERRO
+   DL1 <ARG3> must be a scalar.
+
+*ELSEIF, x_, EQ, unTYPE,THEN
+
+   *IF, lnCOUNT_, EQ, 1,THEN
+      LESI, nl1_, , , ABS(ndiv_), , 1
+   *ELSE
+      LESI,  ALL, , , ABS(ndiv_), , 1
+   *ENDIF
+
+*ENDIF
+
+
+!  main algorithm
+
+*IF, dl1_, EQ, 0,THEN
+
+   *IF, lnCOUNT_, EQ, 1,THEN
+      LESI, nl1_, , , ABS(ndiv_), , 1
+   *ELSE
+      LESI,  ALL, , , ABS(ndiv_), , 1
+   *ENDIF
+
+*ELSEIF, ERROR_, EQ, FALSE,THEN
+
+   nl1_ = nl1_-1
+
+   *IF, ndiv_, LT, 0,THEN
+
+      *IF, MOD(ndiv_,2), EQ, 0,THEN
+
+         n_ = ABS(ndiv_)/2
+
+      *ELSE
+
+         *IF, dl1_, GT, 0,THEN
+            n_ = ABS(ndiv_+1)/2
+         *ELSE
+            n_ = ABS(ndiv_-1)/2
+         *ENDIF
+
+      *ENDIF
+
+   *ELSE
+
+      n_ = ndiv_
+
+   *ENDIF
+
+   *DO, i_, 1, lnCOUNT_
+
+      nl1_ = LSNEXT(nl1_)
+
+      *GET, x_, LINE, nl1_, ATTR, NNOD
+      *IF, x_, NE, 0,THEN
+         *MSG, ERROR_, nl1_
+         LINE %I already meshed.
+         *CYC
+      *ENDIF
+
+      *GET, len_, LINE, nl1_, LENG
+
+      x_ = ABS((len_/ndiv_)/dl1_)
+
+      *IF, x_, NE, 1,THEN
+
+         *IF, ndiv_, LT, 0,THEN
+            len_ = len_/2
+         *ENDIF
+
+         *DO, iter_, 1, 20
+            fx_ = (1-x_**n_)/(1-x_)-ABS(len_/dl1_)
+            gx_ = (1+x_**n_*(n_*(1-1/x_)-1))/(1-x_)**2
+            *IF, ndiv_, LT, 0,THEN
+               *IF, MOD(ndiv_,2), NE, 0,THEN
+                  *IF, dl1_, GT, 0,THEN
+                     fx_ = fx_+0.5*x_**n_
+                     gx_ = gx_+0.5*n_*x_**(n_-1)
+                  *ELSE
+                     fx_ = fx_-0.5
+                  *ENDIF
+               *ENDIF
+            *ENDIF
+            x1_ = x_-fx_/gx_
+            *IF, ABS(x1_-x_), LE, 1E-7,THEN
+               *EXI
+            *ENDIF
+            x_ = x1_
+         *ENDDO
+
+         *IF, ABS(x1_-x_), GT, 1E-7,THEN
+            *MSG, ERROR_, nl1_
+            Could not solve LINE %I spacing ratio in 20 iterations.
+            *CYC
+         *ENDIF
+
+      *ENDIF
+
+      *IF, ndiv_, LT, 0,THEN
+
+         *IF, MOD(ndiv_,2), EQ, 0,THEN
+
+            x_ = -x_**(1-n_)
+            *IF, dl1_, LT, 0,THEN
+               x_= 1/x_
+            *ENDIF
+
+         *ELSE
+
+            *IF, dl1_, GT, 0,THEN
+               x_ = -x_**n_
+            *ELSE
+               x_ = -x_**(1-n_)
+            *ENDIF
+         *ENDIF
+
+      *ELSE
+
+         x_ = x_**(1-n_)
+         *IF, dl1_, LT, 0,THEN
+            x_= 1/x_
+         *ENDIF
+
+      *ENDIF
+
+      *IF, ABS(x_), LT, 0.001,THEN
+         x_ = 0
+      *ENDIF
+
+      *IF, ABS(x_), GE, 1000.,THEN
+         x_ = 0
+      *ENDIF
+
+      LESI, nl1_, , , ABS(ndiv_), x_, 1
+
+
+   *ENDDO
+
+*ENDIF
+
+dl1_     =
+ERROR_   =
+fx_      =
+gx_      =
+i_       =
+iter_    =
+len_     =
+lnCOUNT_ =
+n_       =
+ndiv_    =
+nl1_     =
+x_       =
+x1_      =
+
+/EOF
+
+!  end LESP.mac
+
+Bob Weathers
+bweathers@trane.com
+(608)787-2729
+
+> ----------
+> From: 	ZLU[SMTP:ZLU@seniorflexonics.com]
+> Reply To: 	xansys@onelist.com
+> Sent: 	Thursday, April 29, 1999 9:07 AM
+> To: 	'xansys@onelist.com'
+> Subject: 	[xansys] auto calculated NDIV in LESIZ commend
+> 
+> From: ZLU <ZLU@seniorflexonics.com>
+> 
+> Hi all,
+> 
+> I was using:
+> 
+> *do, ......
+> ......
+> NL1 = (expression 1)
+> NDIV = nint(expression 2)
+> Lesiz,NL1,,,NDIV, -2
+> ........
+> *enddo
+> 
+> to specify divisions on lines.  It is noticed that whenever the NDIV
+> equals zero, the line divisions will be "automatically calculated", as
+> stated in the help manual, but what will be the value I can expect?.
+> Also, the spacing ratio will auto calculated and override my input
+> value.  Does anybody know how does ANSYS (5.5.1) do this calculation?  I
+> will use max(nint(expression 2),1) to force it to be at lest one, but
+> still like to know some details used by ANSYS here. It seems to me that
+> the auto-calculate-division function should use the given spacing ratio
+> rather than override it.
+> 
+> Regards,
+> 
+> Zhi Lu
+> 
+> 
+> ------------------------------------------------------------------------
+> You can now easily share photos and documents with your fellow list
+> members
+> http://www.ONElist.com
+> Check out our homepage for details on how to use our new shared files
+> feature!
+> ------------------------------------------------------------------------
+> To SUBSCRIBE: send blank email to xansys-subscribe@onelist.com
+> 
+> To unsubscribe send blank email to xansys-unsubscribe@onelist.com
+> Archived on http://www.onelist.com/archives.cgi/xansys
+> Archived on http://www.tu-chemnitz.de/~thieme/ansys/ansys.html
+> 
+
+------------------------------------------------------------------------
+Want to learn more about your list users...?
+their opinions, interests, thoughts?
+http://www.onelist.com
+You can now survey them with our new User Survey Tool
+Check out our homepage for details.
+------------------------------------------------------------------------
+To SUBSCRIBE: send blank email to xansys-subscribe@onelist.com
+
+To unsubscribe send blank email to xansys-unsubscribe@onelist.com
+Archived on http://www.onelist.com/archives.cgi/xansys
+Archived on http://www.tu-chemnitz.de/~thieme/ansys/ansys.html

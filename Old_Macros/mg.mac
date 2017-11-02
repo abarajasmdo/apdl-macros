@@ -1,0 +1,35 @@
+/nopr
+!
+!   mg.mac  magnification macro for ANSYS 5.0     4-14-93
+!
+!mult=1/arg1
+!/dist,arg2,user,mult
+!
+!
+!  the above macro worked for the beta release of ANSYS 5.0, but
+!  not for the production version.  Instead, the sequence below will
+!  do just fine.
+!
+!    usage:  mg,mult,win
+!
+!                 where  mult=distance multiplier
+!                        win=window to be magnified
+!                                (defaults to 1)
+!
+*if,arg1,eq,0,:bot
+*get,dist,graph,arg2,dist                                   
+dist=dist/arg1                                    
+/dist,arg2,dist           
+dist=0
+*go,:end
+:bot
+!
+!   If the user doesn't put in any magnification, the
+!   program jumps down here, where the screen is
+!   automatically scaled and replotted.
+!
+/dist,arg2,auto
+:end
+/repl
+/gopr
+

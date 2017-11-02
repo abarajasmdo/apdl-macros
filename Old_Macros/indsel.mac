@@ -1,0 +1,11 @@
+!  selects  only the I node of elements
+!   good for checking gap directions and nodal forces
+/nopr
+nelem
+*GET,NELES,ELEM,,COUNT
+ELE=0
+*DO,LOOP,1,NELES
+ELE=ELNEXT(ELE)
+NSEL,U,,,nelem(ele,2)
+*enddo
+/gopr

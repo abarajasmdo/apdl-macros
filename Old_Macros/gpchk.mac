@@ -1,0 +1,17 @@
+*GET,NELE,ELEM,,COUNT
+cm,_temp_,elem
+E=0
+*DO,ELE,1,NELE
+cmsel,,_temp_
+E=ELNEXT(E)
+esel,,,,e
+nelem
+*GET,Nnds,node,,COUNT
+*if,nnds,lt,2,then
+)/gopr
+edele,e
+)/nopr
+*endif
+*enddo
+nele=
+nnds=

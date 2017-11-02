@@ -1,0 +1,50 @@
+/nopr
+!
+!          nrela.mac         Node RELAtive.mac                                                                                        
+!                                                                                                                                                                     
+!                                      Usage:  nrela,node1,node2,node3,new node id. (optional)                                                                
+!                                                                                                                                                                     
+!                            This macro creates a node the same distance from node1                                          
+!                             that node3 is from node2.  If we look at nodes 1 and 2 as                       
+!                             a pair, then this macro creates node 4 to go along with                          
+!                             node 3 as a similar pair.  In this scenario, node 1 would                          
+!                             correspond to node 4, and node 2 would correspond to                           
+!                             node 3.  The new node number is optional.  If it is not
+!                             provided, the node number nmax+1 will be used.                                                                                                           
+!                                                                               
+*get,ar11,mxnd       
+nd=ar11+1    
+*if,arg4,lt,0.5,:lp1
+nd=arg4
+:lp1                                                       
+*get,x1,nx,arg1                                                                 
+*get,y1,ny,arg1                                                                 
+*get,z1,nz,arg1                                                                 
+*get,x2,nx,arg2                                                                 
+*get,y2,ny,arg2                                                                 
+*get,z2,nz,arg2              
+*get,x3,nx,arg3                                                                 
+*get,y3,ny,arg3                                                                 
+*get,z3,nz,arg3              
+x4=x1+(x3-x2)
+y4=y1+(y3-y2)
+z4=z1+(z3-z2)
+n,nd,x4,y4,z4
+*msg,note,nd,x4,y4,z4
+('Node ',f8.0,'created at X=',f10.4,' Y=',f10.4,' Z=',f10.4)
+x1=
+y1=
+z1=
+x2=
+y2=
+z2=
+x3=
+y3=
+z3=
+x4=
+y4=
+z4=
+nd=
+/gopr
+
+

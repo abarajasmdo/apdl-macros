@@ -1,0 +1,27 @@
+/nopr
+!
+!     cptran.mac  a macro to easily create coupled nodes
+!                         for translations only.
+!
+!      usage:  cptran,node1,node2
+!                         where :   node1=first node to be coupled
+!                                        node2=second node to be coupled
+!
+!   get the maximum coupled node number
+*get,mxcp,mxcp
+!
+!  create the couples
+!
+cp,mxcp+1,ux,arg1,arg2
+cp,mxcp+2,uy,arg1,arg2
+cp,mxcp+3,uz,arg1,arg2
+!
+!  print the message telling what happened
+!   
+*msg,info,arg1,arg2
+('  Nodes ',f5.0,' and ',f5.0,' are coupled in x, y, and z')
+!
+!   clean up the parameter used
+!
+mxcp=
+/gopr

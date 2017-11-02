@@ -1,0 +1,19 @@
+!
+! macro pgaps:  builds stif 40 gaps between pressure faces for nearly
+!		coincident nodes. 
+!
+! requires:  Blade pressure face nodes selected
+!	A local coordinate system with Z normal to pressure face and
+!	x direction in sorting direction active.
+!	The stif 40  element type established.
+!  BY: Dan Bohlen
+!
+!	Get model data
+!
+*GET,ACSYS,ACTIVE,,CSYS
+*GET,NNDS,NODE,,COUNT
+*GET,EMAX,NUM,,MAX
+!
+!	GET USER INFO
+!
+*ASK,PRESSURE FACE COORDINATE SYSTEM ACTIVE?,ACSYS

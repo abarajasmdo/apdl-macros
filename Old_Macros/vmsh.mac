@@ -1,0 +1,19 @@
+!
+!  vmsh - meshes volu w/o solid model connectivity
+!
+/nop
+cm,xxx,volu
+vmesh,arg1
+nall
+*get,ninc,node,,num,max
+vsel,s,,,arg1
+evol
+nelem
+ngen,2,ninc,all,,,
+egen,2,ninc,all,,,
+vclear,arg1
+eplo
+cmsel,a,xxx
+cmdele,xxx
+/gopr
+

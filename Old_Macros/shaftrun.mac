@@ -1,0 +1,15 @@
+C***   Master control for shaft analysis
+/nopr
+*do,irun,1,10000
+   parsave
+   /clear
+   parresume
+   /image,restore,shaft,bmp
+   shaftprompt
+   *if,_button,gt,0,exit
+   /image,delete,shaft,bmp
+   shaftcheck
+   /nerr,1,1
+   /input,shaft,dat
+   /wait,10
+*enddo

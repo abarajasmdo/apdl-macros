@@ -1,0 +1,41 @@
+/nopr
+!
+!      ndup2.mac  A macro to create duplicate nodes
+!                (great for coupling) in ANSYS 5.1.
+!
+!         usage:  ndups,n1,n2,ninc,noffset
+!
+!            where   n1=1st of a string of nodes to be dupd
+!                    n2=last "  "    "    "    "
+! 		     ninc= node # inc
+!		     noffset=add noffset to n1 thru n2
+!
+!
+*get,nstr,ndmx
+n1=arg1
+n2=arg2
+ninc=arg3
+*do,oldn,n1,n2,ninc
+nx=nx(n1)
+ny=ny(n1)
+nz=nz(n1)
+*get,rxy,node,(n1),ang,xy
+*get,ryz,node,(n1),ang,yz
+*get,rzx,node,(n1),ang,zx
+!
+!
+!  create the node
+!
+newn=oldn+arg4
+n,newn,nx,ny,nz,rxy,ryz,rzx
+*enddo
+nx=
+ny=
+nz=
+ntxy=
+ntyz=
+ntxz=
+mxnd=
+newn=
+/gopr
+

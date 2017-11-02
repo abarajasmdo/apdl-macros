@@ -1,0 +1,39 @@
+/PMACRO
+/nopr
+*IF,WIDTH,LE,0.0,THEN
+   WIDTH=4.5
+   HEIGHT=3.2
+   RADIUS=0.45
+   VALUE1= 1
+   VALUE2=2
+   VALUE3=3
+   VALUE4=4
+   VALUE5=5
+*ENDIF
+MultiPro='TEST'
+NumValue=8
+*dim,TESTTitl,string,64
+TESTTitl(1,1) = 'Test of multiprompt macro'
+*dim,TESTDesc,string,32,NumValue
+TESTDesc(1,1)='Description of Parameter WIDTH'
+TESTDesc(1,2)='Description of Parameter HEIGHT'
+TESTDesc(1,3)='Description of Parameter RADIUS'
+TESTDesc(1,4)='Description of Parameter VALUE1'
+TESTDesc(1,5)='Description of Parameter VALUE2'
+TESTDesc(1,6)='Description of Parameter VALUE3'
+TESTDesc(1,7)='Description of Parameter VALUE4'
+TESTDesc(1,8)='Description of Parameter VALUE5'
+*dim,TESTParm,char,NumValue
+TestParm(1)='WIDTH','HEIGHT','RADIUS','VALUE1'
+TestParm(5)='VALUE2','VALUE3','VALUE4','VALUE5'
+
+~eui,'source multipro55.tk'
+
+/nopr
+TESTTitl(1,1)=
+TESTDesc(1,1)=
+TESTParm(1)=
+NumValue=
+MultiPro=
+/go
+*stat

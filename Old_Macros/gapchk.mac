@@ -1,0 +1,51 @@
+! checks distance between gap nodes
+*GET,ACSYS,ACTIVE,,CSYS
+*get,nele,elem,,count
+*cfopen,gap,data
+*VWRITE,acsys
+("DISTANCES IN COORDINATE SYSTEM:" I6)
+*vwrite
+("    element    distance       DX  (i-j)       DY  (i-j)       DZ (i-j)")
+ele=elnext(0)
+dmax=0
+dymax=0
+dxmax=0
+dzmax=0
+*do,loop,1,nele
+d=distnd(nelem(ele,1),nelem(ele,2))
+dy=ny(nelem(ele,1))-ny(nelem(ele,2))
+dx=nx(nelem(ele,1))-nx(nelem(ele,2))
+dz=nz(nelem(ele,1))-nz(nelem(ele,2))
+*if,abs(d),gt,dmax,then
+dmax=abs(d)
+*endif
+*if,abs(dy),gt,dymax,then
+dymax=abs(dy)
+*endif
+*if,abs(dx),gt,dxmax,then
+dxmax=abs(dx)
+*endif
+*if,abs(dz),gt,dzmax,then
+dzmax=abs(dz)
+*endif
+
+*vwrit,ele,d,dx,dy,dz
+(I10,2x,4(E15.6))
+*if,d,gt,1e-4,then
+*msg,info,ele,d
+Element %I nodes are %G apart!
+*endif
+ele=elnext(ele)
+*enddo
+*vwrit,dmax,dxmax,dymax,dzmax
+("    Max     " , 4(E15.6))
+*cfclos
+*msg,info
+Your gap data is on file gap.data
+d=
+ele=
+*uilis,gap.data
+!/sys,vpad gap.data
+
+
+

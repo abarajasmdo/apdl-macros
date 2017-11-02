@@ -1,0 +1,40 @@
+!parsav
+/post1
+_case1_=
+_case2_=
+/outp,term
+/sys,ls *.rst* > Results_files
+*uilist,Results_files
+/sys,rm lc1.out lstp1
+!  rst_diff does load case substraction
+*ask,_case1_,input rst file case 2 sub 1,'a'
+
+*ask,_case2_,input rst file for case 2 ,'b'
+
+file,%_case1_%,rst
+
+!  try maybe   *get,_nset,active,,set,nset    !!!!!!!!!!!!
+set,last
+*get,lstp1,active,,set,lstp
+lcdef,1,lstp1
+file,%_case2_%,rst
+set,last
+*get,lstp2,active,,set,lstp
+lcdef,2,lstp2
+/output,Cases
+lcdef,stat
+/output
+*uilist,Cases
+*ask,go,ready? 0 _ no 1 _ GO ,1
+*if,go,eq,1,then
+lcoper,sub,1
+/title, %_case2_% - %_case1_%
+*endif
+!/sys,rm lc1.out lc2.out lstp1
+!parres
+
+
+
+
+
+

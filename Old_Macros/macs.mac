@@ -1,0 +1,6 @@
+*ask,string,MACRO SEARCH STRING,'*'
+*IF,STRING,EQ,'*',THEN
+/sys,ls /users/abmo01t/ansys/macros/
+*ELSE
+/syp,ls /users/abmo01t/ansys/macros | grep ,string
+*endif

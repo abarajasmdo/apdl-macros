@@ -1,0 +1,23 @@
+/nopr
+!
+!     eflip.mac   A macro to flip elements from top-bot to bot-top.
+!                 This macro will flip elements currently selected.
+!	Note:  ANSYS52 has a good function to flip stif 63's to
+!	have all sides line up.  This macro can still be handy..
+!
+!  BY: DAN BOHLEN    UPDATED:3-1-96
+!
+! NOTE: MACRO CAN HANDLE 2 OR 4 NODED ELEMENTS!!!!
+!
+*get,nels,elem,,count
+*get,ele,elem,,num,min
+*do,m,1,nels
+emod,ele,-1,nelem(ele,2),nelem(ele,1),nelem(ele,4),nelem(ele,3)
+ele=elnext(ele)
+*enddo
+
+
+
+
+
+

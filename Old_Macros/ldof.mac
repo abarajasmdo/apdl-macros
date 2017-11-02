@@ -1,0 +1,7 @@
+/nopr                                                                           
+!    ldof.mac   A macro to turn line direction 
+!               arrows off.
+!
+/psym,ldir,0                                                                    
+/repl                                                                           
+/gopr                                                                           

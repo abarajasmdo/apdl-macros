@@ -1,0 +1,41 @@
+!
+!  extrd.mac  This macro extrudes 2d elements into 3d elements from one
+!		set of nodes to another.
+!
+PARSAV
+!CSYS,0
+*ASK,NBRICKS,NO. OF LAYERS OF BRICKS,1
+CM,_NSEL_,NODE
+*GET,NTOT,NODE,,COUNT
+*GET,ETOT,ELEM,,COUNT
+*GET,NMAX,node,,NUM,MAX
+INC=10**(NINT(LOG10(NMAX)+.5))
+!	MAKE ROWS OF NODES
+*DO,LOOP,1,NTOT/2
+NSEL,R,P
+NSTRT=NDNEXT(0)
+CMSEL,,_NSEL_
+NSEL,R,P
+NEND=NDNEXT(0)
+N,NSTRT+NBRICK*INC,NX(NEND),NY(NEND),NZ(NEND)
+FILL,NSTRT,NSTRT+NBRICK*INC,NBRICKS-1
+*ENDDO
+!	MAKE ELEMENTS
+ELE=0
+*DO,LAYER,1,ETOT
+ELE=ELNEXT(ELE)
+n1=nelem(ele,1)
+n2=nelem(ele,2)
+n3=nelem(ele,3)
+n4=nelem(ele,4)
+e,n1,n2,n3,n4,n1+inc,n2+inc,n3+inc,n4+inc
+*enddo
+esel,r,stif,,45
+cm,bricks,elem
+!
+*if,NBRICKS,gt,1,then
+cmsel,s,bricks
+egen,nBRICKS,inc,all,,,
+*else
+*endif
+PARRES

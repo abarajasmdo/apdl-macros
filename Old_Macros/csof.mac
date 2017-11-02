@@ -1,0 +1,13 @@
+/nopr
+!
+!      csof.mac                Coordinate System OFf.MAC
+!
+!                           Usage: csof        (no arguments)
+!
+!                                       This macro turns coordinate system symbols off.
+!
+/psym,csys                                                                      
+/gopr
+
+
+

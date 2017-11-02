@@ -1,0 +1,8 @@
+!  log.mac   writes log from current db and tails end of it
+lgwrit,last,log,,remove
+!_fname='>/tmp/ss'
+!/output,junk
+/syp,tail -1000 last.log | grep -i,arg1
+!/output,term
+!*UILIST,junk
+

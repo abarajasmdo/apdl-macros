@@ -1,0 +1,25 @@
+!  does smart AMAP
+parsav
+/pmacro
+cm,qwer,area
+cm,asd,kp
+cm,zxc,line
+asel,r,p
+ar=arnext(0)
+lsar
+kpls
+ksel,r,p
+k1=kpnext(0)
+k2=kpnext(k1)
+k3=kpnext(k2)
+k4=kpnext(k3)
+amap,ar,k1,k2,k3,k4
+cmsel,,qwer
+,,asd
+,,zxc
+cmdele,qwer
+,asd
+,zxc
+parres
+
+

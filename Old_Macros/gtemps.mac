@@ -1,0 +1,8 @@
+nd=ndnext(0)
+*cfopen,c0030,temps
+*do,loop,1,18509
+*get,ndtemp,node,nd,bfe,temp
+*cfwrit,bf,nd,temp,ndtemp
+nd=ndnext(nd)
+*enddo
+*cfclos

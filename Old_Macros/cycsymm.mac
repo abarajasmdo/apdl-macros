@@ -1,0 +1,51 @@
+!
+!  cycsymm.mac  new cyclic symm macro  does it in separate database
+!
+
+!	create batch file
+!
+parsav
+_warn_=0
+_warn1_=0
+/prep7
+/sys,rm cyc_sym.*
+/sys,echo "/batch">cyc_sym.inp
+/sys,echo "/psearch,/users/abmo01t/ansys/macros/">cyc_sym.inp
+/sys,echo "/prep7">>cyc_sym.inp
+/sys,echo "et,1,45">>cyc_sym.inp
+/sys,echo "nread,cycsym,node">>cyc_sym.inp
+/sys,echo "et,21,21">>cyc_sym.inp
+/sys,echo "type,21">>cyc_sym.inp
+/sys,echo "e,ndnext(0)">>cyc_sym.inp
+/sys,echo "type,1">>cyc_sym.inp
+/sys,echo "mkcs3d">>cyc_sym.inp
+/sys,echo "cycsm">>cyc_sym.inp
+/sys,echo "all">>cyc_sym.inp
+/sys,echo "cdwrit,db">>cyc_sym.inp
+/sys,echo "cdwrit,db">>cyc_sym.inp
+!/sys,echo "cpdist">>cyc_sym.inp
+/sys,echo "save">>cyc_sym.inp
+/sys,echo "fini">>cyc_sym.inp
+/sys,echo "/exit">>cyc_sym.inp
+!	write nodes
+nwrit,cycsym,node
+!
+!	run ansys again
+/sys,ansys57 -j cyc_sym -b <cyc_sym.inp>cyc_sym.out 
+/sys,e cyc_sym.out &
+/wait,3
+!
+!	get cp commands
+/sys,grep -i coup cyc_sym.cdb > cp.cmds
+/sys,grep -i cp   cyc_sym.cdb >> cp.cmds
+/nopr
+/inp,cp,cmds
+!  clean up!
+/gopr
+/sys,grep -i warn cyc_sym.out
+/sys,grep -i error cyc_sym.out
+/nopr
+/sys,echo "rm cyc_sym.* cps cp.cmds" | at now +1 hour> /dev/null 2>&
+/gopr
+
+

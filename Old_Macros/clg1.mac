@@ -1,0 +1,49 @@
+!
+!     Macro   clg1.mac
+!
+!      Create Line Group 1
+! 
+!      This macro creates a group of lines called lg1.  This group
+!      is actually a macro called lg1.mac  in the problem
+!      subdirectory which has a series of lsel commands which select 
+!      the lines in the group.  
+!
+!      To Create The Stored Group:    Select the lines of interest, then type "clg1".
+!
+!      To Recall The Stored Group:   Type "lg1".
+!
+!      This macro unselects the selected lines as it constructs
+!      macro lg1.mac.  Therefore,  no lines will be currently
+!      selected after this macro is executed.    
+!
+!      This macro can be changed to make additional groups of lines,
+!      (lg2, lg3, etc.) and groups of nodes, keypoints, and so forth.
+!      Use nsel,nall,kpall,lssel, etc. for other entities.
+!
+/nopr
+*get,cnt,lsse
+*cfop,lg1.mac
+*cfwr,/nopr
+*cfwr,lsall
+*cfwr,lsinv
+:top
+*get,nn,lssel
+*get,n,lsmx
+*cfwr,lsase,,n
+lsuse,,n
+*if,nn,eq,1.0,:end
+*go,:top
+:end
+*cfwri,/gopr
+*cfcl
+*msg,NOTE,cnt
+('Line Group "lg1" Has',f6.0,'  Lines In It.')
+cnt=
+nn=
+n=
+/gopr
+
+
+
+
+

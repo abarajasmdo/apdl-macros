@@ -1,0 +1,26 @@
+/nopr
+/uis,msgpop,3
+nod=0
+totx=0
+toty=0
+totz=0
+*get,nnod,node,,count
+*do,i,1,nnod
+nod=ndnext(nod)
+totx=totx+ux(nod)
+toty=toty+uy(nod)
+!totz=totz+uz(nod)
+*enddo
+totx=totx/nnod
+toty=toty/nnod
+!totz=totz/nnod
+*msg,note,totx,toty,totz
+Nodal Displacement Averages %/UX = %G %/UY = %G %/UZ = %G
+nod=
+!totx=
+toty=
+totz=
+nnod=
+i=
+/uis,msgpop,2
+/gopr

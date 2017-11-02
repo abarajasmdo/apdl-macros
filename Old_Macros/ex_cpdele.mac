@@ -1,0 +1,22 @@
+*if,ARG1,eq,'ux',then
+  *set,MYDOF,1
+*elseif,ARG1,eq,'uy',then
+  *set,MYDOF,2
+*elseif,ARG1,eq,'uz',then
+  *set,MYDOF,3
+*elseif,ARG1,eq,'rotx',then
+  *set,MYDOF,4
+*elseif,ARG1,eq,'roty',then
+  *set,MYDOF,5
+*elseif,ARG1,eq,'rotz',then
+  *set,MYDOF,6
+*endif
+
+*get,MAXCPNUM,cp,,max
+
+*do,ICOUNT,1,MAXCPNUM
+  *get,ACTCPDOF,cp,ICOUNT,dof
+  *if,ACTCPDOF,eq,MYDOF,then
+    cpdele,ICOUNT
+  *endif
+*enddo

@@ -1,0 +1,32 @@
+!  macro for cutting boundary conditions for s2 flg submodel
+all
+!  get s2 arm axial forces from 3d model input
+*get,f1,node,273166,f,fy	! outboard node
+*get,f2,node,273167,f,fy	! 
+*get,f3,node,273168,f,fy	! 
+*get,f4,node,273169,f,fy	! 
+*get,f5,node,273170,f,fy	! inboard node
+
+*cfopen,forces
+
+*cfwrit,f,nnd1,fy,f1*(7)/16     !  (7) nodes on the 3d interaction model 16 in sub
+*cfwrit,f,nnd2,fy,f2*(7)/16
+*cfwrit,f,nnd3,fy,f3*(7)/16
+*cfwrit,f,nnd4,fy,f4*(7)/16
+*cfwrit,f,nnd5,fy,f5*(7)/16
+*cfclose
+
+/post1
+cmsel,,s2flg
+subset,last
+cbdof,spacern,nodes,,spacer,dof,,
+cbdof,rabbet,nodes,,rabbet,dof,,
+cbdof,nutface,nodes,,nutface,dof,,
+cbdof,aftcut,nodes,,aftcut,dof,,
+cbdof,bolt,nodes,,bolt,dof,,
+/sys, grep UX aftcut.dof > aftcut.ux_dof
+/sys, grep UX bolt.dof > bolt.ux_dof
+bfint,s2flg, nodes,,s2flg,bf,,			! temperatures
+
+
+

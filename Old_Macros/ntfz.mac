@@ -1,0 +1,39 @@
+/nopr
+!
+!                NTFZ.MAC    Nodal Temperature as a Funtion of Z
+!
+!                                 Usage: NTFZ,Z1,T1,Z2,T2
+!
+!                                 Where:           T1 = Temperature at location Z1
+!                                                          T2 = Temperature at location Z2
+!
+:loop
+*get,nmax,ndmx                   ! get highest node number of selected nodes
+*get,nz,nz,nmax                    ! get this nodes Z value
+!           calculate y axis intercept
+b=arg2-arg1*((arg4-arg2)/(arg3-arg1))
+!           calculate slope of the line
+m=(arg4-arg2)/(arg3-arg1)
+!           calculate value of temperature
+temp=m*nz+b
+!
+t,nmax,temp                           ! apply calculated temperature to node nmax
+nusel,,nmax                            ! remove node nmax from selected set
+*get,nnod,nsel                        ! get number of nodes left in set
+                                                 
+*msg,info,nmax,nz,temp
+(' node ',f8.0,'    at z = ',f10.4,'      has a temperature of = ',f10.4)
+*msg,info,nnod
+(' ',f8.0,'   nodes left in currently selected set')
+*if,nnod,gt,0.4,:loop              ! if number of nodes left in set is greater than
+                                                  ! zero go to top of loop.
+m=
+b=
+nmax =                     
+nz =                                             ! remove parameters from memory     
+temp =  
+nnod =  
+
+
+
+

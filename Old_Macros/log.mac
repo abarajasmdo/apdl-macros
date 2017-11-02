@@ -1,0 +1,3 @@
+!  log.mac   writes log from current db and tails end of it
+lgwrit,last,log,,remove
+/sys,tail -40 last.log

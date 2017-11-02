@@ -1,0 +1,145 @@
+*MSG,INFO
+ ====================================================================== 
+*MSG,INFO
+
+*MSG,INFO
+   FACE2.MAC  ANSYS5.4   Ver 1.0   10/06/98  M.J. LARICCHIUTA
+*MSG,INFO
+
+*MSG,INFO
+   Rotates SOLID45 Brick element FACE 2 to an exterior surface
+*MSG,INFO
+   described by four (4) active exterior nodes on the SOLID45.
+*MSG,INFO
+
+*MSG,INFO
+   Current element settings for MATERIAL and REAL constant
+*MSG,INFO
+   remain unchanged.
+*MSG,INFO
+   A new element TYPE number is established at initialization of this macro.
+*MSG,INFO
+
+*MSG,INFO
+   Surface stress for SOLID45 Face 2 activated by KEYOPT(6)=1 %/ %/ &
+   Note: The macro does not handle corner elements that have all external &
+   nodes selected.  To flip a corner element face unselect the nodes on the &
+   surface that you DON'T need surface stresses on.
+*MSG,INFO
+   %/  &
+PRIOR TO EXECUTING THIS MACRO YOU SHOULD HAVE: %/ %/ &
+1) SELECTED THE NODES ON THE EXTERIOR SURFACE OF THE MODEL THAT YOU WANT &
+THE ELEMENT FACES ROTATED TO.  %/ &
+2) SELECTED THE ELEMENTS THAT YOU WANT MODIFIED THAT ARE ATTACHED TO THOSE NODES
+/NOPR
+parsav
+*ask,go_eq_1,"1" after you read the output window and are ready to go,0
+*if,go_eq_1,eq,1,then
+!*ASK,FACETYPE,Enter the Rotated Face-2 Element TYPE Number,2
+/prep7
+parsav
+*get,etmax,etyp,,num,max	! get current max elem type
+*msg,ui,etmax+1
+The elements that have been flipped to have face 2 on the surface are now element type %i
+esel,r,ename,,solid45			! do only the 45's
+ET,etmax+1,SOLID45,,,,,,1                       ! Create the FACE-2 element TYPE
+TYPE,FACETYPE                                    ! Set the FACE-2 element TYPE number
+*GET,NUMELEM,ELEM,,COUNT                         ! Get the number of active elements
+statup=nint(numelem/20) +1		! status bar counter
+*abset,'Turning Face 2 to the surface',both
+*GET,AELEM,ELEM,,NUM,MIN                         ! Get first active element number
+count=0
+*abcheck,5,'Turning Face 2 to the surface'
+!
+*DO,I,1,NUMELEM                                  ! Loop thru the active elements
+count=count+1
+*if,count,eq,statup,then	! executes every 5% of elements flipped
+percent=nint((i/numelem)*100)
+*abcheck,percent,'%percent% percent of elements processed'
+*if,_return,gt,0,exit
+count=0	
+/nopr
+*endif			! reset counter
+*GET,CMAT,ELEM,AELEM,ATTR,MAT                    ! Get active element MATERIAL number
+MAT,CMAT                                         ! Set the same MATERIAL number
+*GET,CREAL,ELEM,AELEM,ATTR,REAL                  ! Get active element REAL number
+REAL,CREAL                                       ! Set the same REAL number
+!
+*GET,NODI,ELEM,AELEM,NODE,1                      ! Get the element nodes
+*GET,NODJ,ELEM,AELEM,NODE,2                      ! for I-J-K-L-M-N-O-P
+*GET,NODK,ELEM,AELEM,NODE,3                      !
+*GET,NODL,ELEM,AELEM,NODE,4                      !
+*GET,NODM,ELEM,AELEM,NODE,5                      !
+*GET,NODN,ELEM,AELEM,NODE,6                      !
+*GET,NODO,ELEM,AELEM,NODE,7                      !
+*GET,NODP,ELEM,AELEM,NODE,8                      !
+!
+*GET,ACTI,NODE,NODI,NSEL                         ! Find the active node status
+*GET,ACTJ,NODE,NODJ,NSEL                         ! for each node
+*GET,ACTK,NODE,NODK,NSEL                         !
+*GET,ACTL,NODE,NODL,NSEL                         !
+*GET,ACTM,NODE,NODM,NSEL                         !
+*GET,ACTN,NODE,NODN,NSEL                         !
+*GET,ACTO,NODE,NODO,NSEL                         !
+*GET,ACTP,NODE,NODP,NSEL                         !
+!
+FACE1=ACTI+ACTJ+ACTK+ACTL                        ! FACE1= +4=Exterior; -4=Interior; 0=Perpendicular
+FACE6=ACTM+ACTN+ACTO+ACTP                        ! FACE6= +4=Exterior; -4=Interior; 0=Perpendicular
+SRFCHK=FACE1+FACE6                               ! SRFCHK=0 if only 4 exterior face nodes active
+!                                                  First, see if it's a Wedge element to rotate
+*IF,NODL,EQ,NODK,THEN                            ! Is it a Wedge element?
+SRFCHK=-1                                        ! If it is, set SRFCHK to skip the upcoming Brick rotation section
+*IF,FACE1,NE,4,THEN                              ! If either degenerate face is on the surface,
+*IF,FACE6,NE,4,THEN                              ! skip it, completely...
+*IF,ACTI,EQ, 1,THEN                              ! Rotate Wedge based upon the 1st active node
+*IF,ACTJ,EQ,-1,THEN
+EN,AELEM,NODK,NODI,NODJ,NODJ,NODO,NODM,NODN,NODN
+*ELSEIF,ACTJ,EQ, 1,THEN
+EMODIF,AELEM,TYPE,CTYPE
+*ENDIF
+*ELSEIF,ACTI,EQ,-1,THEN
+EN,AELEM,NODJ,NODK,NODI,NODI,NODN,NODO,NODP,NODP
+*ENDIF
+*ENDIF
+*ENDIF
+*ENDIF
+!                                                  Then, rotate a Brick element
+*IF,SRFCHK,EQ,0,THEN                             ! Skip this Brick element if 4 face nodes are not active or it's a wedge
+*IF,FACE1,EQ,0,THEN                              ! FACE 1 is perpendicular to surface
+*IF,ACTI,EQ,-1,THEN                              ! Rotate Brick based upon the 1st active node
+*IF,ACTJ,EQ,-1,THEN
+EN,AELEM,NODK,NODL,NODI,NODJ,NODO,NODP,NODM,NODN
+*ELSEIF,ACTJ,EQ, 1,THEN
+EN,AELEM,NODJ,NODK,NODL,NODI,NODN,NODO,NODP,NODM
+*ENDIF
+*ELSEIF,ACTI,EQ, 1,THEN
+*IF,ACTJ,EQ,-1,THEN
+EN,AELEM,NODL,NODI,NODJ,NODK,NODP,NODM,NODN,NODO
+*ELSEIF,ACTJ,EQ, 1,THEN
+EMODIF,AELEM,TYPE,CTYPE
+*ENDIF
+*ENDIF
+*ELSEIF,FACE1,EQ,-4,THEN                         ! FACE 1 is on the surface
+EN,AELEM,NODM,NODN,NODJ,NODI,NODP,NODO,NODK,NODL
+*ELSEIF,FACE1,EQ,4,THEN                          ! FACE 6 is on the surface, FACE 1 is completely interior
+EN,AELEM,NODI,NODJ,NODN,NODM,NODL,NODK,NODO,NODP
+*ENDIF
+*ENDIF
+!
+*GET,AELEM,ELEM,AELEM,NXTH                       ! Get the next element
+*ENDDO
+*abfini
+*if,i,eq,numelem,then
+*msg,ui,i,numelem
+Note: %i elements of %i processed.
+*else
+*msg,ui,i,numelem
+Only %i elements of %i were processed.
+*endif
+!
+*else
+*msg,info,
+Try again later
+*endif
+parres
+/GOPR

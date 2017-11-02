@@ -1,0 +1,29 @@
+! $Id: setnview.mac,v 1.2 1996/03/18 18:02:24 buyuk Exp $
+! $Log: setnview.mac,v $
+!Revision 1.2  1996/03/18  18:02:24  buyuk
+!added author/comments
+!
+!Revision 1.1  1995/03/14  18:38:52  buyuk
+!Initial revision
+!
+!
+! Osman Buyukisik   243-4282
+!
+/nopr
+! set /view along _n1 and _n2
+_n1=arg2
+_n2=arg3
+*get,_coord,active,,csys
+csys,0
+_vx1=(nx(_n1)-nx(_n2))
+_vy1=(ny(_n1)-ny(_n2))
+_vz1=(nz(_n1)-nz(_n2))
+/view,arg1,_vx1,_vy1,_vz1
+_k1=
+_k2=
+_vx1=
+_vy1=
+_vz1=
+csys,_coord
+_coord=
+/gopr

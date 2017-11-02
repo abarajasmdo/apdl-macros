@@ -1,0 +1,373 @@
+From e067976@asbc22.phx1.aro.allied.com Tue Oct 15 12:28:19 EDT 1996
+Received: from gemb1.ae.ge.com by c0112.ae.ge.com with SMTP
+	(1.37.109.16/16.2) id AA285906899; Tue, 15 Oct 1996 12:28:19 -0400
+Return-Path: <e067976@asbc22.phx1.aro.allied.com>
+Received: from thomas.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA05030; Tue, 15 Oct 1996 12:25:48 -0400
+Received: from ns.ge.com (ns.ge.com [192.35.39.24]) by thomas.ge.com (8.7.5/8.7.5) with ESMTP id MAA26296 for <dan.bohlen@ae.ge.com>; Tue, 15 Oct 1996 12:30:01 -0400 (EDT)
+Received: from tmpil001.tmp.allied.com (tmpil001.tmp.allied.com [198.80.19.2]) by ns.ge.com (8.7.5/8.7.3) with SMTP id MAA03739 for <dan.bohlen@ae.ge.com>; Tue, 15 Oct 1996 12:29:24 -0400 (EDT)
+Received: by tmpil001.tmp.allied.com id AA08730
+  (InterLock SMTP Gateway 3.0 for dan.bohlen@ae.ge.com);
+  Tue, 15 Oct 1996 09:25:56 -0700
+Message-Id: <199610151625.AA08730@tmpil001.tmp.allied.com>
+Received: by tmpil001.tmp.allied.com (Internal Mail Agent-1);
+  Tue, 15 Oct 1996 09:25:56 -0700
+Date: Tue, 15 Oct 1996 09:26:09 -0700
+From: John Crawford <e067976@asbc22.phx1.aro.allied.com>
+Apparently-To: dan.bohlen@ae.ge.com
+Status: RO
+
+/nopr
+!
+!  modwrite.mac a macro which creates a file of n and e commands
+!               for the currently selected elements, as well as
+!               temperature and pressure commands.  Applicable for
+!               ANSYS 5.X.
+! 
+!               The nodes for these elements will be selected and 
+!               written out.  The originally selected nodes are stored
+!               in a component and restored after the macro is finished
+!               running.
+!
+!               The macro will write out 4, 8, or 20 nodes per element,
+!               depending on how many the element has.
+!
+!               The macro will prompt the user for the name of
+!               the file which will be created.  The default name is
+!               'modfile'.
+!
+!  usage:  newrite
+!
+!  written by John Crawford   10-11-96
+!
+!  check to see if any elements are selected.  If so, run the
+!  macro.  If not, print a message and quit
+*if,elmiqr(0,13),gt,0,then
+!
+fname=
+*ask,fname,file name enclosed in single quotes,'modfile'
+!
+*cfopen,fname
+!
+*vwrite
+('/prep7')
+!
+!  create a component of the currently selected nodes
+cm,_Y1,node
+!
+!  select the nodes which are associated with the currently 
+!  selected elements
+nsle
+!
+!  remove any pre-existing variable named nd, in case a vector parameter exists.
+nd=
+!
+!  set initial value for nd
+nd=0
+!
+*msg,info,ndinqr(0,13)
+Writing data for %i nodes
+!
+!  enter the loop which creates the node list
+*do,i,1,ndinqr(0,13)
+!
+nd=ndnext(nd)
+!
+*get,nxy,node,nd,ang,xy
+*get,nyz,node,nd,ang,yz
+*get,nzx,node,nd,ang,zx
+*vwrite,nd,nx(nd),ny(nd),nz(nd),nxy,nyz,nzx
+('n,',f7.0,',',e13.6,',',e13.6,',',e13.6,',',e13.6,',',e13.6,',',e13.6)
+*enddo
+!  remove any predefined variable named el, in case a vector parameter exists.
+el=
+!
+!  set initial value of element number el to 0.
+el=0
+!
+!  delete any pre-existing value for n
+n=
+!
+!  dimension the array n
+*dim,n,array,20
+!
+!  special note:  the command *vlen has been used prior to the *vwrite commands
+!  to control the writing of the node list vector so that only one write is 
+!  done when using *vwrite.  Otherwise, ANSYS will loop on the number of rows
+!  used in the vector, which would write out too many lines of element data.
+!  This is rather confusing.  If you want to understand this, try commenting
+!  out the *vlin commands, and then look at the file which this macro
+!  creates.  The element list will be incorrect.
+!
+!
+*msg,info,elmiqr(0,13)
+Writing data for %i elements
+!
+*do,i,1,elmiqr(0,13)
+el=elnext(el)
+!  get the element type
+*get,type,elem,el,attr,type
+!  get the element name
+*get,ename,etyp,type,attr,enam
+!  get the element keyopt1
+*get,key1,etyp,type,attr,kop1
+!  get the element keyopt2
+*get,key2,etyp,type,attr,kop2
+!  get the element keyopt3
+*get,key3,etyp,type,attr,kop3
+!  get the element keyopt4
+*get,key4,etyp,type,attr,kop4
+!  get the element keyopt5
+*get,key5,etyp,type,attr,kop5
+!  get the element keyopt6
+*get,key6,etyp,type,attr,kop6
+*vwrite,type,ename,key1,key2,key3,key4,key5,key6
+('et,',i5,','i5,',',i5,',',i5,',',i5,',',i5,',',i5,',',i5)
+*vwrite,type
+('type,',i5)
+!
+!  get the node numbers for the element, putting them into the vector "n"
+  *do,j,1,20
+  n(j)=nelem(el,j)
+  *enddo
+!
+!  write out the appropriate number of nodes for each element
+*if,n(20),gt,0,then
+!*msg,info,el
+!Writing 20 nodes for elem %i
+*vlen,1
+*vwrite,el,n(1),n(2),n(3),n(4),n(5),n(6),n(7),n(8)
+('en,',8(f6.0,','),f6.0)
+*vlen,1
+*vwrite,n(9),n(10),n(11),n(12),n(13),n(14),n(15),n(16)
+('emore,',7(f6.0,','),f6.0)
+*vlen,1
+*vwrite,n(17),n(18),n(19),n(20)
+('emore,',3(f6.0,','),f6.0)
+!
+*elseif,n(8),gt,0,then
+!*msg,info,el
+!Writing 8 nodes for elem %i
+*vlen,1
+*vwrite,el,n(1),n(2),n(3),n(4),n(5),n(6),n(7),n(8)
+('en,',8(f6.0,','),f6.0)
+!
+*else
+*vlen,1
+!*msg,info,el
+!Writing 4 nodes for elem %i
+*vwrite,el,n(1),n(2),n(3),n(4)
+('en,',4(f6.0,','),f6.0)
+*endif
+!
+*enddo
+!
+*msg,info,ndinqr(0,13)
+Writing temperatures...
+!
+!  create a vector for the nodal temperatures
+*dim,tvect,array,ndinqr(0,13)
+*vget,tvect(1),125,1,12,1,,,2
+!  write the temps to the file
+nd=0
+*do,i,1,ndinqr(0,13)
+nd=ndnext(nd)
+t=tvect(i)
+*if,t,ne,0,then
+*vwrite,nd,t
+('bf,',f6.0,',temp,',f12.6)
+*endif
+*enddo
+!
+!  create a vector for the nodal displacements
+*dim,dvect,array,ndinqr(0,13),6
+*vget,dvect(1,1),125,1,7,1,1,,2
+*vget,dvect(1,2),125,1,7,2,1,,2
+*vget,dvect(1,3),125,1,7,3,1,,2
+*vget,dvect(1,4),125,1,7,4,1,,2
+*vget,dvect(1,5),125,1,7,5,1,,2
+*vget,dvect(1,6),125,1,7,6,1,,2
+!  write the displacements to the file
+!nd=0
+!*do,i,1,ndinqr(0,13)
+!nd=ndnext(nd)
+!d=dvect(i)
+!*vwrite,nd,t
+!('bf,',f6.0,',temp,',f12.6)
+!*enddo
+!
+!  create a vector of element pressures
+!  there is one element per/node per face
+!  this is the vector for face 1 of each element
+pvect1=
+pvect2=
+pvect3=
+pvect4=
+pvect5=
+pvect6=
+!
+*dim,pvect1,array,elmiqr(0,13),4
+*dim,pvect2,array,elmiqr(0,13),4
+*dim,pvect3,array,elmiqr(0,13),4
+*dim,pvect4,array,elmiqr(0,13),4
+*dim,pvect5,array,elmiqr(0,13),4
+*dim,pvect6,array,elmiqr(0,13),4
+!
+!  face 1, node i pressure
+*vget,pvect1(1,1),150,1,13,1,1,,2
+!  face 1, node j pressure
+*vget,pvect1(1,2),150,1,13,1,3,,2
+!  face 1, node k pressure
+*vget,pvect1(1,3),150,1,13,1,5,,2
+!  face 1, node l pressure
+*vget,pvect1(1,4),150,1,13,1,7,,2
+!
+!  face 2, node i pressure
+*vget,pvect2(1,1),150,1,13,2,1,,2
+!  face 2, node j pressure
+*vget,pvect2(1,2),150,1,13,2,3,,2
+!  face 2, node k pressure
+*vget,pvect2(1,3),150,1,13,2,5,,2
+!  face 2, node l pressure
+*vget,pvect2(1,4),150,1,13,2,7,,2
+!
+!  face 3, node i pressure
+*vget,pvect3(1,1),150,1,13,3,1,,2
+!  face 3, node j pressure
+*vget,pvect3(1,2),150,1,13,3,3,,2
+!  face 3, node k pressure
+*vget,pvect3(1,3),150,1,13,3,5,,2
+!  face 3, node l pressure
+*vget,pvect3(1,4),150,1,13,3,7,,2
+!
+!  face 4, node i pressure
+*vget,pvect4(1,1),150,1,13,4,1,,2
+!  face 4, node j pressure
+*vget,pvect4(1,2),150,1,13,4,3,,2
+!  face 4, node k pressure
+*vget,pvect4(1,3),150,1,13,4,5,,2
+!  face 4, node l pressure
+*vget,pvect4(1,4),150,1,13,4,7,,2
+!
+!  face 5, node i pressure
+*vget,pvect5(1,1),150,1,13,5,1,,2
+!  face 5, node j pressure
+*vget,pvect5(1,2),150,1,13,5,3,,2
+!  face 5, node k pressure
+*vget,pvect5(1,3),150,1,13,5,5,,2
+!  face 5, node l pressure
+*vget,pvect5(1,4),150,1,13,5,7,,2
+!
+!  face 6, node i pressure
+*vget,pvect6(1,1),150,1,13,6,1,,2
+!  face 6, node j pressure
+*vget,pvect6(1,2),150,1,13,6,3,,2
+!  face 6, node k pressure
+*vget,pvect6(1,3),150,1,13,6,5,,2
+!  face 6, node l pressure
+*vget,pvect6(1,4),150,1,13,6,7,,2
+!
+!  write out the pressures to the file
+*msg,info
+Writing out element pressures
+!
+enum=0
+*do,i,1,elmiqr(0,13)
+enum=elnext(enum)
+!
+!  do this for element face 1
+*if,pvect1(enum,1),ne,0,then
+a=pvect1(enum,1)
+b=pvect1(enum,2)
+c=pvect1(enum,3)
+d=pvect1(enum,4)
+*vwrite,enum,a,b,c,d
+('sfe,',i5,',1,pres,0,',f12.6,',',f12.6,',',f12.6,',',f12.6)
+*endif
+*if,pvect2(enum,1),ne,0,then
+a=pvect2(enum,1)
+b=pvect2(enum,2)
+c=pvect2(enum,3)
+d=pvect2(enum,4)
+*vwrite,enum,a,b,c,d
+('sfe,',i5,',2,pres,0,',f12.6,',',f12.6,',',f12.6,',',f12.6)
+*endif
+*if,pvect3(enum,1),ne,0,then
+a=pvect3(enum,1)
+b=pvect3(enum,2)
+c=pvect3(enum,3)
+d=pvect3(enum,4)
+*vwrite,enum,a,b,c,d
+('sfe,',i5,',3,pres,0,',f12.6,',',f12.6,',',f12.6,',',f12.6)
+*endif
+*if,pvect4(enum,1),ne,0,then
+a=pvect4(enum,1)
+b=pvect4(enum,2)
+c=pvect4(enum,3)
+d=pvect4(enum,4)
+*vwrite,enum,a,b,c,d
+('sfe,',i5,',4,pres,0,',f12.6,',',f12.6,',',f12.6,',',f12.6)
+*endif
+*if,pvect5(enum,1),ne,0,then
+a=pvect5(enum,1)
+b=pvect5(enum,2)
+c=pvect5(enum,3)
+d=pvect5(enum,4)
+*vwrite,enum,a,b,c,d
+('sfe,',i5,',5,pres,0,',f12.6,',',f12.6,',',f12.6,',',f12.6)
+*endif
+*if,pvect6(enum,1),ne,0,then
+a=pvect6(enum,1)
+b=pvect6(enum,2)
+c=pvect6(enum,3)
+d=pvect6(enum,4)
+*vwrite,enum,a,b,c,d
+('sfe,',i5,',6,pres,0,',f12.6,',',f12.6,',',f12.6,',',f12.6)
+*endif
+*enddo
+!
+!  finished writing node and element file
+!
+!  close the file
+*cfclose
+!
+!  select the set of originally selected nodes
+cmse,s,_Y1
+!
+!  delete the temporary component
+cmde,_Y1
+!
+!  display a message telling the user that the macro is finished
+*msg,info,fname
+Finished writing data to file %c
+!
+!  clean up the parameters
+el=
+n=
+nxy=
+nyz=
+nzx=
+nd=
+fname=
+i=
+j=
+tvect=
+enum=
+pvect1=
+pvect2=
+pvect3=
+pvect4=
+pvect5=
+pvect6=
+t=
+!
+*vlen
+!
+*else
+*msg,info
+****  MODWRITE Will Not Run Because No Elements Are Selected  ****
+*endif
+! 
+/gopr
+
+

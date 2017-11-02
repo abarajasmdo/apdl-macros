@@ -1,0 +1,16 @@
+!  creates areas on face 2 of selected elements
+el=elnext(0)
+*get,enum,elem,,count
+kpal
+*get,kmax,kp,,num,max
+kpnew=kmax+1
+*do,i,1,enum
+k,kpnew,nx(nelem(el,1)),ny(nelem(el,1)),nz(nelem(el,1))
+k,kpnew+1,nx(nelem(el,2)),ny(nelem(el,2)),nz(nelem(el,2))
+k,kpnew+2,nx(nelem(el,5)),ny(nelem(el,5)),nz(nelem(el,5))
+k,kpnew+3,nx(nelem(el,6)),ny(nelem(el,6)),nz(nelem(el,6))
+a,kpnew,kpnew+1,kpnew+3,kpnew+2
+kpnew=kpnew+4
+el=elnext(el)
+*enddo
+

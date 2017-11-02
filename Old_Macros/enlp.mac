@@ -1,0 +1,14 @@
+/nopr
+!
+!                       ENLP.MAC     This macro plots elements, nodes, and lines
+!                                                   simultaneously, and in that order.
+!                                                                           
+eplo                                                                  
+/user                                                                           
+/noer                                                                           
+/plof,1,1,1,1
+nplo                                                                            
+lplo                                                                            
+/erase         
+/plof                                                                 
+/gopr                                                                           

@@ -1,0 +1,3 @@
+! selects external part of current model
+nsel,ext
+esln,r

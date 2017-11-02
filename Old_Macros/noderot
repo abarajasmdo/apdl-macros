@@ -1,0 +1,47 @@
+#!/bin/csh
+
+#   Program to rotate nodes into stress analysis coordinate
+#   system (engine cylindrical).  Valid for all ANSYS versions up to 5.4.
+#
+#	Mark Mueller   7/1/98
+
+if ($#argv != 1) then
+	echo 'Usage: noderot node_file'
+	exit 1
+endif
+
+set head = `head -1 $1 | cut -c 1-8 | awk '{print $1}'`
+
+### Determine which version ###
+if ($head > 0) then
+	set ver='NEW'
+else
+	set ver='OLD'
+endif
+
+switch ($ver)
+case NEW:
+### Version 5.4 ###
+	awk 'BEGIN {print "/nopr"} \
+	{	n=substr($0,1,8); x=substr($0,9,20); z=substr($0,49,20); \
+		theta=atan2(-z,x)*180./3.141592654; \
+		print "NMOD,",n,",,,,,,",theta; \
+	}	END {print "/gopr"}' $1 >! $1:r.nrot
+	breaksw
+case OLD:
+### Version 5.3 and below ###
+	awk 'BEGIN {print "/nopr"} \
+	{	s=substr($0,6,1); \
+		if ( s >= 0 && s <= 9 ) \
+		{ n=substr($0,1,10); x=substr($0,11,30); z=substr($0,51,70); getline} \
+		else \
+		{ n=substr($0,1,5); x=substr($0,6,16); z=substr($0,38,16)} \
+		if ( n>0 ) \
+		{	theta=atan2(-z,x)*180./3.141592654; \
+			print "NMOD,",n,",,,,,,",theta \
+		} \
+	}	END {print "/gopr"}' $1 >! $1:r.nrot
+	breaksw
+endsw
+
+echo "Ansys NMOD commands written to $1:r.nrot"

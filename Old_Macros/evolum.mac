@@ -1,0 +1,34 @@
+!
+! evolum  calculates volum of selected elements
+!
+*get,loops,elem,,count
+*get,el,elem,,num,min
+etot=
+mx=
+my=
+mz=
+mxyz=
+*do,add,1,3
+*get,evol,elem,el,volu
+etot=etot+evol
+mx=mx+(centrx(el)*evol)
+my=my+(centry(el)*evol)
+mz=mz+(centrz(el)*evol)
+mxyz=evol*centx(el)*centy(el)*centz(el)
+el=elnext(el)
+/gopr
+*enddo
+xbar=mx/etot
+ybar=my/etot
+zbar=mz/etot
+/uis,psgpop,0
+*msg,note,loops,etot
+Volume of %I selected elements is %G
+*msg,note,mx,my,mx,mxyz
+Xbar= %G Ybar= %G Zbar= %G mxyz= %G
+mx=
+my=
+mz=
+mxyz=
+etot=
+

@@ -1,0 +1,5 @@
+!
+! vw3d - set sup vewing for 3d rotor models
+!
+/view,,-.5,-1,-1
+/vup,,x

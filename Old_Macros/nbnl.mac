@@ -1,0 +1,53 @@
+/nopr
+!
+!
+!                    nbnl,Node 1, Node 2, length,Node Number To Be Created
+!
+!                    This macro creates a Node that is distance "length"
+!                     towards Node 2 from Node 1.  It will create a node with
+!                     the next available node number if the node number
+!                     to be created is not provided.
+!
+*get,x1,nx,arg1
+*get,y1,ny,arg1
+*get,z1,nz,arg1
+*get,x2,nx,arg2
+*get,y2,ny,arg2
+*get,z2,nz,arg2
+*if,arg4,gt,0,:lp
+*get,nmax,mxnd
+nn=nmax+1
+*go,:lp2
+:lp
+nn=arg4
+:lp2
+dx=x2-x1
+dy=y2-y1
+dz=z2-z1
+dist=((dx*dx)+(dy*dy)+(dz*dz))**.5
+mult=arg3/dist
+newx=x1+mult*dx
+newy=y1+mult*dy
+newz=z1+mult*dz
+n,nn,newx,newy,newz
+*msg,note,nn,arg3,arg2
+(' Node ',f5.0,' is located ',f3.2,' towards node ',f5.0)
+x1=
+x2=
+y1=
+y2=
+z1=
+z2=
+dx=
+dy=
+dz=
+newx=
+newy=
+newz=
+mult=
+dist=
+/gopr
+  
+ 
+    
+  

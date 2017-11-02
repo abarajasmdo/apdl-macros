@@ -1,0 +1,20 @@
+!/nopr
+__nerr=erinqr(9)	! get users /nerr setting
+/nerr,0			! turn off error/warning msgs
+__tnu0c_=		! clear array
+*dim,__tnu0c_,,1
+*vread,__tnu0c_(1),arg1,count,/afs/.ae.ge.com/dev/ansys/data/
+(F20.0)
+__tnu0c_(1)=__tnu0c_(1)+1
+*cfopen,arg1,count,/afs/.ae.ge.com/dev/ansys/data/
+*vwrit,__tnu0c_(1)
+(F20.0)
+*cfclos
+/sys,echo bohlen"@"c0112 Tue Apr 14 10:14:09 EDT 1998 >>/tmp/.delete_me	! get user date
+/sys,cat /tmp/.delete_me >>/afs/.ae.ge.com/dev/ansys/data/arg1.who
+/sys,rm -f /tmp/.delete_me
+/sys,/afs/.ae.ge.com/dev/ansys/data/_SORT arg1	! keeps one entry/user last date
+!/sys,/afs/ae.ge.com/apps/ansys54/docu/NEW_DIR/_SORT /afs/.ae.ge.com/dev/ansys/data/INFO ???
+__tnu0c_=
+/nerr,__nerr		! reset users /nerr
+__nerr=

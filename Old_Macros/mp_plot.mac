@@ -1,0 +1,26 @@
+parsav
+/anno,dele
+/COLOR,CURVE,WHIT,1 
+/nerr,0,0,
+/SHOW,MAT_PROP,grph
+MMAX=MPINQR(0,,14)
+*DO,MAT,1,MMAX
+*IF,MPINQR(MAT,,1),EQ,0,*CYCLE
+/anno,dele
+/TSPEC, 15,10.000,   1,   0,   0
+/TLAB, 0.280, 0.623,%MAT%
+MPPLOT,EX,MAT,
+,EY,MAT
+,EZ,MAT
+,GXY,MAT
+,GYZ,MAT
+,GXZ,MAT
+/anno,dele
+*ENDDO
+/SHOW,TERM
+PARRES
+/nerr
+/show,duh
+/show,term
+
+

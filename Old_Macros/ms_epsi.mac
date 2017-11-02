@@ -1,0 +1,25 @@
+!
+!  macro hpgl:  makes hpgl file of current plot
+!
+!parsav
+fname=arg1
+!*ask,fname,filename for MS epsi file,'ms_plot'
+!*ask,NEW FILENAME FOR HPGL FILE,'AAA.HPGL'
+*get,r_or_v,graph,,display
+*if,r_or_v,eq,1,then
+!/color,elem,white
+*endif
+/show,%fname%,,r_or_v   	!	
+/replo
+/show,_junk_
+/show,term
+/color,elem,
+!/sys,(f33-ms_epsi eps.plot ; beep ) &
+!
+amper=')'
+/syp,Xans2ms.exe,%fname%
+!/sys, rm  pscr00.grph
+!/syp,rename pscr00,fname
+!/sys, mv *.eps ~/temp
+!/sys,alldone
+

@@ -1,0 +1,20 @@
+!  nrad.mac  determines the radius of three arc'ed nodes
+/NOPR
+/prep7
+/pmacro
+cm,nstart,nODE
+nall
+*GET,NMAX,NODE,,NUM,MAX
+CMSEL,,NSTART
+nsel,r,p
+arcnode=ndnext(0)
+center,NMAX+1,ndnext(0),ndnext(ndnext(0)),ndnext(ndnext(ndnext(0))),,
+_z4=DISTND(arcnode,NMAX+1) 
+*msg,info,_z4 
+The radius is %G
+NDELE,NMAX+1
+CMSEL,,NSTART
+CMDELE,NSTART
+/GOPR
+
+

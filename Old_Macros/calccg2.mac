@@ -1,0 +1,693 @@
+/nopr
+!
+!  calccg2.mac  a macro to calculate the total mass and volume
+!              of the currently selected elements.  
+!
+!  useage: calccg  there are no arguments used with this macro.
+!
+!  written by: John Crawford  5-17-96
+!  
+!  NOTE: this macro is only valid for 3D, structural elements.
+!        invalid element types are...
+!
+!        2
+!        7
+!        9
+!        11
+!        12
+!        13
+!        14
+!        19
+!        24
+!        25
+!        26
+!        27
+!        29
+!        30
+!        31
+!        34
+!        35
+!        36
+!        38
+!        39
+!        42
+!        46-53
+!        55
+!        61
+!        66
+!        67
+!        71
+!        74-79
+!        81-84
+!        88
+!        91
+!        92
+!        96
+!        97
+!        99
+!        106
+!        108
+!        110
+!        111
+!        115
+!        122-124
+!        141
+!        142
+!        145
+!        146
+!        
+!  definition of variables used in the macro
+!  
+!  a1=area of leg 1 of pipe tee elements
+!  a2=area of leg 2 of pipe tee elements
+!  a3=area of leg 3 of pipe tee elements
+!  centx=x centroid location of selected elements
+!  centy=y centroid location of selected elements
+!  centz=z centroid location of selected elements
+!  dens=density value for material table emat 
+!  dens1=density value for material table for leg 1 of pipe tee elements
+!  dens2=density value for material table for leg 2 of pipe tee elements
+!  dens3=density value for material table for leg 3 of pipe tee elements
+!  ecode=type code for element volume calculation
+!          1=line element
+!          2=area element with one thickness
+!          3=volume element
+!          4=straight pipe element
+!          5=pipe tee element
+!          6=point mass element
+!          7=3D surface effect element (SURF22) thickness in real table 7-10
+!          8=combination with mass on each end (COMBIN37) 
+!          9=combination with one mass (COMBIN40)
+!         10=3D membrane element (SHELL41) thickness in real table 1-4
+!         11=tapered beam element (BEAM44)
+!         12=tapered beam element (BEAM54)
+!         99=inappropriate element (2D, etc.) for this calculation.
+!            an error message will be displayed which tells the user
+!            that the volume/mass calculation is incorrect.
+!  emas=total mass for this element
+!  emat=material table for this element
+!  enum=number of the element currently being evaluated for mass, volume
+!  ereal=real constant table for this element
+!  esel=number of selected elements
+!  etype=element type table for this element
+!  flag=a flag which prints a caution message at the end of the macro
+!       which tells the user that the results may be in error due to
+!       the presence of inappropriate elements
+!  i=do loop index
+!  j=counter used to display progress of macro
+!  m1=mass of one end of a combination element
+!  m2=mass of the other end of a combination element
+!  mat1=material property of leg 1 in pipe tee elements
+!  mat2=material property of leg 2 in pipe tee elements
+!  mat3=material property of leg 3 in pipe tee elements
+!  mtot=total mass of selected elements
+!  nd1=node 1 of pipe tee elements
+!  nd2=node 2 of pipe tee elements
+!  nd3=node 3 of pipe tee elements
+!  nd4=node 4 of pipe tee elements
+!  od=outer diameter of pipe elements
+!  od1=outer diameter of leg 1 in pipe tee elements
+!  od2=outer diameter of leg 2 in pipe tee elements
+!  od3=outer diameter of leg 3 in pipe tee elements
+!  thck=thickness of pipe elements
+!  thck1=thickness of leg 1 in pipe tee elements, or node 1 of shell elements
+!  thck2=thickness of leg 2 in pipe tee elements, or node 2 of shell elements
+!  thck3=thickness of leg 3 in pipe tee elements, or node 3 of shell elements
+!  thck4=thickness of node 4 in shell elements
+!  v1=volume of leg 1 of pipe tee elements
+!  v2=volume of leg 2 of pipe tee elements
+!  v3=volume of leg 3 of pipe tee elements
+!  vtot=total volume of selected elements
+!  
+!  clear any predefined parameters from the database.
+!  these are explicitly removed in case there are pre-existing
+!  array parameters.
+a1=
+a2=
+a3=
+centx=
+centy=
+centz=
+dens= 
+dens1=
+dens2=
+dens3=
+ecode=
+emas=
+emat=
+enum=
+ereal=
+esel=
+etype=
+flag=
+i=
+j=
+m1=
+m2=
+mat1=
+mat2=
+mat3=
+mtot=
+nd1=
+nd2=
+nd3=
+nd4=
+od=
+od1=
+od2=
+od3=
+thck=
+thck1=
+thck2=
+thck3=
+thck4=
+v1=
+v2=
+v3=
+vtot=
+!  
+!  get the starting time
+*get,tstart,active,,time,cpu
+!  get the number of selected elements
+esel=elmiqr(0,13)
+!
+!  if the number of selected elements is greater than zero, proceed
+!  with the macro.  otherwise print an error message and quite.
+*if,esel,gt,0,then
+!  set the error flag to zero
+flag=0
+enum=0
+i=0
+!
+centx=0
+centy=0
+centz=0
+vtot=0
+mtot=0
+j=0
+!  create a component of the currently selected nodes
+!  they will be reselected when the macro is finished
+cm,_Y1,node
+!  select nodes associated with the selected elements
+nsle
+!
+!  print a message telling the user that calculation of volume,
+!  mass and centroid has begun.
+*msg,info
+Starting to calculate element volume, mass and centroid... 
+!
+!  enter a loop to calculate mass, cg
+:top
+i=i+1
+*if,i,gt,esel,:bot3
+!
+!  get the next element ID number
+enum=elnext(enum)
+!
+!  get the etype for this element
+*get,etype,elem,enum,attr,type
+!
+!  get the ename for this element type
+*get,ename,etyp,etype,attr,enam
+!
+!  get the real constant table for this element
+*get,ereal,elem,enum,attr,real
+!
+!  get the material table for this element
+*get,emat,elem,enum,attr,mat
+!
+!  get the density for this material table
+*get,dens,dens,emat
+!  
+!  assign element code value so we can calculate
+!  the volume correctly
+*go,:e%ename%
+!
+!
+:e1
+:e3
+:e4
+:e8
+:e10
+:e23
+:e32
+:e33
+:e68
+!  line element calculation
+!  get the area of the element
+*get,earea,rcon,ereal,const,1
+!  get the length of the element
+*get,elength,elem,enum,leng
+!  calculate element volume
+evol=elength*earea
+!  calculate the mass of the element
+emas=evol*dens
+*go,:bot
+!
+:e28
+!  area element calculation
+!  thickness is value 1 in REAL constant table.
+!  get the thickness of the element
+*get,thck,rcon,ereal,const,1
+!  get the area of the element
+*get,earea,elem,enum,area
+!  calculate element volume
+evol=thck*earea
+!  calculate the mass of the element
+emas=evol*dens
+*go,:bot
+!
+:e5
+:e45
+:e56
+:e58
+:e62
+:e64
+:e65
+:e69
+:e70
+:e72
+:e73
+:e80
+:e86
+:e87
+:e89
+:e90
+:e92
+:e95
+:e98
+:e107
+:e147
+:e148
+!  ecode=3 volume element calculation
+!  calculate element volume
+*get,evol,elem,enum,volu
+!  calculate the mass of the element
+emas=evol*dens
+*go,:bot
+!
+:e16
+:e18
+:e20
+:e59
+:e60
+!  ecode=4 straight pipe element calculation
+*get,od,rcon,ereal,const,1
+*get,thck,rcon,ereal,const,2
+earea=((od/2)**2-((od-thck)/2)**2)*3.14159
+!  get the length of the element
+*get,elength,elem,enum,leng
+!  calculate element volume
+evol=elength*earea
+!  calculate the mass of the element
+emas=evol*dens
+*go,:bot
+! 
+:e17
+!  ecode=5 pipe tee element calculation
+*get,od1,rcon,ereal,const,1
+*get,thck1,rcon,ereal,const,2
+*get,mat1,rcon,ereal,const,3
+*get,od2,rcon,ereal,const,7
+*get,thck2,rcon,ereal,const,8
+*get,mat2,rcon,ereal,const,9
+*get,od3,rcon,ereal,const,13
+*get,thck3,rcon,ereal,const,14
+*get,mat3,rcon,ereal,const,15
+!  if no materials are specificed in the real constant
+!  table, then use the value obtained from *get,emat...
+*if,mat1,eq,0,then
+mat1=emat
+*endif
+*if,mat2,eq,0,then
+mat2=emat
+*endif
+*if,mat3,eq,0,then
+mat3=emat
+*endif
+!  calculate area of each leg
+a1=(((od1/2)**2 -((od1/2)-thck1)**2)*3.14159
+a2=(((od2/2)**2 -((od2/2)-thck2)**2)*3.14159
+a3=(((od3/2)**2 -((od3/2)-thck3)**2)*3.14159
+!  get the node ID's used by this element
+*get,nd1,elem,enum,node,1
+*get,nd2,elem,enum,node,2
+*get,nd3,elem,enum,node,3
+*get,nd4,elem,enum,node,4
+!  in case you are wondering,node 2 is the center node
+!  calculate the volume of each leg
+v1=a1*distnd(n1,n2)
+v2=a2*distnd(n3,n2)
+v3=a3*distnd(n4,n2)
+!  calculate the total volume of the element
+evol=v1+v2+v3
+!  get the densities for each leg
+*get,dens1,dens,mat1
+*get,dens2,dens,mat2
+*get,dens3,dens,mat3
+!  calculate the mass of this element
+emas=v1*dens1+v2*dens2+v3*dens3
+*go,:bot
+! 
+:e21
+!  ecode=6 point mass element calculation
+*get,m1,rcon,ereal,const,1
+*get,m2,rcon,ereal,const,2
+*get,m3,rcon,ereal,const,3
+*if,m2,eq,0,then
+m2=m1
+*endif
+*if,m3,eq,0,then
+m3=m1
+*endif
+emas=(m1+m2+m3)/3
+!  set element volume to zero since point masses don't have volume
+evol=0
+!  tell the user that this is a point mass, with zero volume
+*msg,info,enum
+*** ELEMENT %i IS A POINT MASS, VOLUME = 0 ***
+!  set the error flag so the final error message will be displayed
+flag=1
+*go,:bot
+!
+:e22
+!  ecode=7 area element calculation with 4 thicknesses for surf effect
+!  thickness 1 is value 7, etc., in REAL constant table.
+*get,thck1,rcon,ereal,const,7
+*get,thck2,rcon,ereal,const,8
+*get,thck3,rcon,ereal,const,9
+*get,thck4,rcon,ereal,const,10
+*if,thck2,eq,0,then
+thck2=thck1
+*endif
+*if,thck3,eq,0,then
+thck3=thck1
+*endif
+*if,thck4,eq,0,then
+thck4=thck1
+*endif
+!  calculate the average thickness
+thck=(thck1+thck2+thck3+thck4)/4
+!  get the area of the element
+*get,earea,elem,enum,area
+!  calculate element volume
+evol=earea*thck
+!  calculate mass of the element
+emas=evol*dens
+*go,:bot
+!
+:e37
+!  ecode=8 combination element with a mass on each end
+!  element masses are in positions 3 and 7 in REAL constant table.
+*get,m1,rcon,ereal,const,3
+*get,m2,rcon,ereal,const,7
+emas=m1+m2
+!  set element volume to zero since combination elements don't have volume
+evol=0
+!  tell the user that this is a combination element, with zero volume
+*msg,info,enum
+*** ELEMENT %i IS A COMBINATION ELEMENT, VOLUME = 0 ***
+!  set the error flag so the final error message will be displayed
+flag=1
+*go,:bot
+!
+:e40
+!  ecode=9 combination element with one mass
+!  element mass is in positions 3 in REAL constant table.
+*get,emas,rcon,ereal,const,3
+!  set element volume to zero since combination elements dont' have volume
+evol=0
+!  tell the user that this is a combination element, with zero volume
+*msg,info,enum
+*** ELEMENT %i IS A COMBINATION ELEMENT, VOLUME = 0 ***
+!  set the error flag so the final error message will be displayed
+flag=1
+*go,:bot
+!
+:e41
+:e43
+:e57
+:e63
+:e93
+:e143
+:e150
+!  ecode=10 area element calculation with 4 thicknesses 
+!  thickness 1 is value 1, etc., in REAL constant table.
+*get,thck1,rcon,ereal,const,1
+*get,thck2,rcon,ereal,const,2
+*get,thck3,rcon,ereal,const,3
+*get,thck4,rcon,ereal,const,4
+!
+*if,thck2,eq,0,then
+thck2=thck1
+*endif
+*if,thck3,eq,0,then
+thck3=thck1
+*endif
+*if,thck4,eq,0,then
+thck4=thck1
+*endif
+!  calculate the average thickness
+thck=(thck1+thck2+thck3+thck4)/4
+!  get the area of the element
+*get,earea,elem,enum,area
+!  calculate element volume
+evol=earea*thck
+!  calculate element mass
+emas=evol*dens
+*go,:bot
+! 
+:e11
+!  ecode=11 tapered beam element calculation
+!  areas are in real constant entries 1 and 7
+*get,a1,rcon,ereal,const,1
+*get,a2,rcon,ereal,const,7
+earea=(a1+a2)/2
+!  get the length of the element
+*get,elength,elem,enum,leng
+!  calculate element volume
+evol=elength*earea
+!  calculate element mass
+emas=evol*dens
+*go,:bot
+! 
+:e54
+! ecode=12 tapered beam element calculation
+!  areas are in real constant entries 1 and 5
+*get,a1,rcon,ereal,const,1
+*get,a2,rcon,ereal,const,5
+earea=(a1+a2)/2
+!  get the length of the element
+*get,elength,elem,enum,leng
+!  calculate element volume
+evol=elength*earea
+!  calculate element mass
+emas=evol*dens
+*go,:bot
+!
+!
+:e2
+:e7
+:e9
+:e11
+:e12
+:e13
+:e14
+:e19
+:e24
+:e25
+:e26
+:e27
+:e29
+:e30
+:e31
+:e34
+:e35
+:e36
+:e38
+:e39
+:e42
+:e46
+:e47
+:e48
+:e49
+:e50
+:e51
+:e52
+:e53
+:e55
+:e61
+:e66
+:e67
+:e71
+:e74
+:e75
+:e77
+:e78
+:e79
+:e81
+:e82
+:e83
+:e84
+:e88
+:e91
+:e96
+:e97
+:e99
+:e106
+:e108
+:e110
+:e111
+:e115
+:e122
+:e123
+:e124
+:e141
+:e142
+:e145
+:e146
+*msg,info,enum
+*** CAUTION - ELEMENT %i IS NOT USED IN VOLUME CALCULATION ***
+!
+!  set flag which tells the macro to print an error message
+!  when the macro is finished running to alert the user that
+!  the calculated volume, etc. are incorrect
+flag=1
+!
+*go,:bot2
+!
+:bot
+!  calculate the centroid location and mass
+*get,ecentx,elem,enum,cent,x
+*get,ecenty,elem,enum,cent,y
+*get,ecentz,elem,enum,cent,z
+centx=centx+ecentx*emas
+centy=centy+ecenty*emas
+centz=centz+ecentz*emas
+!centx=centx+centrx(enum)*emas
+!centy=centy+centry(enum)*emas
+!centz=centz+centrz(enum)*emas
+!  calculate the total element volume so far
+vtot=vtot+evol
+*if,evol,le,0,then
+*msg,info,enum
+***  ELEMENT NUMBER %i DOES NOT HAVE A POSITIVE VOLUME ***
+flag=1
+*endif
+!  calculate the running total mass of the elements
+mtot=mtot+emas
+!*msg,info,centx,centy,centz,vtot,mtot
+!centx= %g centy= %g centz= %g vtot= %g mtot= %g
+!
+!  increment counter j by one, and print status if j=100
+j=j+1
+*if,j,eq,100,then
+j=0
+*msg,info,i,esel
+*** FINISHED ELEMENT %i OF %i SELECTED ELEMENTS ***
+!
+*endif
+:bot2
+!
+*go,:top
+:bot3
+!
+!  this ends the do loop which gets the centroid, mass, and volume
+!  for the selected elements
+!
+!  calculate centroid of elements
+centx=centx/mtot
+centy=centy/mtot
+centz=centz/mtot
+!
+!  print the results
+*msg,info,esel
+%/ FOR THE %i ELEMENTS SELECTED,
+*msg,info,mtot
+%/ Total mass is %g 
+*msg,info,vtot
+Total volume is %g
+*msg,info,centx,centy,centz
+Centroid Located at %/ X= %g %/ Y= %g %/ Z= %g
+!
+*if,flag,eq,1,then
+*msg,info
+*** RESULTS ARE INCORRECT DUE TO SELECTED ELEMENT TYPES ***
+*msg,info
+*** THERE WERE SOME ELEMENT TYPES IN THE SET OF SELECTED ***
+*msg,info
+*** ELEMENTS WHICH ARE NOT COMPLETELY SUPPORTED BY THIS MACRO. ***
+*endif
+!
+!  select the original set of nodes
+cmse,s,_Y1
+!
+!  delete the temporary component which held the original set of nodes
+cmde,_Y1
+!
+!  clean up parameters
+a1=
+a2=
+a3=
+centx=
+centy=
+centz=
+dens= 
+dens1=
+dens2=
+dens3=
+ecode=
+emas=
+emat=
+enum=
+ereal=
+etype=
+flag=
+i=
+j=
+m1=
+m2=
+mat1=
+mat2=
+mat3=
+mtot=
+nd1=
+nd2=
+nd3=
+nd4=
+od=
+od1=
+od2=
+od3=
+thck=
+thck1=
+thck2=
+thck3=
+thck4=
+v1=
+v2=
+v3=
+vtot=
+!
+!  get the ending time
+*get,tend,active,,time,cpu
+*msg,info,tend-tstart
+%/ *** TOTAL CPU TIME = %g ***
+*else
+*msg,info
+*** NO ELEMENTS ARE CURRENTLY SELECTED ***
+*msg,info
+*** SELECT SOME ELEMENTS AND TRY AGAIN ***
+*endif
+!
+esel=
+!
+!
+/gopr
+
+
+
+
+
+
+

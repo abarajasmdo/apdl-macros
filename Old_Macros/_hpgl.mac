@@ -1,0 +1,20 @@
+!
+!  macro hpgl:  makes hpgl file of current plot
+!
+!parsav
+*ask,fname,NEW FILENAME FOR HPGL FILE,'AAA.HPGL'
+/sys,rm hpgl.plot
+*GET,PTYPE,GRAPH,1,TYPE
+*IF,PTYPE,GT,4,then
+/TYPE,ALL,4
+*endif
+/show,_hpgl,plot,1   	!	assumes vector b&w plot
+/replo
+/show,_junk_
+/show,term,,1
+/sys,f33-hpgl _hpgl.plot
+/syp,mv hpgl00.grph,%fname%
+/syp,mv_hpgl2temp,%fname%
+beep
+!/sys,applix43 -add A.hpgl &
+

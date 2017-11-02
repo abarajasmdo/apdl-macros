@@ -1,0 +1,6 @@
+!
+! creates cylindrical coord system so that 3d model will be consistent with 2d
+!  axisymmetric model  rotates y towards z.
+!
+local,11,1,,,,,,90
+!

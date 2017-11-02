@@ -1,0 +1,110 @@
+From - Mon Jun 25 10:49:54 2001
+Received: by ev009msxaege.ae.ge.com 
+	id <01C0F34D.6B2C9890@ev009msxaege.ae.ge.com>; Tue, 12 Jun 2001 10:39:00 -0400
+Message-ID: <A897DD563B6ED311B78200902792799A760C4D@ev009msxaege.ae.ge.com>
+From: "Wang, Dah-Ding (GEAE)" <Dah-Ding.Wang@ae.ge.com>
+To: "Meyers, Andrew (GEAE)" <Andrew.Meyers@ae.ge.com>
+Cc: "@GEAE LESA" <#LESA@msx.ae.ge.com>, "@GEAE SESA" <#SESA@msx.ae.ge.com>
+Subject: RE: MODEL TRANSFORMATION
+Date: Tue, 12 Jun 2001 10:38:58 -0400
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAwX3RjBAAgm5J5JQCgg3Gx0utjVdfJq
+
+There was an error in the original email I sent. In the example
+given(down at bottom), it's really for a mesh WITHOUT solid model.
+Sorry for the inconvenience.
+
+Dah-Ding Wang
+Phone: 513-243-2259 / 8-332-2259
+e-mail: Dah-Ding.Wang@ae.ge.com
+
+> ----------
+> From: 	Wang, Dah-Ding (GEAE)
+> Sent: 	Monday, June 11, 2001 5:49 PM
+> To: 	Meyers, Andrew (GEAE)
+> Cc: 	@GEAE LESA; @GEAE SESA
+> Subject: 	MODEL TRANSFORMATION
+> 
+> Andy:
+> 
+> When I worked with EACOE engineers, they always seemed to be confused
+> about the model transfer among the three coordinate systems we use.
+> They either do not understand Page 69 of Natesh's Note or could not
+> figure out the angle rotations to define a local coordinate system for
+> the transformation. Please forward this message to all EACOE engineers
+> and have them contact me if they have any questions.
+> 
+> Thanks.  
+> 
+> Mesh transformation, nodes only, from one coordinate system to another
+> in ANSYS:
+>  
+> ######################################################################
+> ########
+> ! UG     		Global Cartesian Coordinate System : 	Z-RADIAL
+> OUT, X-AXIAL AFT
+> ! SIESTA 	Global Cartesian Coordinate System : 	Y-RADIAL OUT,
+> Z-AXIAL AFT
+> ! ANSYS  	Global Cartesian Coordinate System : 	X-RADIAL OUT,
+> Y-AXIAL AFT
+>  
+> ulcs=40 ! Undefined Local Coordinate System
+> loca,ulcs
+>  
+> loca,ulcs,,,,,-90,  0,-90 $ csys,ulcs $ allsel $ transfer,0,,all ! UG
+> to ANSYS 
+> loca,ulcs,,,,, 90, 90,  0 $ csys,ulcs $ allsel $ transfer,0,,all !
+> SIESTA to ANSYS 
+>  
+> loca,ulcs,,,,,-90,  0,-90 $ csys,ulcs $ allsel $ transfer,0,,all !
+> SIESTA to UG    
+> loca,ulcs,,,,, 90, 90,  0 $ csys,ulcs $ allsel $ transfer,0,,all !
+> ANSYS  to UG    
+>  
+> loca,ulcs,,,,,-90,  0,-90 $ csys,ulcs $ allsel $ transfer,0,,all !
+> ANSYS  to SIESTA
+> loca,ulcs,,,,, 90, 90,  0 $ csys,ulcs $ allsel $ transfer,0,,all ! UG
+> to SIESTA
+>  
+> csys,0 $ dsys,0 $ csde,ulcs $ /reset $ /vie,,.5,-1,-1 $ /vup,,x $
+> eplot ! ANSYS  SYSTEM
+> csys,0 $ dsys,0 $ csde,ulcs $ /reset $ /vie,,-1,-1,.5 $ /vup,,z $
+> eplot ! UG     SYSTEM
+> csys,0 $ dsys,0 $ csde,ulcs $ /reset $ /vie,,-1,.5,-1 $ /vup,,y $
+> eplot ! SIESTA SYSTEM
+> ######################################################################
+> ########
+>  
+> For element mesh associated with solid models, use 'vtran' command
+> instead of 'transfer', as shown above, to transfer all entities, the
+> format is:     vtran,0,all,,,,,1 ! See ANSYS manual for details
+> 
+> To verify the transformation, make a plot before and after by choosing
+> the appropriate line(with an eplot command at the end). The
+> orientation should not change.
+> 
+> Example: Transfer a mesh with solid model from UG system to ANSYS
+> system:
+> 
+> ulcs=40 ! Undefined Local Coordinate System
+> loca,ulcs
+> allsel
+> csys,0 $ dsys,0 $ csde,ulcs $ /reset $ /vie,,-1,-1,.5 $ /vup,,z $
+> eplot ! UG     SYSTEM
+> loca,ulcs,,,,,-90,  0,-90 $ csys,ulcs $ allsel $ transfer,0,,all ! UG
+> to ANSYS 
+> csys,0 $ dsys,0 $ csde,ulcs $ /reset $ /vie,,.5,-1,-1 $ /vup,,x $
+> eplot ! ANSYS  SYSTEM
+> 
+> You should see two identical plots.
+> 
+> 
+> Dah-Ding Wang
+> Dah-Ding Wang
+> Phone: 513-243-2259 / 8-332-2259
+> e-mail: Dah-Ding.Wang@ae.ge.com
+> 
+

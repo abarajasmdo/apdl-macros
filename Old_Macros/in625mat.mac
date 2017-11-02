@@ -1,0 +1,55 @@
+/nopr
+!
+!
+!             in625mat.mac  a macro to assign IN625 properties to a material table
+!
+!             usage:  in625mat,arg1     where arg1=desired table for property
+!                                                           i.e., in625mat,8 would place IN625 material
+!                                                           properties in table 8.
+!
+/COM
+/COM
+/COM     CREATED BY ESPEC_ANS : 9 / 15 /   92
+/COM
+/COM
+/COM============================================================================
+/COM
+/COM     ***  INCO 625  S   ***     ESPEC PROPERTY FILE DATED   MAR31'89
+/COM
+/COM                              E         G         A         K         C
+/COM
+/COM     RED BOOK CURVE #     62101     62101     62101      1968         0
+/COM
+/COM============================================================================
+mpde,all,arg1
+MPTEMP
+MPTEMP,1,  70.
+DENS,      arg1, .79016E-03
+MPTGEN,1,16,  50.,  90.
+MPDATA,  EX,      arg1, 1, .29900E+08, .29540E+08, .29180E+08, .28800E+08
+MPDATA,  EX,      arg1, 5, .28400E+08, .28000E+08, .27600E+08, .27200E+08
+MPDATA,  EX,      arg1, 9, .26750E+08, .26300E+08, .25850E+08, .25370E+08
+MPDATA,  EX,      arg1,13, .24850E+08, .24320E+08, .23750E+08, .23150E+08
+MPTGEN,1,16,  50.,  90.
+MPDATA, GXY,      arg1, 1, .11396E+08, .11249E+08, .11103E+08, .10948E+08
+MPDATA, GXY,      arg1, 5, .10786E+08, .10623E+08, .10460E+08, .10297E+08
+MPDATA, GXY,      arg1, 9, .10114E+08, .99308E+07, .97476E+07, .95523E+07
+MPDATA, GXY,      arg1,13, .93406E+07, .91249E+07, .88930E+07, .86488E+07
+MPTGEN,1,16,  50.,  90.
+MPDATA,NUXY,      arg1, 1, .31186E+00, .31295E+00, .31406E+00, .31527E+00
+MPDATA,NUXY,      arg1, 5, .31658E+00, .31793E+00, .31932E+00, .32076E+00
+MPDATA,NUXY,      arg1, 9, .32243E+00, .32416E+00, .32596E+00, .32795E+00
+MPDATA,NUXY,      arg1,13, .33021E+00, .33261E+00, .33533E+00, .33834E+00
+MPTGEN,1,16, 200.,  80.
+MPDATA,ALPX,      arg1, 1, .71300E-05, .71800E-05, .72300E-05, .72800E-05
+MPDATA,ALPX,      arg1, 5, .73300E-05, .73900E-05, .74600E-05, .75300E-05
+MPDATA,ALPX,      arg1, 9, .76100E-05, .77000E-05, .78000E-05, .79200E-05
+MPDATA,ALPX,      arg1,13, .80500E-05, .81900E-05, .83600E-05, .85400E-05
+MPTGEN,1,16, -65., 125.
+MPDATA, KXX,      arg1, 1, .11573E-03, .12862E-03, .14173E-03, .15508E-03
+MPDATA, KXX,      arg1, 5, .16866E-03, .18247E-03, .19651E-03, .21079E-03
+MPDATA, KXX,      arg1, 9, .22529E-03, .24003E-03, .25500E-03, .27019E-03
+MPDATA, KXX,      arg1,13, .28562E-03, .30128E-03, .31718E-03, .33330E-03
+MPDATA,   C,      arg1,0.0
+/gopr
+

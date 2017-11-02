@@ -1,0 +1,30 @@
+!LFILLT,250,247,.025, , 
+!a=_return 
+!
+!  chamfer.mac   macro makes 45 deg chamfers
+!		using the  lfillt command
+!
+/PMACRO
+PARSAV
+CM,_MKP,KP
+CM,_MAC,LINE
+*ASK,CSIZE,CHAMFER SIZE (in.) (for 45 deg chamfer),0
+*msg,info
+SELECT INTERSECTING LINES
+LSEL,R,P
+L1=LSNEXT(0)
+L2=LSNEXT(L1)
+LFILLT,L1,L2,CSIZE
+CMSEL,U,_MAC
+LRAD=LSNEXT(0)	!GET FILLET LS #
+KPLS
+K1=KPNEXT(0)
+K2=KPNEXT(K1)
+LDELE,LRAD
+L,K1,K2
+CMSEL,A,_MAC
+CMSEL,A,_MKP
+CMDELE,_MAC
+CMDELE,_MKP
+LPLO
+PARRES

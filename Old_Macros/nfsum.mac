@@ -1,0 +1,9 @@
+/nopr
+/out,NFSUM.lis
+nforc
+/out
+/sys,nfsum NFSUM.lis
+/sys,mv NFSUM.lis.tmp NFSUM.lis
+/gopr
+*uilist,NFSUM.lis
+

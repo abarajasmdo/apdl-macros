@@ -1,0 +1,35 @@
+/nopr
+!
+!   klpx.mac  A macro to create a keypoint where a line
+!                    intersects the X plane at a given X value.
+!
+!   usage:   kplx,line number,X plane coordinate
+!
+!
+*get,kp1,line,arg1,kp,1
+*get,kp2,line,arg1,kp,2
+!
+*get,kp1x,kp,kp1,loc,x
+*get,kp1y,kp,kp1,loc,y
+*get,kp1z,kp,kp1,loc,z
+
+
+*get,kp2x,kp,kp2,loc,x
+*get,kp2y,kp,kp2,loc,y
+*get,kp2z,kp,kp2,loc,z
+
+y=kp1y+((kp2y-kp1y)*(arg2-kp1x))/(kp2x-kp1x)
+z=kp1z+((kp2z-kp1z)*(arg2-kp1x))/(kp2x-kp1x)
+
+*get,kmax,mxkp
+
+kpid=kmax+1
+
+k,kpid,arg2,y,z
+
+*msg,info,kpid,arg2,y,z
+Keypoint %i created at x= %g y= %g z= %g
+*ask,enter,key to clear screen
+
+
+

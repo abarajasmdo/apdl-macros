@@ -1,0 +1,98 @@
+/nopr
+!
+!
+!   SCLAMP.MAC    A macro to allow slippage between
+!                 two elements that represend 
+!                 a pipe and it's clamp.
+!
+!                 The old clamp element is deleted and
+!                 and a new clamp element is generated
+!                 with the same element number, mat,
+!                 real, and type. The new clamp is generated
+!                 .05 inches away from the old clamp to 
+!                 tube interface. This is done so that
+!                 nummrg,node may be used and you will
+!                 not lose your coupling. The new clamp
+!                 clamp is coupled to the tube with only
+!                 ux (ux is along the tube axis) remaining
+!                 free. The current(prior to issuing this 
+!                 macro) csys, mat, type, and real are restored.
+!
+!   Usage:    sclamp, tube elem no., clamp elem no.
+!
+*get,nt1,elem,arg1,node,1
+*get,nt2,elem,arg1,node,2
+*get,nc1,elem,arg2,node,1
+*get,nc2,elem,arg2,node,2
+!
+*if,nt1,eq,nc1,:branch1
+*if,nt1,eq,nc2,:branch2
+*if,nt2,eq,nc1,:branch3
+!
+ncom=nt2
+ntend=nt1
+ncend=nc1
+nbnd,nt2,nc1,.05
+*go,:branch4
+!
+:branch1
+ncom=nt1
+ntend=nt2
+ncend=nc2
+nbnd,nt1,nc2,.05
+*go,:branch4
+!
+:branch2
+ncom=nt1
+ntend=nt2
+ncend=nc1
+nbnd,nt1,nc1,.05
+*go,:branch4
+!
+:branch3
+ncom=nt2
+ntend=nt1
+ncend=nc2
+nbnd,nt2,nc2,.05
+!
+:branch4
+*get,curr,active,,real
+*get,curm,active,,mat
+*get,curt,active,,type
+*get,clampr,elem,arg2,attr,real
+*get,clampm,elem,arg2,attr,mat
+*get,clampt,elem,arg2,attr,type
+real,clampr
+mat,clampm
+type,clampt
+!
+*get,nmax,mxnd
+!
+edele,arg2
+en,arg2,nmax,ncend
+!
+real,curr
+mat,curm
+type,curt
+!
+*get,curc,active,,csys
+cs,11,0,ncom,ntend,ncend
+!
+nrotat,ncom
+nrotat,nmax
+!
+*get,cpmax,active,,cp
+cpnext=cpmax+1
+cp,cpnext,uy,nn,ncom
+cpnext=cpnext+1
+cp,cpnext,uz,nn,ncom
+cpnext=cpnext+1
+cp,cpnext,rotx,nn,ncom
+cpnext=cpnext+1
+cp,cpnext,roty,nn,ncom
+cpnext=cpnext+1
+cp,cpnext,rotz,nn,ncom
+!
+csys,curc
+!
+/gopr

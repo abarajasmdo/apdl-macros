@@ -1,0 +1,15 @@
+!/nopr
+/pmacro
+cm,_temp_,line
+lsel,r,p
+gnum=arg1
+!*ask,gnum,gap number,0
+latt,,gnum
+cm,gap%gnum%i,line
+cmsel,,_temp_
+cmdele,_temp_
+gnum=
+/gopr
+!/replo
+
+

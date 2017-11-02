@@ -1,0 +1,14 @@
+/nopr
+parsav
+/pmacro
+cm,temp_,line
+lsel,r,p
+/nopr
+ls=lsnext(0)
+t_ang=asin(lsx(ls,.5))
+*msg,UI,ls,T_ang
+The tangent angle of line %i is %g degrees
+cmsel,,temp_
+cmdele,temp_
+parres
+/gopr

@@ -1,0 +1,114 @@
+/nopr
+!
+!   MTP.MAC       a macro to enter material proprieties
+!
+!   Usage:  mtp,ref#,ex,dens,alpx,temp
+!
+!           Current available predefined material proprieties
+!                   
+!               enter: 321 for AISI 321
+!               enter: 625 for INCO 625
+!               enter: 325 for TI 3-2.5
+!          
+!           You may also enter user defined material proprieties
+!
+!                ex.  mtp,1,29e8,,9.29e-6
+!                     yields mp,ex,1,29e8
+!                            mp,alpx,1,9.29e-6
+!
+!
+!           you may also combine predefined and user defined materials
+!           proprieties
+!
+!                ex.  mtp,2,321,321,,600
+!
+!           if you use predefined material ex you also get nuxy for 
+!           free 
+!
+*if,arg2,eq,321,:ex321
+*if,arg2,eq,625,:ex625
+*if,arg2,eq,325,:ex325
+mp,ex,arg1,arg2
+:rtnex
+!
+*if,arg3,eq,321,:dens321
+*if,arg3,eq,625,:dens625
+*if,arg3,eq,325,:dens325
+mp,dens,arg1,arg3
+:rtndens
+!
+*if,arg4,eq,321,:alpx321
+*if,arg4,eq,625,:alpx625
+*if,arg4,eq,325,:alpx325
+mp,alpx,arg1,arg4
+:rtnalpx
+!
+!
+*go,:bot
+!
+!
+:ex321
+ex321=2.89d7-7d3*arg5
+mp,ex,arg1,ex321
+a=2.931150660825985D-1
+b=2.160710704628809D-5*arg5+1.356705714546759D-8*arg5**2
+nuxy321=a+b
+mp,nuxy,arg1,nuxy321
+*go,:rtnex
+!
+:ex625
+a=3.004159525538611D7
+b=-3.520486219179034D3*arg5-9.734758100771144D-1*arg5**2
+ex625=a+b
+mp,ex,arg1,ex625
+a=3.117868460794174D-1
+b=7.924993640696215D-6*arg5+7.634245383029165D-9*arg5**2
+nuxy625=a+b
+mp,nuxy,arg1,nuxy625
+*go,:rtnex
+!
+:ex325
+ex325=1.615779191176471D7-4.977985294117647D3*arg5
+mp,ex,arg1,ex325
+a=3.235857738851527D-1
+b=3.163675406302502D-5*arg5+2.441711699456171D-8*arg5**2
+nuxy325=a+b
+mp,nuxy,arg1,nuxy325
+*go,:rtnex
+!
+!
+:dens321
+mp,dens,arg1,0.750518E-3
+*go,:rtndens
+!
+:dens625
+mp,dens,arg1,0.789337E-03
+*go,:rtndens
+!
+:dens325
+mp,dens,arg1,0.419255E-03
+*go,:rtndens
+!
+!
+:alpx321
+a=9.191983402203330D-6
+b=3.941006307850796D-10*arg5
+c=6.023870751387846D-13*arg5**2
+alpx321=a+b+c
+mp,alpx,arg1,alpx321
+*go,:bot
+!
+:alpx625
+a=7.146728334148252D-6
+b=-6.813876705943895D-11*arg5
+c=7.429543939291651D-13*arg5**2
+alpx625=a+b+c
+mp,alpx,arg1,alpx625
+*go,:bot
+!
+:alpx325
+alpx325=5.169300595256990D-6+3.468003394051262D-10*arg5
+mp,alpx,arg1,alpx325
+!
+:bot
+/gopr

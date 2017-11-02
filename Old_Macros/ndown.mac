@@ -1,0 +1,16 @@
+/nopr
+!
+!                   ndown.mac             
+!                                           This macro replaces a node with another
+!                                            node with a lower number.
+!
+!                                    Usage:    ndown,node number,replacement node number
+!
+inc=arg2-arg1                                                            
+nsel,node,arg1
+ngen,2,inc,arg1                                                                                                                                                
+numm,node,1e-15                                                                 
+/gopr
+
+
+

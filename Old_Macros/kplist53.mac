@@ -1,0 +1,38 @@
+!
+! calculates distance between two kps, returns _dist
+! Dan Bohlen  4/1/96
+/nopr
+/pmacro
+!*do,k,1,10
+*get,a_dsys,active,,dsys
+*get,a_csys,active,,csys
+cm,_macro_,kp
+ksel,r,p
+kpt=kpnext(0)
+*GET,NKPS,KP,,COUNT
+/output,KEYPOINT.LIST
+KLIST,ALL, , ,XYZ,NODE,NODE,NODE
+/com,
+/com,LIST DIAMETERS
+/com,--------------
+/COM,
+/nopr
+*DO,I,1,NKPS
+*msg,info,kpt,2*kx(kpt)
+KPoint %I _ Diameter= %g <-----------
+*enddo
+dsys,a_csys
+/gopr
+KLIST,ALL, , ,XYZ,NODE,NODE,NODE
+/out
+/nopr
+*uilist,KEYPOINT.LIST
+dsys,a_dsys
+cmsel,,_macro_
+cmdele,_macro_
+a_dsys=
+a_csys=
+/sys,rm KEYPOINT.LIST
+!klist,p,,,coord
+!*enddo
+/gopr

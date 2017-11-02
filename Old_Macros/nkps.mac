@@ -1,0 +1,44 @@
+ /nopr
+!      Macro nkps.mac
+!       
+!      Usage:      nkps
+!
+!      This macro creates a node where a keypoint is for
+!       all nodes currently selected.
+!   
+!
+!      The coordinate is listed in the currently
+!       selected CSYS.
+!
+x=
+y=
+z=
+lcnt=0
+:top
+*get,knum,kpmx             !   get latest kpoint number
+*if,knum,eq,0,:end
+lcnt=lcnt+1
+*get,nmax,mxnd
+nmax=nmax+1
+*get,x,kx,knum                                                                 
+,y,ky,knum                                                           
+,z,kz,knum                                                                   
+n,nmax,x,y,z
+!*msg,NOTE,nmax,knum
+!(' Created node number  ',f6.0,' from keypoint ',f6.0)
+kpus,,knum
+*get,klft,kpse               !  get number of keypoints left in group
+!*msg,NOTE,klft
+!(' Number of nodes left to generate = ',f6.0) 
+*go,:top
+:end
+!*msg,NOTE,lcnt
+!(' Macro NKPS created a total of',f6.0,' nodes')
+knum=
+lcnt=
+nmax=
+x=
+y=
+z= 
+/gopr
+

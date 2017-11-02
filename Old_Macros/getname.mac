@@ -1,0 +1,8 @@
+NAME=
+*DIM,NAME,CHAR,4
+*get,name(1),active,,jobnam,,start,1
+*get,name(2),active,,jobnam,,start,9
+*get,name(3),active,,jobnam,,start,17
+*get,name(4),active,,jobnam,,start,25
+
+

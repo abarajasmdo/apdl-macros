@@ -1,0 +1,71 @@
+!  
+! macro rabbet.mac  This macro builds STIF 52 gaps between rabbet joints that 
+!   have an interference.  This is done by creating a set of dummy nodes based
+!	on the inner surface to get the stif 52 direction correct.  The inner
+!	node is coupled to the psuedo inner node and a stif 52 is built
+!	between the outer node and the pseudo inner node for the correct dir.
+! 
+!  usage :  rabbet
+!
+! prep:  have component of inner nodes outer nodes, have stif 21 type defined,
+!	stif52 type defined, cylindrical system selected, real constant for 
+!	stif52 and 21 msut be defined
+!
+!  prep
+PARSAV
+csys,11
+eall
+einv  ! unselect all elems
+CMSEL,,INNER
+CMSEL,A,OUTER
+NROTAT,ALL	!  MUST ROTAT FOR CPINTF TO WORK!
+*GET,LNUM,NODE,,NUM,MIN
+*GET,NMAX,MXND
+INC=NMAX-LNUM+10
+*ASK,DISP,TOLER FOR GENERATING INITIAL GAPS,.0001
+TYPE,52
+EINTF,DISP	! make temp 52's to use as definition 
+CM,_ETEMP_,ELEM
+*GET,ENUM,ELEM,,COUNT
+E=ELNEXT(0)
+NGEN,2,INC,INNER,,,-.1  ! CREATE PSUEDO INNER NODE -.1 INBOARD, INCREMENT=INC
+CM,_NTEMP_,NODE
+NROTAT,ALL   !  ROTATE IN CYLIN SYSTEM
+!
+! LOOP CREATES PSUEDO ELEMENT, COUPLES, AND STIF 52'S
+!
+*DO,IT,1,ENUM
+ESEL,R,,,E
+NELEM
+CMSEL,R,INNER
+NINNER=NDNEXT(0)
+NELEM
+CMSEL,U,INNER
+NOUTER=NDNEXT(0)
+!
+!  TWEAK OUTER NODES TO ALIGN EXACTLY WITH INNER
+!
+NMOD,NOUTER,,NY(NINNER),NZ(NINNER)
+TYPE,21
+REAL,21
+CMSEL,,_NTEMP_
+E,NINNER+INC	!  MAKE DUMMY STIF 21'S AT PSUEDO NODES (REQUIRED)
+CP,NEXT,UX,NINNER,NINNER+INC
+,NEXT,UY,NINNER,NINNER+INC
+,NEXT,UZ,NINNER,NINNER+INC
+TYPE,52
+REAL,30
+E,NOUTER,NINNER+INC
+CMSEL,,_ETEMP_
+E=ELNEXT(E)
+*ENDDO
+CMSEL,,_NTEMP_
+NROTAT,ALL
+!
+! CLEAN UP
+!
+CMSEL,,_ETEMP_
+CMDELE,_ETEMP_
+CMDELE,_NTEMP_
+EDELE,ALL
+PARRES,NEW

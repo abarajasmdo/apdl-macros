@@ -1,0 +1,19 @@
+!
+!  nr0t51  rotates selected nodes to "rotor" cylindrical system
+!             x-radial, y-axial, z-circumferiential
+!
+csys,0
+*get,anod,node,,num,min
+*get,loops,node,,count
+*do,q,1,loops
+*afun,deg   ! return degrees vs. radians
+:lp
+thzx=(-1)*atan2(nz(anod),nx(anod))
+nmod,anod,,,,,,thzx
+anod=ndnext(anod)
+*if,anod,eq,0,*exit
+*enddo
+q=
+loops=
+anod=
+thzx=

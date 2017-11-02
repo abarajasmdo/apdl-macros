@@ -1,0 +1,10 @@
+!
+!  hprun5 - macro set sup file deletes to run static analysis on workstation
+!
+fini
+/fdele,emat,dele
+/fdele,esav,dele
+/fdele,tri,dele
+/fdel,erot,dele
+/solu
+solve

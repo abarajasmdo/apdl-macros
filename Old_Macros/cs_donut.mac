@@ -1,0 +1,50 @@
+!/nopr
+/pmacro
+!
+! This macro creates a cylindral coord system
+!  based on at the center of an arc
+!
+!   usage: csarc,line number
+!
+/nopr
+parsav
+get_rout
+/prep7
+pi=3.141592654
+cm,_macro_,line
+csys,0
+imme,0
+*IF,ARG1,LT,1,THEN
+LSEL,R,P
+*ELSE
+LSEL,,,,arg1
+*ENDIF
+!*GET,NL,LINE,,COUNT
+*get,mxkp,mxkp
+!*get,mxnd,node,,num,max
+kp2=mxkp+1
+LN=0
+!*DO,L,1,NL
+LN=LSNEXT(LN)
+kl,LN,.5,kp2	!  MID KPOINT
+*get,kp1,line,LN,kp,1    ! END KPPOINTS
+*get,kp3,line,LN,kp,2
+!/output,crap,asdf
+!nkpt,mxnd+1,kp1
+!nkpt,mxnd+2,kp2
+!nkpt,mxnd+3,kp3
+kcenter,kp,kp1,kp2,kp3,,kp2+1
+k_cent=kpnext(kp2)
+filletr=distkp(k_cent,kp2)
+*msg,warn,filletr
+Fillet radius is %G
+/uis,msgpop,3
+local,99,3,filletr,ky(k_cent),,,-90,,kx(k_cent)-filletr
+/uis,msgpop,defa
+cson
+cmsel,a,_macro_
+cmdele,_macro_
+imme,1
+parres
+/gopr
+

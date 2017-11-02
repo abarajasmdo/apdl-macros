@@ -1,0 +1,275 @@
+From - Fri Mar 12 11:12:18 1999
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2448.0)
+	id G33MRTQW; Thu, 11 Mar 1999 18:21:44 -0500
+Received: from thomas.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA04288; Thu, 11 Mar 1999 18:17:12 -0500
+Received: from ns.ge.com (ns-i.ge.com [10.35.39.24])
+	by thomas.ge.com (8.9.3/8.9.3) with ESMTP id SAA20715
+	for <dan.bohlen@ae.ge.com>; Thu, 11 Mar 1999 18:19:51 -0500 (EST)
+Received: from onelist.com (pop.onelist.com [209.207.164.223])
+	by ns.ge.com (8.9.3/8.9.3) with SMTP id SAA27497
+	for <dan.bohlen@ae.ge.com>; Thu, 11 Mar 1999 18:19:50 -0500 (EST)
+Received: (qmail 27097 invoked by alias); 11 Mar 1999 23:23:08 -0000
+Received: (qmail 27079 invoked from network); 11 Mar 1999 23:23:07 -0000
+Received: from unknown (HELO pluto.ipass.net) (198.79.53.5) by pop.onelist.com with SMTP; 11 Mar 1999 23:23:07 -0000
+Received: from peaktechnology.com (ts4-49-ppp.ipass.net [207.120.205.49]) by pluto.ipass.net (8.9.1a/8.9.1) with ESMTP id SAA23897 for <xansys@onelist.com>; Thu, 11 Mar 1999 18:19:43 -0500 (EST)
+Message-Id: <36E85284.B3D84A4E@peaktechnology.com>
+Date: Thu, 11 Mar 1999 18:32:21 -0500
+From: Chris Kennedy <ckennedy@peaktechnology.com>
+Organization: peaktechnology.com
+X-Mailer: Mozilla 4.5 [en] (WinNT; I)
+X-Accept-Language: en
+To: xansys@onelist.com
+References: <36E7C175.F1FC9480@ae.ge.com>
+Mailing-List: list xansys@onelist.com; contact xansys-owner@onelist.com
+Delivered-To: mailing list xansys@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@ONElist.com>
+Reply-To: xansys@onelist.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Subject: [xansys] Re: Attributes of divided areas.
+X-Mozilla-Status: 8001
+X-Mozilla-Status2: 00000000
+X-UIDL: AAwSGyiAAAwNGbACgBg3YGR0aMGXHKwA
+
+From: Chris Kennedy <ckennedy@peaktechnology.com>
+
+Hi Dan,
+I recently added this 'smart' booleans to my midsurface tool. I'll include a
+subset of the granule and the corresponding macro that is called to
+determine the active attributes. This macro works with areas, and the area
+of 'max area' that also has attributes assigned is deemed the winner. Thus
+the output area will have the attributes assigned from the largest area from
+the given inputs.
+
+I haven't tested the macro a lot but it appears to work.
+
+Granule Subset:
+:!
+:! ----------------------------------------------------------
+:!
+:N Fnc_pMSC_aadd
+:S    237,   118,   112
+:T Cmd_P
+:C ! Fnc_pMSC_aadd
+:A   Add Areas
+:K #(PREP7)
+:H Hlp_C_AADD
+Inp_P
+Cmd_cm,pt_asl,area   ! areas active on call.
+Cmd_ASEL
+ Fld_2
+  Typ_DEF_R
+ Fld_5
+  Prm_[PT_AADD]  Pick or enter planar areas for smart adding
+  Typ_AREA
+  Min_2
+  Cnt_s
+  PCN_1
+Cmd_CM,pt_Y,AREA
+Cmd_PT_WRAP,'PT_SAA'
+Cmd_AADD,ALL
+Cmd_AATT,PT_MAT,PT_REAL,PT_TYPE,PT_ESYS
+Cmd_cmsel,a,pt_asl
+Cmd_APLOT
+:E END
+:!
+:! ----------------------------------------------------------
+:! ----------------------------------------------------------
+:!
+:N Fnc_pMSC_aovlp
+:S    237,   118,   112
+:T Cmd_P
+:C ! Fnc_pMSC_aovlp
+:A   Overlap Areas
+:K #(PREP7)
+:H Hlp_C_AOVLAP
+Inp_P
+Cmd_cm,pt_asl,area   ! areas active on call.
+Cmd_ASEL
+ Fld_2
+  Typ_DEF_R
+ Fld_5
+  Prm_[PT_AOVLP]  Pick or enter planar areas for smart overlapping
+  Typ_AREA
+  Min_2
+  Cnt_s
+  PCN_1
+Cmd_CM,pt_Y,AREA
+Cmd_PT_WRAP,'PT_SAA'
+Cmd_AOVLAP,ALL
+Cmd_AATT,PT_MAT,PT_REAL,PT_TYPE,PT_ESYS
+Cmd_cmsel,a,pt_asl
+Cmd_APLOT
+:E END
+:!
+:! ----------------------------------------------------------
+:! ----------------------------------------------------------
+:!
+:N Fnc_pMSC_aglu
+:S    237,   118,   112
+:T Cmd_P
+:C ! Fnc_pMSC_aglu
+:A   Glue Areas
+:K #(PREP7)
+:H Hlp_C_AGLUE
+Inp_P
+Cmd_cm,pt_asl,area   ! areas active on call.
+Cmd_ASEL
+ Fld_2
+  Typ_DEF_R
+ Fld_5
+  Prm_[PT_AGLUE]  Pick or enter areas for smart glueing
+  Typ_AREA
+  Min_2
+  Cnt_s
+  PCN_1
+Cmd_CM,pt_Y,AREA
+Cmd_PT_WRAP,'PT_SAA'
+Cmd_AGLUE,ALL
+Cmd_AATT,PT_MAT,PT_REAL,PT_TYPE,PT_ESYS
+Cmd_cmsel,a,pt_asl
+Cmd_APLOT
+:E END
+:!
+:! ----------------------------------------------------------
+:!
+
+
+
+macro:
+/noprint
+!
+!
+! PT_SAA.MAC - set area attributes of selected set of areas
+!               based on 'majority' area settings.
+!
+!
+!
+cm,pt_arsl,area   ! selected set of areas on macro entry
+!
+*get,ar20,area,,num,min
+*get,ar21,area,,num,max
+*get,ar22,area,,count
+!
+*DEL,_P_AR(1)
+*DIM,_P_AR,,ar22,5   ! area of area, mat,real,type,esys
+!
+*IF,ar22,le,1,:MINAR   ! below minimum required areas
+
+!aatt,mat,real,type,esys
+PT_AMAX=0   ! max area in selected set
+ar11=0
+!
+============================================================================
+
+*DO,ar10,1,ar22
+    cmsel,s,pt_arsl
+    ar11=arnext(ar11)
+    asel,s,,,ar11
+    *get,ar40,area,ar11,attr,real    ! returns real constant number
+    *get,ar41,area,ar11,attr,mat    ! returns mat number
+    *get,ar42,area,ar11,attr,type    ! returns element type number
+    *get,ar43,area,ar11,attr,esys    ! returns esys number
+    !
+    _P_AR(ar10,2)=ar41  ! mat
+    _P_AR(ar10,3)=ar40  ! real
+    _P_AR(ar10,4)=ar42  ! type
+    _P_AR(ar10,5)=ar43  ! esys
+    !
+    ar45=0
+    *IF,ar40+ar41+ar42+ar43,gt,0,then    ! at least one attribute is set
+        $ASUM
+        *get,ar45,area,,area
+        _P_AR(ar10,1)=ar45
+        !
+        ! find max area
+        !
+        *IF,ar45,gt,PT_AMAX,then
+            PT_AMAX=ar45
+            PT_AIND=ar10
+            PT_ANUM=ar11
+        *ENDIF
+    *ENDIF
+*ENDDO
+!
+=============================================================================
+
+!
+*IF,PT_AMAX,gt,0,then
+    ! an area was input that had attributes set
+    *MSG,NOTE,PT_ANUM
+    PT_SAA: Area attributes determined from area %I
+    !
+    PT_TYPE=_P_AR(PT_AIND,4)
+    PT_MAT=_P_AR(PT_AIND,2)
+    PT_REAL=_P_AR(PT_AIND,3)
+    PT_ESYS=_P_AR(PT_AIND,5)
+    !
+    *VWRITE,PT_TYPE
+    (' TYPE= ',F5.0,TL1,' ')
+    *VWRITE,PT_MAT
+    ('  MAT= ',F5.0,TL1,' ')
+    *VWRITE,PT_REAL
+    (' REAL= ',F5.0,TL1,' ')
+    *VWRITE,PT_ESYS
+    (' ESYS= ',F5.0,TL1,' ')
+*ELSE
+    /com ---
+    /com PT_SAA: No areas had specified attributes.
+    /com ---
+    PT_TYPE=0
+    PT_MAT=0
+    PT_REAL=0
+    PT_ESYS=0
+*ENDIF
+!
+
+cmsel,s,pt_arsl   ! reactive areas that were active on entry
+!
+*DEL,_P_AR(1)
+!
+
+Note: PT_WRAP is a wrapper macro, you don't need it if you're not dealing
+with encrypted macros (this may be non-current info).
+
+
+Dan Bohlen wrote:
+
+> From: Dan Bohlen <dan.bohlen@ae.ge.com>
+>
+> Has this peeve been on the list already?  I have an area that I went to
+> the trouble of setting real/mat/type attributes.  I go to divide the
+> area by a line for meshing purposes and BOTH resulting areas have their
+> attributes reset.
+>
+> I feel a macro coming on.....
+>
+> --
+> Dan Bohlen             Phone: (513) 243-4645 / Dial Comm [8*332-4645]
+> Stress Analyst         Email: dan.bohlen@ae.ge.com  M/D K-105
+> GE Aircraft Engines    Fax:   (513) 243-4888 or 243-4886
+>
+
+--------------------------------------------------------------
+Chris Kennedy               Email: ckennedy@peaktechnology.com
+Providing services to clients utilizing PTC and ANSYS products.
+Independent software developer providing productivity plug-ins
+                           for ANSYS and Pro/ENGINEER software.
+Research Triangle Park, NC  Ph: 919-387-8822 Fax: 919-363-4300
+                                 http://www.peaktechnology.com
+
+
+
+------------------------------------------------------------------------
+Come check out our brand new web site!
+http://www.onelist.com
+Onelist: Making the Internet intimate
+------------------------------------------------------------------------
+To SUBSCRIBE: send blank email to xansys-subscribe@onelist.com
+
+To unsubscribe send blank email to xansys-unsubscribe@onelist.com
+Archived on http://www.onelist.com/archives.cgi/xansys
+Archived on http://www.tu-chemnitz.de/~thieme/ansys/ansys.html

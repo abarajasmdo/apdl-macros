@@ -1,0 +1,127 @@
+From - Thu Apr 20 13:53:28 2000
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2650.21)
+	id 2SCAV9R0; Thu, 13 Apr 2000 09:40:55 -0400
+Received: from unknown-24-5.pilot.net by gemb1.ae.ge.com (8.8.8/1.1.22.3/16Sep99-0217PM)
+	id JAA0000017425; Thu, 13 Apr 2000 09:41:11 -0500 (CDT)
+Received: from unknown-147-100.pilot.net (localhost [127.0.0.1]) by unknown-24-5.pilot.net with ESMTP id GAA29632 for <dan.bohlen@ae.ge.com>; Thu, 13 Apr 2000 06:40:53 -0700 (PDT)
+Received: from b05.egroups.com (b05.egroups.com [207.138.41.189]) by unknown-147-100.pilot.net with SMTP id GAA07831 for <dan.bohlen@ae.ge.com>; Thu, 13 Apr 2000 06:40:52 -0700 (PDT)
+Received: from [10.1.10.35] by b05.egroups.com with NNFMP; 13 Apr 2000 13:40:27 -0000
+Received: (qmail 23639 invoked from network); 13 Apr 2000 13:40:26 -0000
+Received: from unknown (10.1.10.26) by m1.onelist.org with QMQP; 13 Apr 2000 13:40:26 -0000
+Received: from unknown (HELO pluto.ipass.net) (198.79.53.5) by mta1 with SMTP; 13 Apr 2000 13:40:26 -0000
+Received: from thinkpeak.com (thinkpeak.net [209.170.148.35]) by pluto.ipass.net (8.9.3/8.9.3) with ESMTP id JAA19539 for <xansys@onelist.com>; Thu, 13 Apr 2000 09:40:23 -0400 (EDT)
+X-eGroups-Return: sentto-57960-10386-dan.bohlen=ae.ge.com@returns.onelist.com
+Message-ID: <38F5CDA3.55DED257@thinkpeak.com>
+Organization: "for your solutions" Think Peak, Inc.
+X-Mailer: Mozilla 4.7 [en] (WinNT; I)
+X-Accept-Language: en
+To: xansys@onelist.com
+MIME-Version: 1.0
+Mailing-List: list xansys@egroups.com; contact xansys-owner@egroups.com
+Delivered-To: mailing list xansys@egroups.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@egroups.com>
+Date: Thu, 13 Apr 2000 09:37:39 -0400
+X-eGroups-From: Chris Kennedy <ckennedy@thinkpeak.com>
+From: Chris Kennedy <ckennedy@thinkpeak.com>
+Reply-To: xansys@egroups.com
+Subject: [xansys] documentation / material names / real data / long strings 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mozilla-Status: 8001
+X-Mozilla-Status2: 00000000
+X-UIDL: AAALpQYAAAgm5J5JQCgg3Gx0utjVdfJq
+
+I've included a macro that can be used to extract information that has
+been stored in the database log file. This macro finds all :LBL
+constructs in the database. A :LBL can be any valid Ansys characters
+following a colon ":". Therefore you can have different labels for
+different aspects of your model, such as :MAT for material info, :REAL
+for real constant information, :INFO for general notes about the
+analysis, etc. Labels can be repeated. I call the macro LSTDBDOC.
+
+No warranty, liability, support, etc. for this macro. Use it at your own
+risk, it isn't a very complex macro. Just an alternative solution to a
+popular enhancement request.
+
+The macro also extracts the timestamp from each occurrence of starting
+ANSYS, and any other place where ":" may show up such as in a /COM
+statement.
+
+! === START of MACRO ====
+!
+! Think Peak, Inc.      Copyright 2000
+! Chris Kennedy
+!
+! LSTDBDOC.MAC - strip labels from LGWRITE file and post info in *UILIST
+
+!
+! Uses tools which should be on the OS.
+! WinNT - find ":"
+!
+! Unix - grep ":"
+!
+!
+/nopr
+!
+! Create new file with 'no info' text in
+! case there is a problem with the *get or /SYS command
+! following.
+!
+! To have an input file or macro file copied into the
+! database log record use the command /PMACRO. Place
+! /PMACRO within the file to be copied.
+!
+*CREATE,file-lgwnotes,txt
+:NOTE
+:NOTE The OS operation did not function.
+:NOTE
+:NOTE You don't have "find" or "grep" ??
+:NOTE
+*END
+!
+!
+*GET,ar10,'active',,'syname',,'start',7
+!
+LGWRITE,file,lgw,,NONE
+!
+!
+*IF,ar10,eq,'NT', then  !{
+    !
+    /sys, find ":" file.lgw > file-lgwnotes.txt
+    !
+*ELSE
+    !
+    /sys, grep ":" file.lgw > file-lgwnotes.txt
+    !
+*ENDIF  !}
+!
+*UILIST,file-lgwnotes,txt
+!
+/GO
+
+!  === END OF MACRO ===
+
+--
+--------------------------------------------------------------
+Chris Kennedy                    Email: ckennedy@thinkpeak.com
+"for your solutions"     http://www.thinkpeak.com
+Think PEAK, Inc.         ANSYS Channel Partner
+Providing design, analysis, training and implementation services.
+Customized productivity plug-ins for ANSYS software.
+Offering THINK3 CAD products, see http://www.think3.com
+Research Triangle Park, NC  Ph: 919-387-8822 Fax: 919-363-4300
+
+
+
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@onelist.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@onelist.com
+
+ARCHIVED on:
+http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+http://www.eScribe.com/software/xansys/
+             
+

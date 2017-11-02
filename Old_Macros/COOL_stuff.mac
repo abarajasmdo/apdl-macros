@@ -1,0 +1,341 @@
+From - Sat Jan 16 09:14:12 1999
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2232.9)
+	id CYJ61VG1; Fri, 15 Jan 1999 17:57:24 -0500
+Received: from thomas2.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA00081; Fri, 15 Jan 1999 18:08:14 -0500
+Received: from ns.ge.com (ns.ge.com [192.35.39.24])
+	by thomas2.ge.com (8.9.1/8.9.1) with ESMTP id RAA13415
+	for <dan.bohlen@ae.ge.com>; Fri, 15 Jan 1999 17:55:30 -0500 (EST)
+Received: from onelist.com (pop.onelist.com [209.207.135.253])
+	by ns.ge.com (8.9.1/8.9.1) with SMTP id RAA24441
+	for <dan.bohlen@ae.ge.com>; Fri, 15 Jan 1999 17:55:12 -0500 (EST)
+Received: (qmail 21233 invoked by alias); 15 Jan 1999 22:54:14 -0000
+Received: (qmail 21048 invoked from network); 15 Jan 1999 22:54:08 -0000
+Received: from unknown (HELO dalex1.flowserve.com) (12.19.70.7) by pop.onelist.com with SMTP; 15 Jan 1999 22:54:07 -0000
+Received: from kalex1.flowserve.com (KALEX1 [172.31.4.49]) by dalex1.flowserve.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.1960.3) id CTLC07K3; Fri, 15 Jan 1999 16:55:02 -0600
+Received: by KALEX1 with Internet Mail Service (5.5.2232.9) id <CXVJW3ZV>; Fri, 15 Jan 1999 17:56:02 -0500
+Message-Id: <B195C9D0D80AD21181090008C72877A008C7D4@KALEX1>
+From: "Artiles, Tony" <TArtiles@flowserve.com>
+To: "'xansys@onelist.com'" <xansys@onelist.com>
+Date: Fri, 15 Jan 1999 17:56:01 -0500
+X-Mailer: Internet Mail Service (5.5.2232.9)
+Mailing-List: list xansys@onelist.com; contact xansys-owner@onelist.com
+Delivered-To: mailing list xansys@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@ONElist.com>
+Reply-To: xansys@onelist.com
+Mime-Version: 1.0
+Content-Type: multipart/alternative; boundary="----_=_NextPart_001_01BE40DA.39048BF0"
+Subject: [xansys] Re: SELECT Criteria / and improved SelMshd macro
+X-Mozilla-Status: 8001
+X-Mozilla-Status2: 00000000
+X-UIDL: AAgvEAbAAAwNGbACgBg3YGR0aMGXHKwA
+
+From: "Artiles, Tony" <TArtiles@Flowserve.com>
+
+This message is in MIME format. Since your mail reader does not understand
+this format, some or all of this message may not be legible.
+
+------_=_NextPart_001_01BE40DA.39048BF0
+Content-Type: text/plain
+
+John, 
+
+I believe the command you refer to is: 
+        *get,par,Entity,n,ATTR,NELM 
+which I used in the macro below. I simplified it a bit and added a
+second element to allow it to apply also to volumes. 
+
+I suggest that if ANSYS is going to support this (see message by Bob
+Weathers Re: SELECT Criteria CORRECTION), they should generalize it to
+include lines and keypoints (which can also be meshed) as well as
+allowing true 'reselection' capability to be compatible with other
+selection commands. (What I wrote only selects from the full set).
+
+Two thoughts that came to mind as I wrote it: 
+1. Does ANSYS allow macro writers to query whether an argument passed to
+a macro is a character or real? 
+2. How does one query the maximum or total number of a defined entity
+(e.g. areas) without changing the current state of selection? The *GET
+command only seems to access number of selected entities. I know a why
+around it (saving and restoring selection with components), but it is
+not very "elegant." 
+
+Tony 
+===================== 
+! SelMshd, Type, Entity 
+! Type= 0 or 1, to select meshed (default) or unmeshed entities,
+respectively 
+! Entity= 0 or 1, for areas (default) or volumes, respectively 
+ar36='eq' 
+*if,arg1,eq,1,then 
+   ar36='gt' 
+*endif 
+ar34='AREA' 
+ar35='A' 
+*if,arg2,eq,1,then 
+    ar34='VOLU' 
+    ar35='V' 
+*endif 
+%ar35%SEL,'all' 
+*get,ar32,%ar34%,0,'COUNT' 
+ar31=0 
+*do,ar30,1,ar32 
+   *GET,ar31,%ar34%,ar31,'NXTH' 
+   *get,ar33,%ar34%,ar31,'ATTR','NELM' 
+   *if,ar33,ar36,0,then 
+        %ar35%SEL,'U',%ar34%,,ar31 
+   *endif 
+*enddo 
+===================== 
+Dr. Tony Artiles, Technology Development Staff Consultant 
+Flowserve Corporation, Fluid Sealing Division 
+2100 Factory St., Kalamazoo MI 49001-4163 
+(616)226-3641   fax: (616)226-3417 e-mail: TArtiles@flowserve.com 
+http://www.flowserve.com <http://www.flowserve.com>  
+
+
+	-----Original Message----- 
+From:   John Swanson [SMTP:John.Swanson@ansys.com] 
+Sent:   Friday, January 15, 1999 2:38 PM 
+To:     'xansys@onelist.com' 
+Subject:        [xansys] Re: SELECT Criteria 
+
+	From: John Swanson <John.Swanson@ansys.com> 
+
+	   I believe this forum had an INQUIRE function some time ago
+which 
+would return the number of 
+elements in an area or volume.  If the number is zero, you can assume 
+the area/volume is unmeshed. 
+John.Swanson 
+
+	> -----Original Message----- 
+> From:Weathers, Bob [SMTP:bweathers@trane.com] 
+> Sent:Friday, January 15, 1999 10:26 AM 
+> To:   'xansys' 
+> Subject:      SELECT Criteria 
+> 
+> I have a need to select/unselect items (volumes & areas) that are 
+> already meshed.  Don't think there's a command for it but I could be 
+> wrong - someone let me know if the command already exists. 
+> 
+> If no command exists and others feel it would be useful, a suggested 
+> format for ANSYS is: 
+> 
+> *SEL, Type, MSHD 
+> 
+> Bob Weathers 
+> bweathers@trane.com 
+> (608)787-2729 
+
+	
+------------------------------------------------------------------------
+
+To unsubscribe from this mailing list, or to change your subscription 
+to digest, go to the ONElist web site, at http://www.onelist.com
+<http://www.onelist.com>  and 
+select the User Center link from the menu bar on the left. 
+------------------------------------------------------------------------
+
+To unsubscribe send blank email to xansys-unsubscribe@onelist.com 
+Archived 12/98 - Present on   http://www.onelist.com/archives.cgi/xansys
+<http://www.onelist.com/archives.cgi/xansys>  
+Archives prior to 12/98 on
+http://www.tu-chemnitz.de/~thieme/ansys/ansys.html
+<http://www.tu-chemnitz.de/~thieme/ansys/ansys.html>  
+
+
+------_=_NextPart_001_01BE40DA.39048BF0
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+
+<META NAME=3D"Generator" CONTENT=3D"MS Exchange Server version =
+5.5.2232.0">
+<TITLE>RE: [xansys] Re: SELECT Criteria / and improved SelMshd =
+macro</TITLE>
+</HEAD>
+<BODY>
+
+<P><FONT SIZE=3D2 FACE=3D"Arial">John,</FONT>
+</P>
+
+<P><FONT SIZE=3D2 FACE=3D"Arial">I believe the command you refer to =
+is:</FONT>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <FONT SIZE=3D2 =
+FACE=3D"Arial">*get,par,Entity,n,ATTR,NELM</FONT>
+<BR><FONT SIZE=3D2 FACE=3D"Arial">which I used in the macro below. I =
+simplified it a bit and added a second element to allow it to apply =
+also to volumes.</FONT>
+</P>
+
+<P><FONT SIZE=3D2 FACE=3D"Arial">I suggest that if ANSYS is going to =
+support this (see message by Bob Weathers Re: SELECT Criteria =
+CORRECTION), they should generalize it to include lines and keypoints =
+(which can also be meshed) as well as allowing true 'reselection' =
+capability to be compatible with other selection commands. (What I =
+wrote only selects from the full set).</FONT></P>
+
+<P><FONT SIZE=3D2 FACE=3D"Arial">Two thoughts that came to mind as I =
+wrote it:</FONT>
+<BR><FONT SIZE=3D2 FACE=3D"Arial">1. Does ANSYS allow macro writers to =
+query whether an argument passed to a macro is a character or =
+real?</FONT>
+<BR><FONT SIZE=3D2 FACE=3D"Arial">2. How does one query the maximum or =
+total number of a defined entity (e.g. areas) without changing the =
+current state of selection? The *GET command only seems to access =
+number of selected entities. I know a why around it (saving and =
+restoring selection with components), but it is not very =
+&quot;elegant.&quot; </FONT></P>
+
+<P><FONT SIZE=3D2 FACE=3D"Arial">Tony</FONT>
+<BR><FONT =
+FACE=3D"Arial">=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D</FONT>
+<BR><FONT FACE=3D"Arial">! SelMshd, Type, Entity</FONT>
+<BR><FONT FACE=3D"Arial">! Type=3D 0 or 1, to select meshed (default) =
+or unmeshed entities, respectively</FONT>
+<BR><FONT FACE=3D"Arial">! Entity=3D 0 or 1, for areas (default) or =
+volumes, respectively</FONT>
+<BR><FONT FACE=3D"Arial">ar36=3D'eq'</FONT>
+<BR><FONT FACE=3D"Arial">*if,arg1,eq,1,then</FONT>
+<BR><FONT FACE=3D"Arial">&nbsp;&nbsp; ar36=3D'gt'</FONT>
+<BR><FONT FACE=3D"Arial">*endif</FONT>
+<BR><FONT FACE=3D"Arial">ar34=3D'AREA'</FONT>
+<BR><FONT FACE=3D"Arial">ar35=3D'A'</FONT>
+<BR><FONT FACE=3D"Arial">*if,arg2,eq,1,then</FONT>
+<BR><FONT FACE=3D"Arial">&nbsp;&nbsp;&nbsp; ar34=3D'VOLU'</FONT>
+<BR><FONT FACE=3D"Arial">&nbsp;&nbsp;&nbsp; ar35=3D'V'</FONT>
+<BR><FONT FACE=3D"Arial">*endif</FONT>
+<BR><FONT FACE=3D"Arial">%ar35%SEL,'all'</FONT>
+<BR><FONT FACE=3D"Arial">*get,ar32,%ar34%,0,'COUNT'</FONT>
+<BR><FONT FACE=3D"Arial">ar31=3D0</FONT>
+<BR><FONT FACE=3D"Arial">*do,ar30,1,ar32</FONT>
+<BR><FONT FACE=3D"Arial">&nbsp;&nbsp; =
+*GET,ar31,%ar34%,ar31,'NXTH'</FONT>
+<BR><FONT FACE=3D"Arial">&nbsp;&nbsp; =
+*get,ar33,%ar34%,ar31,'ATTR','NELM'</FONT>
+<BR><FONT FACE=3D"Arial">&nbsp;&nbsp; *if,ar33,ar36,0,then</FONT>
+<BR><FONT FACE=3D"Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+%ar35%SEL,'U',%ar34%,,ar31</FONT>
+<BR><FONT FACE=3D"Arial">&nbsp;&nbsp; *endif</FONT>
+<BR><FONT FACE=3D"Arial">*enddo</FONT>
+<BR><FONT =
+FACE=3D"Arial">=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">Dr. Tony Artiles, =
+Technology Development Staff Consultant</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">Flowserve =
+Corporation, Fluid Sealing Division</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">2100 Factory St., =
+Kalamazoo MI 49001-4163</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 =
+FACE=3D"Arial">(616)226-3641&nbsp;&nbsp; fax: (616)226-3417 e-mail: =
+TArtiles@flowserve.com</FONT>
+<BR><U><FONT COLOR=3D"#0000FF" SIZE=3D2 FACE=3D"Arial"><A =
+HREF=3D"http://www.flowserve.com" =
+TARGET=3D"_blank">http://www.flowserve.com</A></FONT></U>
+</P>
+<BR>
+<UL>
+<P><FONT SIZE=3D1 FACE=3D"Arial">-----Original Message-----</FONT>
+<BR><B><FONT SIZE=3D1 FACE=3D"Arial">From:&nbsp;&nbsp;</FONT></B> <FONT =
+SIZE=3D1 FACE=3D"Arial">John Swanson [SMTP:John.Swanson@ansys.com]</FONT=
+>
+<BR><B><FONT SIZE=3D1 FACE=3D"Arial">Sent:&nbsp;&nbsp;</FONT></B> <FONT =
+SIZE=3D1 FACE=3D"Arial">Friday, January 15, 1999 2:38 PM</FONT>
+<BR><B><FONT SIZE=3D1 =
+FACE=3D"Arial">To:&nbsp;&nbsp;&nbsp;&nbsp;</FONT></B> <FONT SIZE=3D1 =
+FACE=3D"Arial">'xansys@onelist.com'</FONT>
+<BR><B><FONT SIZE=3D1 =
+FACE=3D"Arial">Subject:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</FONT>=
+</B> <FONT SIZE=3D1 FACE=3D"Arial">[xansys] Re: SELECT Criteria</FONT>
+</P>
+
+<P><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">From: John Swanson =
+&lt;John.Swanson@ansys.com&gt;</FONT>
+</P>
+
+<P><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&nbsp;&nbsp; I =
+believe this forum had an INQUIRE function some time ago which</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">would return the =
+number of</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">elements in an area =
+or volume.&nbsp; If the number is zero, you can assume</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">the area/volume is =
+unmeshed.</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">John.Swanson</FONT>
+</P>
+
+<P><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; -----Original =
+Message-----</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; From:Weathers, =
+Bob [SMTP:bweathers@trane.com]</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; Sent:Friday, =
+January 15, 1999 10:26 AM</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; =
+To:&nbsp;&nbsp; 'xansys'</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; =
+Subject:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SELECT Criteria</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; </FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; I have a need =
+to select/unselect items (volumes &amp; areas) that are</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; already =
+meshed.&nbsp; Don't think there's a command for it but I could =
+be</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; wrong - =
+someone let me know if the command already exists.</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; </FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; If no command =
+exists and others feel it would be useful, a suggested</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; format for =
+ANSYS is:</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; </FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; *SEL, Type, =
+MSHD</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; </FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; Bob =
+Weathers</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; =
+bweathers@trane.com</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">&gt; =
+(608)787-2729</FONT>
+</P>
+
+<P><FONT COLOR=3D"#000000" SIZE=3D2 =
+FACE=3D"Arial">---------------------------------------------------------=
+---------------</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">To unsubscribe from =
+this mailing list, or to change your subscription</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">to digest, go to =
+the ONElist web site, at</FONT><U> <FONT COLOR=3D"#0000FF" SIZE=3D2 =
+FACE=3D"Arial"><A HREF=3D"http://www.onelist.com" =
+TARGET=3D"_blank">http://www.onelist.com</A></FONT></U><FONT =
+COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial"> and</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">select the User =
+Center link from the menu bar on the left.</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 =
+FACE=3D"Arial">---------------------------------------------------------=
+---------------</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">To unsubscribe send =
+blank email to xansys-unsubscribe@onelist.com</FONT>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">Archived 12/98 - =
+Present on&nbsp;&nbsp;</FONT><U> <FONT COLOR=3D"#0000FF" SIZE=3D2 =
+FACE=3D"Arial"><A HREF=3D"http://www.onelist.com/archives.cgi/xansys" =
+TARGET=3D"_blank">http://www.onelist.com/archives.cgi/xansys</A></FONT><=
+/U>
+<BR><FONT COLOR=3D"#000000" SIZE=3D2 FACE=3D"Arial">Archives prior to =
+12/98 on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</FONT><U> <FONT =
+COLOR=3D"#0000FF" SIZE=3D2 FACE=3D"Arial"><A =
+HREF=3D"http://www.tu-chemnitz.de/~thieme/ansys/ansys.html" =
+TARGET=3D"_blank">http://www.tu-chemnitz.de/~thieme/ansys/ansys.html</A>=
+</FONT></U>
+</P>
+</UL>
+</BODY>
+</HTML>
+------_=_NextPart_001_01BE40DA.39048BF0--

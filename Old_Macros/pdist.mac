@@ -1,0 +1,34 @@
+!
+!  pres-dist.mac  calc pres dist  ksi
+!
+/post1
+cm,_temp,node
+*dim,ft,table,25,3
+yloc=0
+*do,row,1,25
+/gopr
+!	select node row by location
+nsel,r,loc,y,yloc-.02,yloc+.02
+*get,chk,node,,count
+*if,chk,ne,9,then
+*msg,warn,chk
+Got %I nodes not nine!
+*endif
+fsum
+*get,xsum,fsum,,item,fx
+*get,ysum,fsum,,item,fy
+*get,zsum,fsum,,item,fz
+stot=sqrt(xsum**2+zsum**2+ysum**2)/.0435
+*vfill,ft(row,0),data,yloc
+*vfill,ft(row,1),data,stot
+cmsel,s,_temp,node
+yloc=yloc+.0435
+/gopr
+*enddo
+stot=
+chk=
+xsum=
+ysum=
+zsum=
+
+

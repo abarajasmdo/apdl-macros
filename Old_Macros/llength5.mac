@@ -1,0 +1,69 @@
+/nopr
+
+!      llength5.mac      Usage: llength,KP1,KP2,L
+
+!            This macro creates a line of length L from keypoint KP1
+!             towards keypoint KP2.
+!     get the coordinates of KP1
+*get,x1,kp,arg1,loc,x                                 
+*get,y1,kp,arg1,loc,y                                                   
+*get,z1,kp,arg1,loc,z                 
+!     get the coordinates of KP2                                       
+*get,x2,kp,arg2,loc,x                                                           
+*get,y2,kp,arg2,loc,y                                                        
+*get,z2,kp,arg2,loc,z                 
+!     calculate the distance from KP2 to KP1                                       
+dx=x2-x1                                                               
+dy=y2-y1                                                                        
+dz=z2-z1 
+ddx=dx*dx
+ddy=dy*dy
+ddz=dz*dz                                                       
+ld=(ddx+ddy+ddz)**.5
+!     calculate a distance ratio "dist" to use to calculate the
+!     coordinates of the endpoint for the new line.        
+dist=arg3/ld
+dxn=dx*dist
+dyn=dy*dist
+dzn=dz*dist
+!     here are the coordinates for the new line
+xn=x1+dxn
+yn=y1+dyn
+zn=z1+dzn
+!     get the highest keypoint number in the model
+*get,mxkp,mxkp
+!     increment the highest keypoint number by one for the new endpoint for the line
+kpn=mxkp+1
+!     create the new keypoint for the end of the new line
+k,kpn,xn,yn,zn
+!     create the new line of lenght L
+l,arg1,kpn
+!     make a message telling what has happened
+*msg,info,arg1,arg2,arg3
+Line Created From Point %i To Point %i Of Length %g     
+*ask,enter,Hit the enter key to clear screen
+                                 
+x1=
+y1=
+z1=
+x2=
+y2=
+z2=
+ddx=
+ddy=
+ddz=
+dx=
+dy=
+dz=
+n1=
+n2=
+dist=
+kpn=
+xn=
+yn=
+zn=
+dxn=
+dyn=
+dzn=
+mxkp=
+/gopr

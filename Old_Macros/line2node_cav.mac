@@ -1,0 +1,10 @@
+*DO,LOOP,1,200
+*msg,info,loop
+doing %i
+*get,check,comp,cav%loop%n,type
+*if,check,eq,0,*cycle
+cmsel,,cav%loop%
+nline
+cm,cav%loop%n,node
+sf,cav%loop%n,pres,
+*enddo

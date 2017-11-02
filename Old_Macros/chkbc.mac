@@ -1,0 +1,37 @@
+!
+!  checks to see if and D's or F's are internal
+!
+nsel,d,-1e9,1e9
+*get,dnd,nsel
+nsel,ext
+nrsel,d,-1e9,1e9
+*get,xdnd,nsel
+*if,dnd,eq,xdnd,:go1
+ids=dnd-xdnd
+*msg,warn,ids
+('There are',F7.1,'nodes in the interior of the model')
+*go:g11
+:go1
+*msg,note
+('Disp bc's o.k.!')
+:g11
+! forces
+nsel,f,-1e9,1e9
+*get,fnd,nsel
+nsel,ext
+nrsel,f,-1e9,1e9
+*get,xfnd,nsel
+*if,dnd,eq,xdnd,:go2
+ids=fnd-xfnd
+*msg,warn,ids
+('There are',F7.1,'nodes in the interior of the model')
+*go,g22
+:go1
+*msg,note
+('Force bc's o.k.!')
+:g22
+ids=
+fnd=
+xfnd=
+dnd=
+xdnd=

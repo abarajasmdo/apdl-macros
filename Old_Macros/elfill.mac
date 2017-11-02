@@ -1,0 +1,117 @@
+!
+!  efill - extrudes elements between a set of stif 63's and a matched
+!          set of nodes on another area
+!
+*if,arg1,gt,0,then
+nelem
+cm,mac_node,node
+cm,mac_elem,elem
+!
+*if,arg2,lt,0,then
+nelem=1
+*else
+nelem=arg2
+*endif
+*get,nod,node,,num,max
+*get,ele,elem,,num,max
+*get,nofn,node,,count
+*get,nofe,elem,,count
+ninc=arg1
+!
+! check to make sure elements are on csys #1
+!csys***
+!nsel,r,loc,z,-.001,.001
+!*get,nchk,node,,count
+!*if,nchk,eq,nofn,then
+!
+!  generate nodes from given set to far end
+!
+! generate intermediate nodes
+!
+*if,nelem,gt,1,then
+cmsel,s,mac_node
+csys,0
+*get,nod,node,,num,max
+*do,nq,1,nofn,1
+nall
+fill,nod,nod+ninc,nelem-1,,,
+cmsel,s,mac_node
+*get,nod,node,nod,nxtl
+*if,nod,eq,0,*exit
+/gopr
+*enddo
+!
+*else
+*endif
+!
+! generate elems  layers of 63's and 45's
+!
+cmsel,s,mac_elem
+nall
+egen,2,ninc,all  *plates on far layer (for further extruding)
+cmsel,u,mac_elem
+cm,next-ele,elem
+!
+! make bricks
+!
+eall
+*get,ele,elem,,num,max
+numstr,elem,ele+1
+type,1
+cmsel,s,mac_elem
+*get,ele,elem,,num,max
+!
+!  first layer
+!
+*do,layer,1,nofe,1
+n1=nelem(ele,1)
+n2=nelem(ele,2)
+n3=nelem(ele,3)
+n4=nelem(ele,4)
+e,n1,n2,n3,n4,n1+ninc/nelem,n2+ninc/nelem,n3+ninc/nelem,n4+ninc/nelem
+*get,ele,elem,ele,nxtl
+*if,ele,eq,0,*exit
+*enddo
+esel,r,stif,,45
+cm,bricks,elem
+!
+*if,nelem,gt,1,then
+!esel,s,,,ele+1,1e7
+cmsel,s,bricks
+egen,nelem,ninc/nelem,all,,,
+*else
+*endif
+ninc=
+nnmax=
+nchk=
+nofe=
+nofn=
+ele=
+nod=
+nelem=
+n1=
+n2=
+n3=
+n4=
+x1=
+y1=
+z1=
+cmdele,mac_node
+cmdele,mac_elem
+cmdele,bricks
+cmdele,mac_nds
+*msg,note
+Component next-ele has next layer of stif 63's for next extrusion
+!*else
+!*msg,warn,arg1
+!ERROR: Some of the elements selected do not lie on csys %I
+*else
+*msg,warn
+Usage: efill,node inc to far end, # of elements to generate
+*endif
+!*endif
+
+
+
+
+

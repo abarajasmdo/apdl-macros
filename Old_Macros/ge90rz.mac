@@ -1,0 +1,536 @@
+/nopr
+!
+! EDITOR'S NOTE:  THE THERMAL GROWTH DATA USED IN THIS MACRO DATES BACK TO
+!	1992.  CONSULT THE LATEST KEY DIMENSION DWG. CONTAINONG CASE THERMAL
+!	GROTH DATA TO VERIFY THE NUMBERS USED BELOW BEFORE USING THE MACRO!
+!
+!     ge90rz.mac  
+!             A macro to calculate the engine case radial and axial thermal growths 
+!            for the GE90 engine.  Applies radial and axial displacements 
+!            on the currently selected nodes.  Also rotates the nodes
+!            to align with a cylindrical coordinate system (csys 11)
+!            which runs down the engine axis.
+!
+!            This macro only places ux (radial) and uz (axial) deflections
+!            on the model.  If you desire to fix the nodes in the other 
+!            directions, you will have to do it before running this macro
+!            (which is easier, like d,all,all) or after (which is harder, like
+!            d,all,uy; d,all,rotx; d,all,roty; d,all,rotz).  
+!
+!            This macro is written for ANSYS 5.0.  A similar macro exists for
+!            ANSYS 4.4A, which is called calcrz44.mac.
+!
+!  Usage: ge90rz  Author: John Crawford     Last Updated: Approx 1992
+!
+!   set csys to zero for creation of cylindrical system 11
+!
+csys,0
+!
+!   create cylindrical system 11 along engine axis
+!
+local,11,1,100,100
+!
+!   set display coordinate system to 11 so x and z will be
+!   read in cylindrical coordinates
+!
+dsys,11
+!
+!   rotate all selected nodes to be aligned with csys 11
+!
+nrot,all
+!
+!   get the lowest node number of the selected nodes to start looping with
+!
+*get,n,node,,num,min
+!
+!   get the highest node number of the selected nodes to use for 
+!   checking to see when the macro is finished
+!
+*get,nmax,node,,num,max
+!
+!   enter the loop which calculates displacements and assigns them
+!   to the selected nodes.
+!
+:loop
+!
+!   get the radial and axial coordinates of the node
+!
+r=nx(n)
+z=nz(n)
+!
+!   a series of if statements to determine where the node
+!   is and what the variables should be for the equation
+!   which calculates axial growth.
+!
+*if,z,lt,201.457,:err
+*if,z,le,222.910,:lp1
+*if,z,le,236.212,:lp2
+*if,z,le,255.376,:lp3
+*if,z,le,262.011,:lp4
+*if,z,le,276.278,:lp5
+*if,z,le,303.193,:lp6
+*if,z,le,309.400,:lp7
+*if,z,le,315.754,:lp8
+*if,z,le,319.140,:lp9
+*if,z,gt,319.140,:err
+!
+!   assign the proper values for the variables in the axial
+!   growth equation
+!
+:lp1
+zl=201.457
+zh=222.910
+dzl=.005
+dzh=.049
+*go,:calcz
+:lp2
+zl=222.910
+zh=236.212
+dzl=.049
+dzh=.101
+*go,:calcz
+:lp3
+zl=236.212
+zh=255.376
+dzl=.101
+dzh=.246
+*go,:calcz
+:lp4
+zl=255.376
+zh=262.011
+dzl=.246
+dzh=.288
+*go,:calcz
+:lp5
+zl=262.011
+zh=276.278
+dzl=.288
+dzh=.388
+*go,:calcz
+:lp6
+zl=276.278
+zh=303.193
+dzl=.388
+dzh=.608
+*go,:calcz
+:lp7
+zl=303.193
+zh=309.400
+dzl=.608
+dzh=.655
+*go,:calcz
+:lp8
+zl=309.400
+zh=315.754
+dzl=.655
+dzh=.705
+*go,:calcz
+:lp9
+zl=315.754
+zh=319.140
+dzl=.705
+dzh=.730
+!
+:calcz
+!
+!   calculate the axial growth for node n 
+!
+dz=((z-zl)/(zh-zl))*(dzh-dzl)+dzl
+!
+!   assign the axial growth to node n
+!
+d,n,uz,dz
+!
+!   start the calculation for radial growth
+!
+!   calculate the temperature at the z value provided
+!   for node n.  check to see where the z value is
+!   and assign the appropriate values for the equation
+!   which calculates temperature t.
+!
+*if,z,lt,201.6,:err
+*if,z,le,206.0,:tl1
+*if,z,le,210.0,:tl2
+*if,z,le,214.0,:tl3
+*if,z,le,218.0,:tl4
+*if,z,le,222.3,:tl5
+*if,z,le,224.0,:tl6
+*if,z,le,226.0,:tl7
+*if,z,le,228.6,:tl8
+*if,z,le,230.0,:tl9
+*if,z,le,231.0,:tl10
+*if,z,le,232.3,:tl11
+*if,z,le,233.0,:tl12
+*if,z,le,235.0,:tl13
+*if,z,le,236.8,:tl14
+*if,z,le,241.6,:tl15
+*if,z,le,243.9,:tl16
+*if,z,le,246.1,:tl17
+*if,z,le,246.9,:tl18
+*if,z,le,248.3,:tl19
+*if,z,le,250.3,:tl20
+*if,z,le,252.0,:tl21
+*if,z,le,256.1,:tl22
+*if,z,le,262.9,:tl23
+*if,z,le,273.1,:tl24
+*if,z,le,293.0,:tl25
+*if,z,le,297.0,:tl26
+*if,z,le,301.0,:tl27
+*if,z,le,304.9,:tl28
+*if,z,le,308.0,:tl29
+*if,z,le,311.0,:tl30
+*if,z,le,314.0,:tl31
+*if,z,le,317.6,:tl32
+*if,z,gt,317.6,:err
+!
+:tl1
+zl=201.6
+zh=206.0
+tzl=363.05
+tzh=389.84
+*go,:calct
+!
+:tl2
+zl=206.0
+zh=210.0
+tzl=363.05
+tzh=438.35
+*go,:calct
+!
+:tl3
+zl=210.0
+zh=214.0
+tzl=438.35
+tzh=488.78
+*go,:calct
+!
+:tl4
+zl=214.0
+zh=218.0
+tzl=488.78
+tzh=542.01
+*go,:calct
+!
+:tl5
+zl=218.0
+zh=222.3
+tzl=542.01
+tzh=566.77
+*go,:calct
+!
+:tl6
+zl=222.3
+zh=224.0
+tzl=566.77
+tzh=592.28
+*go,:calct
+!
+:tl7
+zl=224.0
+zh=226.0
+tzl=592.28
+tzh=596.42
+*go,:calct
+!
+:tl8
+zl=226.0
+zh=228.6
+tzl=596.42
+tzh=674.87
+*go,:calct
+!
+:tl9
+zl=228.6
+zh=230.0
+tzl=674.87
+tzh=795.60
+*go,:calct
+!
+:tl10
+zl=230.0
+zh=231.0
+tzl=795.60
+tzh=797.10
+*go,:calct
+!
+:tl11
+zl=231.0
+zh=232.3
+tzl=797.10
+tzh=725.23
+*go,:calct
+!
+:tl12
+zl=232.3
+zh=233.0
+tzl=725.23
+tzh=624.10
+*go,:calct
+!
+:tl13
+zl=233.0
+zh=235.0
+tzl=624.10
+tzh=630.15
+*go,:calct
+!
+:tl14
+zl=235.0
+zh=236.8
+tzl=630.15
+tzh=955.65
+*go,:calct
+!
+:tl15
+zl=236.8
+zh=241.6
+tzl=955.65
+tzh=1100.3
+*go,:calct
+!
+:tl16
+zl=241.6
+zh=243.9
+tzl=1100.3
+tzh=1159.0
+*go,:calct
+!
+:tl17
+zl=243.9
+zh=246.1
+tzl=1159.0
+tzh=1173.7
+*go,:calct
+!
+:tl18
+zl=246.1
+zh=246.9
+tzl=1173.7
+tzh=1176.2
+*go,:calct
+!
+:tl19
+zl=246.9
+zh=248.3
+tzl=1176.2
+tzh=1170.0
+*go,:calct
+!
+:tl20
+zl=248.3
+zh=250.3
+tzl=1170.0
+tzh=1157.8
+*go,:calct
+!
+:tl21
+zl=250.3
+zh=252.0
+tzl=1157.8
+tzh=1135.8
+*go,:calct
+!
+:tl22
+zl=252.0
+zh=256.1
+tzl=1135.8
+tzh=1130.6
+*go,:calct
+!
+:tl23
+zl=256.1
+zh=262.9
+tzl=1130.6
+tzh=920.58
+*go,:calct
+!
+:tl24
+zl=262.9
+zh=273.1
+tzl=920.58
+tzh=955.78
+*go,:calct
+!
+:tl25
+zl=273.1
+zh=293.0
+tzl=955.78
+tzh=871.63
+*go,:calct
+!
+:tl26
+zl=293.0
+zh=297.0
+tzl=871.63
+tzh=821.07
+*go,:calct
+!
+:tl27
+zl=297.0
+zh=301.0
+tzl=821.07
+tzh=783.05
+*go,:calct
+!
+:tl28
+zl=301.0
+zh=304.9
+tzl=783.05
+tzh=863.57
+*go,:calct
+!
+:tl29
+zl=304.9
+zh=308.0
+tzl=863.57
+tzh=947.23
+*go,:calct
+!
+:tl30
+zl=308.0
+zh=311.0
+tzl=947.23
+tzh=950.59
+*go,:calct
+!
+:tl31
+zl=311.0
+zh=314.0
+tzl=950.59
+tzh=954.54
+*go,:calct
+!
+:tl32
+zl=314.0
+zh=317.6
+tzl=954.54
+tzh=957.55
+!
+:calct
+!
+!   calculate the value for t using the
+!   values selected in the process above.
+!
+t=((z-zl)/(zh-zl))*(tzh-tzl)+tzl
+!
+!   figure out which material is being used at the z 
+!   coordinate provided
+!
+!          Z Coordinate      mlp Number        Material Name
+!           201.6 - 222.3             1                        M152
+!           222.3 - 236.8             2                        IN718
+!           236.8 - 262.9             3                         R220
+!           262.9 - 271.8             2                        IN718
+!           271.8 - 304.9             4                   WASPALLOY
+!           304.9 - 317.6             2                        IN718
+!
+!
+!
+!   depending on the z location of the node, skip down
+!   to the appropriate :mlp_ location and calculate the
+!   thermal expansion coefficient alpha.  
+!
+!   for each material, it was necessary to obtain an 
+!   equation for alpha as a function of temperature. 
+!
+!   this was done by looking up the material in the 
+!   redbook and using the equation listed for 
+!   alpha=f(t) if it's provided, or use the tabular
+!   data from the Honeywell Phystat program 
+!   and using the PC program crvplot to
+!   calculate the equation coefficients necessary
+!   to adequately describe the curve.
+!
+*if,z,lt,201.6,:err
+*if,z,le,222.3,:mlp1
+*if,z,le,236.8,:mlp2
+*if,z,le,262.9,:mlp3
+*if,z,le,271.8,:mlp2
+*if,z,le,304.9,:mlp4
+*if,z,le,317.6,:mlp2
+*if,z,gt,317.6,:err
+!
+!   calculate alpha for M152
+!
+:mlp1
+alpha=(6.749226-(4.56338e-3)*t+(84.68283e-7)*t**2-(3.91673e-9)*t**3)*10e-6
+*go,:calcdr
+!
+!   calculate alpha for IN718
+!
+:mlp2
+alpha=(1.29e-9)*t+7e-6
+*go,:calcdr
+!
+!   calculate alpha for R220
+!
+:mlp3
+alpha=(6.328374e-13)*t**2+(1.592457e-10)*t+6.95099e-6
+*go,:calcdr
+!
+!   calculate alpha for waspalloy
+!
+:mlp4
+alpha=(4.2058e-13)*t**2+(6.98679e-10)*t+6.65924e-6
+!
+!   enter the section which applies the radial displacement
+!   to the node and checks to see if we're done yet.
+!
+:calcdr
+!
+!   calculate radial displacment dr
+!
+dr=r*alpha*(t-70)
+!
+!   apply dr to the node
+!
+d,n,ux,dr
+!
+!   check to see if we've done the last node
+!
+*if,n,ge,nmax,:end
+!
+!   if we haven't done the last node, then get the next 
+!   highest node number
+!
+*get,n,node,n,nxth
+!
+!   go back to the top of the loop
+!
+*go,:loop
+!
+!   enter the error loop which says that node "n" is not
+!   between the min and max values for which data 
+!   is provided.
+!
+:err
+*msg,info,n
+Z coordinate of node %i is outside the limits for which values are known
+*ask,enter,key to clear screen
+!   end of displacement calculation
+:end
+!
+!   reset csys and dsys to the global cartesian system.
+!
+dsys,0
+csys,0
+!
+!   remove the variables used in the macro from the ANSYS database.
+!
+n=
+dz=
+dr=
+nmax=
+zl=
+zh=
+dzl=
+dzh=
+tzl=
+tzh=
+t=
+alpha=
+!
+!   all done
+!
+/gopr
+

@@ -1,0 +1,56 @@
+/nopr
+!
+!    makeplcn.mac   A macro to make a series of 
+!                             displacement plots for animation
+!                             in ANSYS 5.0.
+!
+!                              This macro scales the displacement contours.
+!
+!                 usage:   makeplcn,n,mxsc,mnsc
+!
+!                     where:  n=number of plots from dscale=mnsc to
+!                                      dscale=mxsc
+!                                  mxsc=maximum dscale for deformed shape
+!                                  mnsc=minimum dscale for deformed shape
+!                                                       (optional)
+!
+/user,1
+,2
+,3
+,4
+nsort,u,sum,,1
+*get,cmax,sort,,max
+
+arg1=arg1-1
+/seg,dele
+/seg,multi
+cnt=.1e-9
+*if,arg2,eq,0,then
+     arg2=1
+*endif
+:lp
+scale=arg3+((arg2-arg3)*cnt)/arg1
+/dsca,1,scale
+/dsca,2,scale
+/dsca,3,scale
+/dsca,4,scale
+count=cnt+1
+
+
+*msg,info,count,scale
+Making Plot  %I  Scale =  %G
+
+/cont,all,9,0,,(cmax*arg2/scale)
+
+plns,u,sum
+*if,cnt,ge,arg1,:end
+cnt=cnt+1
+*go,:lp
+:end
+/seg,off
+/dsca,1
+,2
+,3
+,4
+/gopr
+

@@ -1,0 +1,36 @@
+/nopr
+!      Macro ngrkp.mac
+!       
+!      Usage:      ngrkp
+!
+!      This macro creates a node where a keypoint is for the entire group
+!       of selected keypoints.  It unselects the keypoints as it goes.  The node
+!       id's are assigned automatically.
+!       If a node i.d. is not provide, it is assigned nmax+1.
+!   
+!
+!      The coordinate is listed in the currently
+!       selected CSYS.
+!
+x=
+y=
+z=
+:lp1
+*get,kmax,kpmx
+*if,kmax,lt,.5,:end
+*get,nmax,mxnd
+nmax=nmax+1
+*get,x,kx,kmax                                                          
+,y,ky,kmax                                                             
+,z,kz,kmax                                                                   
+n,nmax,x,y,z
+kpus,,kmax
+*go,:lp1
+:end
+nmax=
+x=
+y=
+z= 
+kmax=
+/gopr
+

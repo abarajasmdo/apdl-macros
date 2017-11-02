@@ -1,0 +1,35 @@
+/nopr
+ltot=0
+:top
+*get,n,elmx
+*if,n,le,.5,:end
+! *go,:end
+*get,nlft,esel
+*msg,info,nlft
+('Elements left = ',f8.0)
+*get,n1,en1,n
+*get,n2,en2,n
+*get,x1,nx,n1
+
+*get,y1,ny,n1
+*get,z1,nz,n1
+*get,x2,nx,n2
+*get,y2,ny,n2
+*get,z2,nz,n2
+dx=x2-x1
+dy=y2-y1
+dz=z2-z1
+ddx=dx*dx
+ddy=dy*dy
+ddz=dz*dz
+l=(ddx+ddy+ddz)**.5
+
+ltot=ltot+l
+euse,,n
+*go,:top
+:end
+*msg,info,ltot
+('Total Length = ',f10.4)
+/gopr
+
+

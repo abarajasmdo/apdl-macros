@@ -1,0 +1,37 @@
+cm,_temp_,line
+!
+! usage:  mkgap,real set number of gap  
+!   
+
+xarg1=arg1
+!*ask,xarg2,TYPE 40=uy 41=ux,41
+!xarg2=52
+cmsel,,gap%XARG1%i
+nline,1
+cm,nodei,node
+cmsel,,gap%XARG1%j
+nline,1
+cm,nodej,node
+
+multipro,'start',2
+*cset,1,3,gangle,'Angle [0 axial] [-90 radial] [-999 to bail]',-90
+*cset,4,6,gapval,'gap interference (+) or gap (-)',1e-9
+multipro,'end'
+
+*if,gangle,gt,-900,then
+
+r,xarg1,gangle,1e10,gapval,0,1e9  
+lsgap,xarg1,,12,xarg1,
+)/nopr
+/inp,%xarg1%,inp
+*endif
+
+xarg1=
+xarg2=
+gangle=
+gapval=
+cmsel,,_temp_
+cmdele,nodei
+,nodej
+,_temp_
+)/gopr

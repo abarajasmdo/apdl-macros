@@ -1,0 +1,37 @@
+/pmacro
+
+parsav
+
+*if,arg1,lt,1,then
+*ask,_arc_,arc line number to snap to,1
+*else
+_arc_=arg1
+*enddif
+
+!  create csys at arc center  returns max csys as new
+
+pi=3.141592654
+cm,_macro_,line
+csys,0
+*get,mxkp,mxkp
+kp2=mxkp+1
+LN=_ARC_
+kl,LN,.5,kp2   !  MID KPOINT
+*get,kp1,line,LN,kp,1    ! END KPPOINTS
+*get,kp3,line,LN,kp,2
+kcenter,kp,kp1,kp2,kp3,,kp2+1
+mxcs=csyiqr(,14)        ! get max cs number
+cskp,mxcs+1,1,kp2+1,kp1,kp3
+csys,mxcs+1
+shpp,off
+radius_=distkp(kp2+1,kp1)
+*get,nnds,node,,count
+nd=ndnext(0)
+*do,loop,1,nnds
+nmod,nd,radius_,,,,,,
+nd=ndnext(nd)
+*enddo
+shpp,on
+parres
+)/gopr
+

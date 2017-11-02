@@ -1,0 +1,9 @@
+!
+! modes,# of modes
+!
+! performs modal analysis and gets first # modes
+!
+kan,2
+kay,2,arg1
+kay,3,arg1
+kay,7,arg1

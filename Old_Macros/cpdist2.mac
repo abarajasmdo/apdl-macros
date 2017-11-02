@@ -1,0 +1,40 @@
+/output,cplist
+cplist
+/output,term
+*cfopen,cpcheck
+*get,cpmax,active,,cp
+*vwrite
+( ' CP Set Number   Node 1   Node 2   Distance Between Nodes  ')
+/sys,grep -i node cplist > out
+/sys,grep -v out > cplist
+/sys,sort -k 2 -u cplist > out
+*get,nofnds,node,,,count
+*dim,node,,nofnds,2
+*vread,nodes,out,,,2
+(7x,2I8)
+*do,loop,1,nofnds
+d=distnd(node(loop,1),node(loop,2))
+!
+!   if the distance is greater than .01, jump down to the 
+!   message that flags this line of output
+!
+*if,d,ge,.01,then
+!
+!   write the line of output with out the flag
+!
+*vwrite,cp,n1,n2,d
+(5x,f4.0,8x,f6.0,3x,f6.0,9x,f8.4,'  <-----')
+*ELSE
+*vwrite,cp,n1,n2,d
+(5x,f4.0,8x,f6.0,3x,f6.0,9x,f8.4)
+*ENDIF
+*ENDDO
+*cfclos
+*msg,note
+/////////////////////////////////////////////////////////////////// &
+---> THE NODE PAIRS AND DISTANCES BETWEEN AR ON FILE "cpcheck" &
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
+

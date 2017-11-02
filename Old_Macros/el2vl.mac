@@ -1,0 +1,15 @@
+!
+! write vol comds for elems
+!
+*get,x,elem,,num,min
+*get,nelem,elem,,count
+!
+*cfopen,vol,cmds
+*do,a,1,nelem,1
+*cfwrit,v,nelem(x,1),nelem(x,2),nelem(x,3),nelem(x,4),nelem(x,5),nelem(x,6),nelem(x,7),nelem(x,8)
+!
+*get,x,elem,x,nxth
+*enddo
+*cfclos
+!
+!

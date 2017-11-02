@@ -1,0 +1,13 @@
+! duplicates area with new kpoints /nodes etc.
+/pmacro
+/prep7
+!parsav
+asel,r,p
+cm,_clear_,area
+agen,2,all, , , , , , ,0  
+!cm,_temp_,area
+aclear,_clear_
+adele,_clear_,,,1
+cmdele,_clear_
+!,_temp_
+!

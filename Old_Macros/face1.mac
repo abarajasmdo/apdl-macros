@@ -1,0 +1,17 @@
+et,19,40
+type,19
+mat,1
+real,1
+/pnum,real,1
+elem=0
+:lp1
+*get,elem,elmx,elem
+*if,elem,le,0,:eloop
+*get,n1,en1,elem
+*get,n2,en2,elem
+e,n1,n2
+*go,:lp1
+:eloop
+elem=
+n1=
+n2=

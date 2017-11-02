@@ -1,0 +1,14 @@
+/nopr
+!
+!     arpl.mac     A macro to select and plot areas which
+!                           have a given real constant.
+!
+!                Usage:  arpl,real
+!                             where real = the desired real constant
+!
+arse,real,arg1                                                                  
+aplo                                                                            
+/gopr
+
+
+

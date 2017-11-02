@@ -1,0 +1,7 @@
+!
+!  filedel - does /fdele for Ansys5.1 for static analysis
+!
+/fdele,emat,dele
+/fdele,esav,dele
+/fdele,full,dele
+/fdele,tri,dele

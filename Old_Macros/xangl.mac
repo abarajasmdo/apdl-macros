@@ -1,0 +1,38 @@
+ /nopr
+ !
+ !  angl.mac  a macro to list the slopes of a line at each end
+ !
+ !  arg1=line number
+ !
+ /PMACRO
+ PARSAV
+ FLAG=0
+ *IF,ARG1,LT,1,THEN
+ CM,LINE_,LINE
+ !*MSG,INFO,SELECT ONE LINE
+ ! 
+lsel,r,p
+ARG1=LSNEXT(0)
+ FLAG=1
+ *ENDIF
+ *get,arg11,line,arg1,kp,1
+ *get,arg12,line,arg1,kp,2
+ dy=ky(arg11)-ky(arg12)
+ dx=kx(arg11)-kx(arg12)
+ xangle=atan(dy/dx)
+ ang90=abs(xangle)-90
+ *msg,info,arg1,xangle,ang90
+ Line Number = %i  angle= %g comp. angle= %g 
+ !*msg,info,arg11,lsx(arg1,0),lsy(arg1,0),lsz(arg1,0)
+ !At KP %i  DX = %g  DY = %g  DZ = %g
+ !*msg,info,lsx(arg1,.5),lsy(arg1,.5),lsz(arg1,.5)
+ !At Midpoint   DX = %g  DY = %g  DZ = %g
+ !*msg,info,arg12,lsx(arg1,1),lsy(arg1,1),lsz(arg1,1)
+ !At KP %i  DX = %g  DY = %g  DZ = %g
+ !
+ *IF,FLAG,GT,0,THEN
+ CMSEL,A,LINE_
+ CMDEL,LINE_
+ *ENDIF
+ PARRES
+ /gopr

@@ -1,0 +1,11 @@
+/pbc,temp,,1
+/pbc,heat,,1
+/pbc,cp,,1
+/pbc,ce,,1
+/pbf,hgen,,1
+*ask,ar10,'ENTER 0 TO SHOW CONVECTION, ENTER 1 TO SHOW FLUX',0
+*if,ar10,eq,0, THEN
+/psf,conv,,2
+*ELSE
+/psf,flux,,2
+*ENDIF

@@ -1,0 +1,131 @@
+/nopr
+!
+!    loop to find uxmax and it's node
+eall
+nall
+!  initialize counters, etc.
+uxmx=0
+ux=0
+ndmx=0
+nxmx=0
+!  enter top loop 1
+:tp1
+*get,nsel,nsel
+*if,nsel,le,0,:en1
+!  get max node number in model
+*get,ndmx,ndmx
+!*msg,info,ndmx,ux,uxmx,nxmx
+!(' max node =',f5.0,' ux =',f10.5,' uxmx =',f10.5,' nxmx =',f10.5)
+!*if,ndmx,lt,.5,:en1
+*get,ux,ux,ndmx
+ux=abs(ux)
+*if,ux,lt,uxmx,:lp1
+uxmx=ux
+nxmx=ndmx
+!*stat
+:lp1
+nuse,,ndmx
+*go,:tp1
+:en1
+
+!  max uy displacement
+eall
+nall
+uymx=0
+uy=0
+ndmx=0
+nymx=0
+:tp2
+*get,nsel,nsel
+*if,nsel,le,0,:en2
+*get,ndmx,ndmx
+!*msg,info,ndmx,uy,uymx,nymx
+!(' max node =',f5.0,' uy =',f10.5,' uymx =',f10.5,' nymx =',f10.5)
+!*if,ndmx,lt,.5,:en2
+*get,uy,uy,ndmx
+uy=abs(uy)
+*if,uy,lt,uymx,:lp2
+uymx=uy
+nymx=ndmx
+!*stat
+:lp2
+nuse,,ndmx
+*go,:tp2
+:en2
+
+!  max uz displacement
+eall
+nall
+uzmx=0
+uz=0
+ndmx=0
+nzmx=0
+:tp3
+*get,nsel,nsel
+*if,nsel,le,0,:en3
+*get,ndmx,ndmx
+!*msg,info,ndmx,uz,uzmx,nzmx
+!(' max node =',f5.0,' uz =',f10.5,' uzmx =',f10.5,' nzmx =',f10.5)
+!*if,ndmx,lt,.5,:en3
+*get,uz,uz,ndmx
+uz=abs(uz)
+*if,uz,lt,uzmx,:lp3
+uzmx=uz
+nzmx=ndmx
+!*stat
+:lp3
+nuse,,ndmx
+*go,:tp3
+:en3
+
+
+!  max total td displacement
+eall
+nall
+utmx=0
+ut=0
+ndmx=0
+ntmx=0
+:tp4
+*get,nsel,nsel
+*if,nsel,le,0,:en4
+*get,ndmx,ndmx
+!*msg,info,ndmx,ut,utmx,ntmx
+!(' max node =',f5.0,' ut =',f10.5,' utmx =',f10.5,' ntmx =',f10.5)
+!*if,ndmx,lt,.5,:en4
+*get,ut,disp,ndmx
+ut=abs(ut)
+*if,ut,lt,utmx,:lp4
+utmx=ut
+ntmx=ndmx
+!*stat
+:lp4
+nuse,,ndmx
+*go,:tp4
+:en4
+
+!*msg,info,uxmx,nxmx
+!(' uxmx =',f10.3,' nxmx =',f6.0)
+
+!*msg,info,uymx,nymx
+!(' uymx =',f10.3,' nymx =',f6.0)
+
+!*msg,info,uzmx,nzmx
+!(' uzmx =',f10.3,' nzmx =',f6.0)
+
+!*msg,info,utmx,ntmx
+!(' utmx =',f10.3,' ntmx =',f6.0)
+
+
+*get,load,load
+*get,iter,iter
+*get,freq,freq
+*msg,info,load,iter,freq
+(' Load Step ',f3.0,'  Iteration ',f3.0,' Frequency = ',f8.3)
+*msg,info,nxmx,nymx,nzmx,ntmx
+(' nxmx =',f6.0,' nymx =',f6.0,' nzmx =',f6.0,' ntmx =',f6.0)
+
+*msg,info,uxmx,uymx,uzmx,utmx
+(' uxmx =',f6.3,' uymx =',f6.3,' uzmx =',f6.3,' utmx =',f6.3)
+/gopr
+

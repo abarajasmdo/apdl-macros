@@ -1,0 +1,99 @@
+!/nopr
+!
+!
+/nopr
+!
+!  lregen.mac  a macro to recreate the selected lines.
+!              82 points are created to describe
+!              the new line.
+!
+! useage: lregen,# of keypoints used for new spline
+!		(controls the polynomial order of the line -
+!		higher the order more accuracy for complex
+!		curves, but more computational time for area
+!		generation etc.)
+!
+! BY: John Crawford     Updated: 2/96
+!
+! Development needed:  GET original line end slopes and use at
+!			spline ends.
+!
+!  lnum = number of originally selected lines
+!  lmax = max line ID number in the original set
+!  kmax = max kp ID number in the original set
+!
+!  make sure we're in prep7
+!/prep7
+!  create the new line
+!
+cm,QWERTY,kp
+*if,arg1,gt,2,then
+ksel,r,,,arg1,arg2
+*endif
+*get,nkps,kp,,count
+*if,nkps,gt,80,then
+nkps=80
+*endif
+!	figure out how many of the selected kpoints can be used (by position)
+kpt=kpnext(0)
+klast=kpt
+count=1
+*do,k,1,nkps-1
+!/gopr
+*if,kx(kpnext(kpt)),gt,kx(klast),then
+count=count+1
+klast=kpnext(kpt)
+*endif
+kpt=kpnext(kpt)
+*enddo
+!
+flst,3,count,3
+kpt=kpnext(0)
+klast=kpt
+fitem,3,kpt  ! first keypoint
+*do,kk,1,nkps-1
+!/gopr
+*if,kx(kpnext(kpt)),gt,kx(klast),then
+fitem,3,kpnext(kpt)
+klast=kpnext(kpt)
+*endif
+kpt=kpnext(kpt)
+*enddo
+!
+!  set the starting number for creating lines
+!numstr,line,lineid
+bsplin,,p51x
+!
+!*msg,info,lineid,j,lnum
+!Just recreated spline %i , number %i of %i total splines
+!
+!  finished creating this spline, go back to the top or quit
+!*enddo
+!
+!  delete unneeded keypoints
+!kdel,kpmax+1,kpmax+arg1
+!
+!  select the originally selected keypoints
+!cmse,s,_zdummy
+!
+!  delete the dummy set of keypoints
+!cmde,_zdummy
+!  clean up various parameters
+cmsel,,QWERTY
+cmdele,QWERTY
+csid=
+i=
+j=
+kp1=
+kp2=
+kpmax=
+lineid=
+lmax=
+count=
+lnum=
+ll=
+k=
+kk=
+kpt=
+/gopr
+llist

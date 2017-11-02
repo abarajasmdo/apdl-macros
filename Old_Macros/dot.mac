@@ -1,0 +1,11 @@
+! puts dots on selected nodes
+cm,_tmp,node
+nd=0
+*get,nnds,node,,count
+*do,loop,1,nnds
+nd=ndnext(nd)
+/AN3D,SYMB,3,nx(nd),ny(nd),nz(nd),.5
+*enddo
+loop=
+nnds=
+nd=

@@ -1,0 +1,36 @@
+!    /nopr
+!            usage:   *use,kan2post,arg1
+!                 where  arg1 = frequency of interest
+
+!reset
+
+!stress,s16i,16,27
+
+!,s16j,16,31
+
+!,s18i,18,27
+
+!,s18j,18,31
+!,sigi,16,27
+!,sigi,18,27
+!,sigj,16,31
+!,sigj,18,31
+
+!!,ta16,16,34
+!!,to16,16,35
+!,ta18,18,34
+!,to18,18,35
+!,sene
+!,kene
+
+lclim,4                                                                         
+lcase,1                                                                         
+set,2,arg1                                                                      
+lcase,2                                                                         
+set,3,arg1                                                                      
+lcase,3                                                                         
+set,4,arg1                                                                      
+lcsrss,4,1,2,3
+lcase,4
+
+

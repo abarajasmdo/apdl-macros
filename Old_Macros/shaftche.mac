@@ -1,0 +1,32 @@
+
+/nopr
+
+c***   Check parameters for validity
+
+*if,RLarge,le,RSmall,then
+   RLarge = 2.0*RSmall
+*endif
+
+*if,RFillet,le,0.0,then
+   RFillet = (RLarge-RSmall)/2.0
+*endif
+
+*if,RFillet,gt,0.90*(RLarge-RSmall),then
+   RFillet = 0.90*(RLarge-RSmall)
+*endif
+
+*if,LLarge,lt,RLarge,then
+   LLarge = RLarge
+*endif
+
+*if,LSmall,lt,RSmall,then
+   LSmall = RSmall
+*endif
+
+*if,NFIllet,lt,5,then
+   NFillet = 5
+*endif
+
+*if,NFillet,gt,20,then
+   NFillet = 20
+*endif

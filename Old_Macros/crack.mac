@@ -1,0 +1,12 @@
+!  sets display for crack checking
+!
+/nopr
+/GSAV,
+/graphics,full
+/type,all,0	! see-thru
+/edge,all,1,45	! edges only
+/show,,,1	! vector
+/gopr
+*MSG,NOTE
+Enter command /GRESUM to restore your previous graphic settings
+

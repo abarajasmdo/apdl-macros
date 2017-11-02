@@ -1,0 +1,49 @@
+parsav
+cm,_elems_,elem
+cm,_nodes_,node
+cmsel,,aft_cut  
+!enode   
+scale=1/52
+rsysq=0
+
+fsum,rsysq   
+*get,aftcutx,fsum,,item,fx
+*get,aftcuty,fsum,,item,fy
+*get,aftcutz,fsum,,item,fz
+aft_x=aftcutx*scale
+aft_z=aftcutz*scale
+cmsel,,mid_cut  
+!enode   
+fsum,rsysq   
+*get,midcutx,fsum,,item,fx
+*get,midcuty,fsum,,item,fy
+*get,midcutz,fsum,,item,fz
+mid_x=midcutx*scale
+mid_z=midcutz*scale
+cmsel,,fwd_cut  
+!enode   
+fsum,rsysq   
+*get,fwdcutx,fsum,,item,fx
+*get,fwdcuty,fsum,,item,fy
+*get,fwdcutz,fsum,,item,fz
+fwd_x=fwdcutx*scale
+fwd_z=fwdcutz*scale
+*cfopen,cut,forces
+*cfwrit,/com,  3D cut forces
+,/com
+,fwd_x =fwdcutx*scale
+,fwd_y =fwdcuty*scale
+,fwd_z =fwdcutz*scale
+,mid_x=midcutx*scale
+,mid_y=midcuty*scale
+,mid_z=midcutz*scale
+,aft_x=aftcutx*scale
+,aft_y=aftcuty*scale
+,aft_z=aftcutz*scale
+*cfclos
+*uilist,cut,forces
+cmsel,,_nodes_
+cmsel,,_elems_
+cmdele,_nodes_
+,_elems_
+parres

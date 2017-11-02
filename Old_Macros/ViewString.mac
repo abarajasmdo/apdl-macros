@@ -1,0 +1,19 @@
+! ViewString, 'MyString'
+*GET, AR21, PARM, %ARG1%, DIM, 2
+*CFO, %ARG1%, mac
+   *DO, AR20, 1, AR21
+      AR30 = STRLENG(%ARG1%(1,AR20))-1
+      AR30 = (AR30-MOD(AR30,8))/8
+      *DO, AR40, 0, AR30
+         AR5%AR40% = STRSUB(%ARG1%(1,AR20), 8*AR40+1, 8)
+      *ENDDO
+      *DO, AR40, AR30+1, 7
+         AR5%AR40% = ''
+      *ENDDO
+      *VWR, '%ARG1%', CHRVAL(AR20), AR50, AR51, AR52, AR53, AR54, AR55, AR56, AR57
+(A8, '(1,', A2, ') = ', '''', 8A8, '''')
+   *ENDDO
+*CFC
+*UIL, %ARG1%, mac
+
+

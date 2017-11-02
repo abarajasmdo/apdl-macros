@@ -1,0 +1,20 @@
+BL_LNGTH=5.0
+BL_HT=1.0
+BL_WIDTH=5.0
+BL_RAD=.25
+
+! Load the parametric hole in the block GUI
+~eui,'source [file join [pwd] parablock.tcl]'
+
+! Check if OK was picked in dialog
+*IF,_BUTTON,EQ,0,THEN !{
+
+/PREP7
+/view,1,1,1,1
+BLOCK,-1*BL_LNGTH/2.0,BL_LNGTH/2.0,-1*BL_HT/2.0,BL_HT/2.0,-1*BL_WIDTH/2.0,BL_WIDTH/2.0,
+WPRO,,90
+CYLIND,BL_RAD,,-1*BL_HT,BL_HT,0,360
+WPCSYS,-1,0
+VSBV,1,2
+
+*ENDIF !}

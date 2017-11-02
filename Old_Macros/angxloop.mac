@@ -1,0 +1,30 @@
+/nopr
+!
+!  angxloop.mac
+!
+!             this macro "rotates" a model about the
+!             screen X axis in "arg1" steps, "arg2"
+!             times.
+!
+!        Example:  angxloop,10,5
+!
+!             this will rotate the model about the 
+!             screen X axis 5 times, in 10 degree steps.
+!
+cnt=arg2-1         
+/user    
+/ploff,1,1,1,1                                                         
+:loop                                                                                                                                  
+ang=(arg2-cnt)*(arg1)  
+/angl,1,ang,xs                                                         
+/repl                                                                           
+cnt=cnt-1                                                                       
+*if,cnt,ge,0,:loop                                                              
+:end   
+/ploff                                                                         
+cnt=                                                                            
+ang=                                                                            
+/gopr
+
+
+

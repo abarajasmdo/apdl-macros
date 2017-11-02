@@ -1,0 +1,15 @@
+!
+!  pltdisp.mac - produces pldi for many modes
+!
+*do,ntime,1,arg1,1
+set,1,ntime
+zview
+pldi,1
+iso
+pldi,1
+negiso
+pldi,1
+*enddo
+nplo
+
+

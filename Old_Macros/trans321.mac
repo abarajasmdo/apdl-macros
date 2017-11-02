@@ -1,0 +1,18 @@
+!  makes 3 to 1 transition meshes
+!
+!  make fairly square elements meshed.  Make areas 
+!
+/pmacro
+/nopr
+cm,Etemp,elem
+CM,LTEMP,LINE
+LSAL
+LSINV
+*GET,NOFE,ELEM,NUM,COUNT
+ELE=0
+*DO,LOOP,1,NOFE
+ELE=ELNEXT(0)
+*DO,KPS,1,4
+KNODE,
+
+

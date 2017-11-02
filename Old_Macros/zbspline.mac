@@ -1,0 +1,123 @@
+From - Fri Jul  2 12:36:59 1999
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2448.0)
+	id NW6SH4P7; Thu, 1 Jul 1999 09:31:34 -0400
+Received: from thomas3.ge.com by gemb1.ae.ge.com; (5.65/1.1.8.2/04Nov94-0158PM)
+	id AA10896; Thu, 1 Jul 1999 09:29:28 -0400
+Received: from ns2.ge.com (ns2-i.ge.com [10.35.39.25])
+	by thomas3.ge.com (8.9.3/8.9.3) with ESMTP id JAA05071
+	for <dan.bohlen@ae.ge.com>; Thu, 1 Jul 1999 09:31:31 -0400 (EDT)
+Received: from onelist.com (pop.onelist.com [209.207.164.159])
+	by ns2.ge.com (8.9.3/8.9.3) with SMTP id JAA12729
+	for <dan.bohlen@ae.ge.com>; Thu, 1 Jul 1999 09:31:29 -0400 (EDT)
+Received: (qmail 6550 invoked by alias); 1 Jul 1999 13:30:33 -0000
+Received: (qmail 6545 invoked from network); 1 Jul 1999 13:30:32 -0000
+Received: from unknown (HELO eri.erinet.com) (207.0.229.18) by pop.onelist.com with SMTP; 1 Jul 1999 13:30:32 -0000
+Received: from engfe (dlp76.piqua.eri.net [207.90.107.204]) by eri.erinet.com (8.9.1/8.9.1.18) with SMTP id JAA18119 for <xansys@onelist.com>; Thu, 1 Jul 1999 09:30:45 -0400 (EDT)
+Received: by localhost with Microsoft MAPI; Thu, 1 Jul 1999 09:30:37 +0100
+Message-Id: <01BEC3A4.60BEC340.hpidev@erinet.com>
+From: hpidev <hpidev@erinet.com>
+To: "'xansys@onelist.com'" <xansys@onelist.com>
+Date: Thu, 1 Jul 1999 09:30:36 +0100
+X-Mailer: Microsoft Internet E-mail/MAPI - 8.0.0.4211
+Mailing-List: list xansys@onelist.com; contact xansys-owner@onelist.com
+Delivered-To: mailing list xansys@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@ONElist.com>
+Reply-To: xansys@onelist.com
+Mime-Version: 1.0
+Subject: Re: [xansys] BSPLINE
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAAtHtpAAAwNGbACgBg3YGR0aMGXHKwA
+
+From: hpidev <hpidev@erinet.com>
+
+Yes it is possible, I am including a portion of a macro I wrote that 
+splines n points together.  I typically spline 80-200 points with a single 
+spline.  There is probably a more expeditious way programming this, but it 
+does work.  Hope this helps...
+
+!***CREATE KEYPOINTS & SPLINES***
+CT=0
+*DO,J,1,2*NCROSS,1
+     *DO,I,1,NPOINT,1
+          K,I+CT,KPS(I+CT,1),KPS(I+CT,2),KPS(I+CT,3)
+     *ENDDO
+     FLST,3,NPOINT,1
+     *DO,I,1,NPOINT,1
+          FITEM,3,I+CT
+     *ENDDO
+     BSPLIN,,P51X
+     ALLSEL
+     KSLL,U
+     KDELE,ALL
+     ALLSEL
+     NUMCMP,KP
+     CT = J*NPOINT
+*ENDDO
+
+
+Dave Pullman
+Structural Engineer
+Hartzell Propeller Inc.
+
+-----Original Message-----
+From:	Belloni, Mark (GEAE, YohCo) [SMTP:mark.belloni@ae.ge.com]
+Sent:	Thursday, July 01, 1999 2:00 PM
+To:	'xansys@onelist.com'
+Subject:	[xansys] BSPLINE
+
+From: "Belloni, Mark (GEAE, YohCo)" <mark.belloni@ae.ge.com>
+
+
+
+
+> Is it possible to spline a curve together using more than 6 points in
+> command mode ?
+>
+> I have been able to spline a curve together with more than 6 points
+> using the GUI and picking points with the mouse.
+>
+> I have a large amount of curves to generate, which need about 12 points 
+to
+> define each
+> curve accurately, and was hoping someone knew of an undocumented APDL
+> command to accomplish this.
+>
+> If it cannot be done @ ANSYS 5.5 will it be available in a later version?
+>
+>
+> Mark Belloni
+> GEAE TACoE
+> Lynn, MA
+>
+>
+>
+
+--------------------------- ONElist Sponsor ----------------------------
+
+ONElist members are using Shared Files in great ways!
+http://www.onelist.com
+Are you?  If not, see our homepage for details.
+
+------------------------------------------------------------------------
+To SUBSCRIBE: send blank email to xansys-subscribe@onelist.com
+
+To unsubscribe send blank email to xansys-unsubscribe@onelist.com
+Archived on http://www.onelist.com/archives.cgi/xansys
+Archived on http://www.tu-chemnitz.de/~thieme/ansys/ansys.html
+
+
+--------------------------- ONElist Sponsor ----------------------------
+
+ONElist:  where real people with real interests get connected.
+http://www.onelist.com
+Join a new list today!
+
+------------------------------------------------------------------------
+To SUBSCRIBE: send blank email to xansys-subscribe@onelist.com
+
+To unsubscribe send blank email to xansys-unsubscribe@onelist.com
+Archived on http://www.onelist.com/archives.cgi/xansys
+Archived on http://www.tu-chemnitz.de/~thieme/ansys/ansys.html
+

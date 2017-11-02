@@ -1,0 +1,17 @@
+/nopr
+/pmacro
+parsav
+cm,_temp_,kp
+ksel,r,p
+n1=kpnext(0)
+n2=kpnext(n1)
+ang=atan((ky(n2)-ky(n1))/(kx(n2)-kx(n1)))
+*msg,info,n1,n2,ang,90-ang
+The angle bewteen %i and %i is %G degrees or %g degrees
+cmsel,,_temp_
+cmdele,_temp_
+n1=
+n2=
+ang=
+parres
+/gopr

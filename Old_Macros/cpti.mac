@@ -1,0 +1,14 @@
+!
+!    fill in the appropriate table number for xx
+!
+xx=arg1
+mpde,all,arg1
+mptemp
+mptemp,1,100,250,400,550
+mpda,ex,xx,1,15.5e6,14.72e6,13.8e6,12.85e6
+mpda,nuxy,xx,1,.328,.334,.343,.362
+mptemp
+mptemp,1,200,400,600
+mpda,alpx,xx,1,4.8e-6,5.1e-6,5.3e-6
+mpda,dens,xx,1,4.223e-4
+

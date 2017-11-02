@@ -1,0 +1,31 @@
+/nopr
+!
+!                NBN.MAC      A macro to create nodes between nodes.
+!
+!             Usage: nbn,node1,node2,number of nodes between node1 and node2
+!
+!                                              
+!
+!
+*get,nmax,mxnd
+nstr=nmax+1
+*if,arg3,ge,.5,:lp1
+numn=1
+*go,:lp2
+:lp1
+numn=arg3
+*go,:lp2
+:lp2
+fill,arg1,arg2,numn,nstr,1
+nmax=
+nnum=
+/gopr
+
+
+
+
+
+
+
+
+                                                                      

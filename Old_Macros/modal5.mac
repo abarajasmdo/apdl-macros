@@ -1,0 +1,17 @@
+!
+!  modal5,#modes,lower freq,upper freq
+!
+!  does FULL SUBSPACE (all DOF's) modal and expansion pass
+!
+!  execute in solution phase
+!
+antype,2
+modopt,SUBSPACE,arg1,arg2,arg3
+save
+solve
+fini
+/solu
+expass,on
+mxpand,arg1,arg2,arg3
+solve
+

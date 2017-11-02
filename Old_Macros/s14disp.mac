@@ -1,0 +1,80 @@
+!/nopr
+!
+!   stg14disp.mac   a macro to create postprocessing plots
+!                         for the s=14th stage system of cf6-50
+!                         for seismic excitation and print reaction forces
+!
+!                         usage: stg14disp,# of modes
+/nopr
+cnt=0
+:lp
+cnt=cnt+1
+*if,cnt,gt,arg1,:end
+*if,cnt,gt,1,:m2
+/tlab,.5,.95,mode 1 -        Hz
+*go,:ttt
+:m2
+*if,cnt,gt,2,:m3
+/tlab,.5,.95,mode 2 -        Hz
+*go,:ttt
+:m3
+*if,cnt,gt,3,:m4
+/tlab,.5,.95,mode 3 -        Hz
+*go,:ttt
+:m4
+*if,cnt,gt,4,:m5
+/tlab,.5,.95,mode 4 -        Hz
+*go,:ttt
+:m5
+*if,cnt,gt,5,:m6
+/tlab,.5,.95,mode 5 -        Hz
+*go,:ttt
+:m6
+*if,cnt,gt,6,:m7
+/tlab,.5,.95,mode 6 -        Hz
+*go,:ttt
+:m7
+*if,cnt,gt,7,:m8
+/tlab,.5,.95,mode 7 -        Hz
+*go,:ttt
+:m8
+/tlab,.5,.95,mode     -          Hz
+:ttt
+store,disp,real,rforc
+!
+lclim,10
+lcabs,1
+lcase,1
+/gopr
+set,1,cnt
+/nopr
+lcase,2
+set,2,cnt
+lcase,3
+set,3,cnt
+lcsrss,4,1,2,3
+lcase,4
+!
+/type,1,
+/show,,,1
+eall
+nall
+/view,1,1,1,1
+pldi,1
+/view,1,1
+pldi,1
+/view,1,,1
+pldi,1
+/view,1,,,1
+pldi,1
+!
+!  calculate forces and moments
+!
+/tlab,delete
+csys,11
+/gopr
+prrf
+/nopr
+*go,:lp
+:end
+

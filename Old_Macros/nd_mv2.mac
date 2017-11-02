@@ -1,0 +1,196 @@
+From - Wed Jun 14 11:23:38 2000
+Received: from gemb1.ae.ge.com ([129.202.7.246]) by evbhdmsxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2650.21)
+	id M6SLVFQG; Tue, 13 Jun 2000 20:45:40 -0400
+Received: from unknown-24-15.pilot.net by gemb1.ae.ge.com (8.8.8/1.1.22.3/16Sep99-0217PM)
+	id UAA0000008272; Tue, 13 Jun 2000 20:46:16 -0500 (CDT)
+Received: from unknown-147-100.pilot.net (localhost [127.0.0.1]) by unknown-24-15.pilot.net with ESMTP id LAA16293 for <dan.bohlen@ae.ge.com>; Tue, 13 Jun 2000 11:52:14 -0700 (PDT)
+Received: from fh.egroups.com (fh.egroups.com [208.50.144.71]) by unknown-147-100.pilot.net with SMTP id LAA22441 for <dan.bohlen@ae.ge.com>; Tue, 13 Jun 2000 11:52:12 -0700 (PDT)
+Received: from [10.1.10.36] by fh.egroups.com with NNFMP; 13 Jun 2000 18:51:07 -0000
+Received: (qmail 8463 invoked from network); 13 Jun 2000 18:51:05 -0000
+Received: from unknown (10.1.10.26) by m2.onelist.org with QMQP; 13 Jun 2000 18:51:05 -0000
+Received: from unknown (HELO tmpil001.tmp.allied.com) (198.80.19.2) by mta1 with SMTP; 13 Jun 2000 18:51:04 -0000
+Received: from tmpnt701.allied.com (alliedsignal.com) by tmpil001.tmp.allied.com with SMTP id LAA07163 (InterLock SMTP Gateway 3.0 for <xansys@egroups.com>); Tue, 13 Jun 2000 11:51:01 -0700
+Received: from 131.127.249.187 by tmpnt701.allied.com (InterScan E-Mail VirusWall NT); Tue, 13 Jun 2000 11:47:17 -0700
+Received: by TMPCN190 with Internet Mail Service (5.5.2448.0) id <MX8QF4W3>; Tue, 13 Jun 2000 11:50:36 -0700
+X-eGroups-Return: sentto-57960-12404-960922267-dan.bohlen=ae.ge.com@returns.onelist.com
+Message-Id: <5D9B9C0586F1D311917A00062938808012A894@TMPEX181>
+To: "'xansys@egroups.com'" <xansys@egroups.com>
+X-Mailer: Internet Mail Service (5.5.2448.0)
+List-Unsubscribe: <mailto:xansys-unsubscribe@egroups.com>
+From: "Crawford, John" <john.crawford@honeywell.com>
+MIME-Version: 1.0
+Mailing-List: list xansys@egroups.com; contact xansys-owner@egroups.com
+Delivered-To: mailing list xansys@egroups.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@egroups.com>
+Date: Tue, 13 Jun 2000 11:52:09 -0700
+Reply-To: xansys@egroups.com
+Subject: RE: [xansys] node translations...
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAgL1QYAAAgm5J5JQCgg3Gx0utjVdfJq
+
+I'm sure everybody has one of these macros.  From a dusty corner in my
+macros directory I found this ancient relic that I still use from time to
+time.  It could stand to be updated to more modern programming techniques
+and enhanced to include angles, but I'll leave that for another day.  Using
+*VGET and *VPUT would be faster than a *DO loop.  Maybe I should rewrite
+this thing sooner instead of later.
+
+John Crawford
+Honeywell Engines
+Phoenix, AZ
+john.crawford@honeywell.com
+
+/nopr
+!
+!  nddxdydz.mac  a macro which moves the selected nodes
+!                by dx, dy, and dz.
+!
+!  usage:  nddxdydz,dx,dy,dz,key
+!
+!    where:  dx = change in X direction
+!            dy = change in Y direction
+!            dz = change in Z direction
+!            key = 1 if macro is called by a function granule
+!
+!
+!  written by: John Crawford   date: 8-15-96
+!
+!  if the macro is called by a function granule, the originally
+!  selected nodes are stored in a component called _Y1.  If the
+!  value for key is not equal to zero, the macro will restore the
+!  originally selected nodes and then delete the component.
+!
+!
+!  check to see if we are in /PREP7
+!
+!
+!  _z1=the currently active routine number (17=/PREP7)
+!  _z2=flag to determine if we should perform the macro or not
+!
+!  ar21=xy angle of the node
+!  ar22=yz angle of the node
+!  ar23=zx angle of the node
+!  _z99=node number
+!
+_z1=
+_z2=
+_z2=0
+!
+*get,_z1,active,,rout
+*if,_z1,ne,17,then
+_z2=1
+*endif
+*if,ndinqr(0,13),le,0,then
+
+_z2=1
+*endif
+*if,_z2,eq,0,then
+!   
+!  turn warning messages off
+/uis,msgpop,3
+!
+!  turn off element shape checking
+shpp,off
+!  enter the do loop to offset all the selected nodes
+_z99=
+_z99=0
+*do,i,1,ndinqr(0,13)
+_z99=ndnext(_z99)
+*get,ar21,node,_z99,ang,xy
+*get,ar22,node,_z99,ang,yz
+*get,ar23,node,_z99,ang,zx
+n,_z99,arg1+nx(_z99),arg2+ny(_z99),arg3+nz(_z99),ar21,ar22,ar23
+*enddo
+!   
+!  turn warning messages back on
+/uis,msgpop,2
+!  turn element shape checking back on
+shpp,on
+!
+!  print a message telling the user that the nodes have
+!  been moved
+*msg,info,ndinqr(0,13),arg1,arg2,arg3
+*** Moved %i Nodes DX = %g DY = %g DZ = %g
+*else
+*if,_z1,ne,17,then
+*msg,info
+*** ANSYS MUST BE IN /PREP7 TO MOVE NODES ***
+*endif
+*if,ndinqr(0,13),le,0,then
+*msg,info
+*** NO NODES IN SELECTED SET.  SELECT NODES AND TRY AGAIN ***
+*endif
+*endif
+!  if calling the macro from a granule, select the originally
+!  selected nodes
+*if,arg4,eq,1,then
+cmse,s,_Y1
+cmde,_Y1
+*endif
+!
+!  remove the parameters we created earlier
+i=
+_z1=
+_z2=
+_z99=
+/gopr
+ 
+
+-----Original Message-----
+From: Joseph M. Connell
+To: xansys@egroups.com
+Sent: 6/13/00 11:03 AM
+Subject: [xansys] node translations...
+
+Since we are asking about software enhancements from Ansys, how about a
+simple addition to the Move/Modify menu to allow the user to simply move
+a set of nodes some incremental amount in xyz.  This simple enhancement
+could save me hours in assembly time. 
+
+Currently, we have to copy nodes some incremental distance away, copy
+the elements and increment the node numbers accordingly, then delete the
+original nodes & elements. 
+
+-- 
+
+Joseph M. Connell  II   Mechanical Engineer
+
+Lockheed-Martin Naval Electronics & Surveillance Systems
+
+199 Borton Landing Road, Moorestown, NJ  08057-9027
+
+Mail Stop 101-108     joseph.m.connell@lmco.com
+
+856-722-5073    856-273-5734(fax)
+
+"Life is a tragedy for those who feel, and a comedy for those who
+think."
+  
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@onelist.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@onelist.com
+
+ARCHIVED on:
+http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+<http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html> 
+http://www.eScribe.com/software/xansys/
+<http://www.eScribe.com/software/xansys/> 
+             
+
+
+
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@onelist.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@onelist.com
+
+ARCHIVED on:
+http://www.infotech.tu-chemnitz.de/~messtech/ansys/ansys.html
+http://www.eScribe.com/software/xansys/
+             

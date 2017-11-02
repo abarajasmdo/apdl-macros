@@ -1,0 +1,49 @@
+! © AnsBGA 2002-2003
+!
+! Visit http://www.AnsBGA.com for latest version
+!
+!
+! This AnsKBD free version is used to assign custom key bindings to ANSYS® software.
+!
+! You may download, keep, copy and use this AnsKBD free version,
+! You may upload, distribute or otherwise disseminate this program freely, provided that you:
+! 1) distribute them only in their original, unmodified forms. You may alter your own copies of them, but if you do,
+!    be certain that you do not distribute them to anybody without AnsBGA's explicit permission.
+! 2) include all the associated files (documentation, etc.) with which they are archived here in the same archive and directory,
+!    as applicable.
+! 3) receive no money at all for them, except for reasonable compensation for media and shipping (if applicable).
+! 4) Create a link to AnsBGA.Com from the web site AnsBGA is being distributed from.
+!
+! AnsBGA accept no responsibility for the functionality of this freeware, or for any errors in its object code.
+!
+!
+!------------------------------------------------------------------------------------
+! This program only to be used with ANSYS® version 6.1 or higher.
+! If there is enough interest AnsBGA may make this program available for ANSYS v6.0.
+!------------------------------------------------------------------------------------
+!
+! **************** Installation and usage:******************
+!
+! Unzip and copy all the files in a directory from where you can run ANSYS macros. Your HomePath may be a good location.
+! After starting ANSYS GUI just run the AnsBGA macro.
+!
+!  File Description:
+!      	1. AnsBGA.mac   	: This file, a macro to run the AnsKBD program.
+!	2. AnsBGA.KBD		: Contains key assignment definitions in  "<key> : command" pairs
+!	3. AnsBGA_KBD.tcb	: Main code that sets up the keyboard bindings.
+!
+!  All you have to do is run AnsKBD macro to get you keyboard bindings.
+!
+!  You may need to edit the path to below
+!
+! ***************** Customizing AnsKBD:******************
+! 1. Change the path below
+! 2. Edit AnsBGA.KBD with your custom assignments.
+! <<<<<<<<<<<<<<<<<<<<< You will need to make some change below >>>>>>>>>>>>>>>>>>>>>>>>>>
+~eui,'global abdir; set abdir   "c:/"    '
+! *****************************
+! You need to change "C:/" to your home directory or where ever AnsKBD files are located.
+! Do not use \ at the end of the dir name instead use "/"
+! *****************************
+
+~eui,'source [file join $abdir AnsBGA_KBD.tbc]'

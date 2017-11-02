@@ -1,0 +1,50 @@
+/GOPR
+*MSG,INFO
+ ======================================================================
+*MSG,INFO
+
+*MSG,INFO
+   NRCYC.MAC  ANSYS5.2   VER 1.0   3/25/96  M.J. LARICCHIUTA
+*MSG,INFO
+   Based upon ANSYS5.1 Macro by D.L. BOHLEN
+*MSG,INFO
+
+*MSG,INFO
+          ROTATES NODAL COORDINATE SYSTEM FOR CYCLIC SYMMETRIC MODELING.
+*MSG,INFO
+          THE MODEL SHOULD BE CYCLIC SYMMETRIC ABOUT THE GLOBAL Y-AXIS.
+*MSG,INFO
+         
+*MSG,INFO
+          NODAL DIRECTION
+*MSG,INFO
+
+*MSG,INFO
+               X    -   RADIAL DIRECTION
+*MSG,INFO
+
+*MSG,INFO
+               Y    -   AXIAL DIRECTION
+*MSG,INFO
+
+*MSG,INFO
+               Z    -   TANGENTIAL DIRECTION
+*MSG,INFO
+ 
+/NOPR
+CSYS,0                               ! CHANGE TO GLOBAL COORDINATE SYSTEM
+nrotat,all			! node have to start with zero angles
+*AFUN,DEG                            ! CALCULATE ANGLE IN DEGREE UNITS
+*GET,NNDS,NODE,,COUNT                ! GET NUMBER OF ACTIVE NODES
+*GET,ANOD,NODE,,NUM,MIN              ! GET LOWEST ACTIVE NODE NUMBER
+*DO,I,1,NNDS                         !-- LOOP THROUGH ALL ACTIVE NODES
+NANGL=(-1)*ATAN2(NZ(ANOD),NX(ANOD))  ! CALCULATE ROTATION ANGLE FROM NODE X;Z
+NMOD,ANOD,,,,,,NANGL                 ! MODIFY NODE ROTATION ANGLE
+*GET,ANOD,NODE,ANOD,NXTH             ! GET NEXT HIGHEST NODE NUMBER
+*ENDDO                               !-- AND LOOP TO NEXT NODE, OR END
+ANOD=
+NX=
+NZ=
+NANGL=
+/GOPR
+

@@ -1,0 +1,16 @@
+!
+! macro DBEND
+!
+! input  DBEND,node1,radius
+!
+! macro builds pipe elements jointed at node arg1
+!
+rsize,12     ! why? when I don't use 12
+nsel,node,arg1
+enode
+*get,e1,elmx
+*get,e2,elmn
+nall
+eall
+bend,e1,e2,arg2
+

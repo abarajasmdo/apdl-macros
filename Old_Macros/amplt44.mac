@@ -1,0 +1,65 @@
+!/nopr
+!
+!
+!    amplt44.mac   A macro to make a series of 
+!                             displacement plots for animation
+!                             in ANSYS 44 to display in 50
+!
+!                 usage:   amplt44,#plot,#modes
+!
+!                     where:  n=number of plots from dscale=mnsc to
+!                                      dscale=mxsc
+!                                  mxsc=maximum dscale for deformed shape
+!                                  mnsc=minimum dscale for deformed shape
+!                                                       (optional)
+!
+!/nopr
+mode=1
+:lp1
+store,disp,real,
+lclim,10
+lcabs,1
+lcase,1
+/gopr
+set,1,mode
+lcase,2
+set,2,mode
+lcase,3
+set,3,mode
+lcsrss,4,1,2,3
+lcase,4
+!
+/view,1,1,1,1
+/show,,,1
+/type,1,2
+arg1=arg1-1
+cnt=.1e-9
+plns,disp
+*get,dmax,smx
+scf=5/dmax  !  sets max displacement to 5"
+:lp
+scal=(scf*cnt)/arg1
+/dsca,1,scal
+/dsca,2,scal
+/dsca,3,scal
+/dsca,4,scal
+!count=cnt+1
+
+*msg,info,cnt,mode
+('Making Plot',f3.0,' Mode',f3.0)
+
+pldi
+*if,cnt,ge,arg1,:nxt
+cnt=cnt+1
+*go,:lp
+:nxt
+mode=mode+1
+*if,mode,gt,arg2,:end
+*go,:lp1
+:end
+/dsca,1
+,2
+,3
+,4
+/gopr
+

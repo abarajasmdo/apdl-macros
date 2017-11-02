@@ -1,0 +1,101 @@
+/nopr
+!  mk4tem.mac  for ANSYS44A
+!
+!  A macro to create six material tables so that
+!  ansys will write thermal growth for a given
+!  node based on z coordinate.
+!
+!  This program will use materials 15 thru  20, so be sure the model does not use 
+!  these materials, or create a new model space for these calculations
+!
+!  Use   'mk4tem'   to input this data
+!  Reference tmp4.mac for easy way to list growth data for a node
+!
+!  Engine temp is in six tables due to ansys44a table size limitations
+!  and dual alphas at flanges
+!
+!  Table ranges:
+! table15: z=201.6-222.3
+! table16: z=222.3-236.8
+! table17: z=236.8-262.9
+! table18: z=262.9-271.8
+! table19: z=271.8-304.9
+! table20: z=304.9-317.6
+
+!
+!
+! A better description of engine growth parameters is given in mk2temp.mac and maketemp.mac
+!          Z Coordinate        Material Name
+!           201.6 - 222.3                        M152
+!           222.3 - 236.8                        IN718
+!           236.8 - 262.9                         R220
+!           262.9 - 271.8                        IN718
+!           271.8 - 304.9                   WASPALLOY
+!           304.9 - 317.6                        IN718
+!
+!  Table parameter identification:
+!          temperature   ~axial station
+!          EX            ~case temperature
+!          ALPX          ~ALPX
+!          GXY           ~axial growth
+!
+!
+!  mp,stloc,t1,t2,t3,t4,t5,t6
+
+mptemp,1,201.6,206,210,214,218,222.3
+
+!  mpdata,lab,mat,stloc,c1,c2,c3,c4,c5,c6
+
+mpda,ex,15,1,363.05,389.84,438.35,488.78,542.01,566.77
+mpda,alpx,15,1,.60282e-5,.60323e-5,.60498e-5,.60886e-5,.61435e-5,.61733e-5
+mpda,gxy,15,1,.005293,.01432,.02252,.03073,.03893,.04775
+
+mptemp,1,222.3,224,226,228.6,230,231
+,7,232.3,233,235,236.8
+
+!  mpdata,lab,mat,stloc,c1,c2,c3,c4,c5,c6
+
+mpda,ex,16,1,566.77,592.28,596.42,674.87,795.6,797.1
+mpda,ex,16,7,725.23,624.1,630.15,955.65
+
+
+mpda,alpx,16,1,.77317e-5,.77647e-5,.777e-5,.78712e-5,.8027e-5,.80289e-5
+mpda,alpx,16,7,.79362e-5,.78057e-5,.78135e-5,.82334e-5
+
+mpda,gxy,16,1,.04775,.05326,.06108,.07124,.07672,.08063
+mpda,gxy,16,7,.08571,.08844,.09626,.10545
+
+mptemp,1,236.8,241.6,243.9,246.1,246.9,248.3
+,7,250.3,252,256.1,262.9
+
+mpda,ex,17,1,955.65,1100.3,1159,1173.7,1176.2,1170
+mpda,ex,17,7,1157.8,1135.8,1130.6,920.58
+
+mpda,alpx,17,1,.76726e-5,.78774e-5,.79728e-5,.79967e-5,.80008e-5,.79907e-5
+mpda,alpx,17,7,.79709e-5,.79351e-5,.79267e-5,.76266e-5
+
+mpda,gxy,17,1,.10545,.14177,.15917,.17582,.18187,.19246
+mpda,gxy,17,7,.20759,.22046,.25058,.29423
+
+mptemp,1,0
+mptemp,7,0
+
+mptemp,1,262.9,271.8
+
+mpda,ex,18,1,920.58,951.29
+mpda,alpx,18,1,.81882e-5,.82278e-5
+mpda,gxy,18,1,.29423,.35661
+
+mptemp,1,271.8,273.1,293,297,301,304.9
+
+mpda,ex,19,1,951.29,955.78,871.63,821.07,783.05,863.57
+mpda,alpx,19,1,.76403e-5,.76453e-5,.75518e-5,.75228e-5,.75017e-5,.75464e-5
+mpda,gxy,19,1,.35661,.36572,.52468,.55738,.59007,.62093
+
+mptemp,1,304.9,308,311,314,317.6
+
+mpda,ex,20,1,863.57,947.23,950.59,954.54,957.55
+mpda,alpx,20,1,.81146e-5,.82225e-5,.82269e-5,.82320e-5,.82359e-5
+mpda,gxy,20,1,.62093,.6444,.66759,.6912,.71863
+
+/gop

@@ -1,0 +1,110 @@
+/nopr
+!
+! This macro calculates the radius
+! and center of an arc and creates
+! a keypoint at the arc center
+!
+/com
+/com
+/com
+/com
+/com
+/com
+/com,ARC_CALC-O-MATIC
+/com,Weisbrod Enterprises
+/com,02/27/96
+
+*ask,arg1,LINE NUMBER,0
+*get,lnstat,line,arg1,lsel
+
+
+*if,lnstat,eq,0,then
+ /sys,echo '\007'
+ /com,***************************
+ *msg,info,arg1
+ NO LINE %I IN THIS MODEL 
+ /com,***************************
+ /com
+
+
+*else
+ *if,lnstat,eq,-1,then
+   lsel,a,line,,arg1
+   /nopr
+ *endif
+ csys,0
+ kpal
+ lsal
+ /nopr
+ *get,mxkp,kp,,num,max
+ kp2=mxkp+1
+ kl,arg1,.5,kp2
+ *get,kp1,line,arg1,kp,1
+ *get,kp3,line,arg1,kp,2
+ *get,x1,kp,kp1,loc,x
+ *get,x2,kp,kp2,loc,x
+ *get,x3,kp,kp3,loc,x
+ *get,y1,kp,kp1,loc,y
+ *get,y2,kp,kp2,loc,y
+ *get,y3,kp,kp3,loc,y
+ m1=(y2-y1)/(x2-x1)
+ m2=(y3-y2)/(x3-x2)
+ *if,m2,eq,m1,then
+  /sys,echo '\007'
+  /com,*****************************
+  *msg,info,arg1
+  LINE %I IS A STRAIGHT LINE
+  /com,*****************************
+  /com
+ *else
+  x4=0.5*(x2+x1)
+  y4=0.5*(y2+y1)
+  x5=0.5*(x3+x2)
+  y5=0.5*(y3+y2)
+  nm1=-1/m1
+  nm2=-1/m2
+  nb1=y4-nm1*x4
+  nb2=y5-nm2*x5
+  xc=(nb1-nb2)/(nm2-nm1)
+  yc=nm1*xc+nb1
+  rad=((xc-x1)**2+(yc-y1)**2))**0.5
+  /com
+  /com,Arc Radius/Center Calculator
+  /com
+  *msg,info,arg1,rad,xc,yc
+  Calculation XY Plane (CSYS=0) %/ Line %I %/ Rad: %G %/ XC : %G %/ YC : %G %/
+  *get,mxkp,kp,,num,max
+  k,mxkp+1,xc,yc,0
+  *msg,info,mxkp+1,0,xc,yc
+  Kp %I at (XC,YC) in CSYS %I %/ ( %G, %G) %/
+ *endif
+*endif
+ 
+ 
+*set,lnstat
+*set,mxkp
+*set,kp1
+*set,kp2
+*set,kp3
+*set,x1
+*set,y1
+*set,x2
+*set,y2
+*set,x3
+*set,y3
+*set,x4
+*set,y4
+*set,x5
+*set,y5
+*set,m1
+*set,m2
+*set,nm1
+*set,nm2
+*set,nb1
+*set,nb2
+*set,xc
+*set,yc
+*set,rad
+ 
+/gopr
+

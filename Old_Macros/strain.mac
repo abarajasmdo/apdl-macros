@@ -1,0 +1,60 @@
+!
+!
+!   strain.mac - macro  to correct for total strain calculations
+!        new version uses temperature dependent matl props
+!
+!   ORIGINAL MACRO BY ?, MU=F(TEMP) ADDED NY DAN BOHLEN 5/13/97
+!
+!ORIGINAL MACRO
+!
+!*get, nmx,node,,num, max
+!*dim, v1,,nmx   
+!*dim, v2,,nmx   
+! @ 1100 F pratio approximately is ::
+!prat=0.32    !  CONSTANT MU 
+!*vget, v1(1), node, 1, nl, epeq 
+!*vget, v2(1), node, 1, epel, eqv
+!*vfact,,,1/(1+prat)  
+!*voper, v1(1), v1(1), add, v2(1)
+!*vput, v1(1), node, 1, epto, eqv
+!
+PARSAV
+*get, nmx,node,,num, max
+*DIM,ETOT,,NMX
+*DIM,PLASTIC,,NMX
+*DIM,ELASTIC,,NMX
+NUM_MAT=MPINQR(0,,14)    !GET TOTAL # OF MATLS DEFINED
+ELE=ELNEXT(0)
+*GET,MATL,ELEM,ELE,ATTR,MAT    !GET MATL #
+*GET,NNDS,NODE,,COUNT
+ND=NDNEXT(0)
+*VGET,PLASTIC(1),NODE,1,NL,EPEQ    !ACCUMULATED EQUIV. PLASTIC STRAIN
+*VGET,ELASTIC(1),NODE,1,EPEL,EQV    ! ELASTIC EQUIVALENT STRAIN
+*DO,T,1,NNDS
+! ELASTIC EQUIVALENT STRAIN
+*GET,NTEMP,NODE,ND,BFE,TEMP
+*IF,NUM_MAT,GT,1.2,THEN        !CHECK FOR MULTIPLE MATLS
+CM,_TEMP_,NODE
+NSEL,,,,1
+ENODE
+EUSEL,STIF,40    ! TRY TO WEED OUT SOME NONSTRUCTURAL ELEMENT TYPES
+,STIF,12
+,STIF,48,49
+,STIF,26
+,STIF,52
+ELE=ELNEXT(0)
+*GET,MATL,ELEM,ELE,ATTR,MAT
+*ENDIF
+*GET,MU,NUXY,MATL,TEMP,NTEMP
+!check=PLASTIC(ND)
+ELASTIC(ND)=ELASTIC(ND)/(1+MU)
+ND=NDNEXT(ND)
+*ENDDO
+*VOPER,ETOT(1),PLASTIC(1),ADD,ELASTIC(1)
+*VPUT,ETOT(1),NODE,1,EPTO,EQV    !puts result in this nodal stress for postprocessing
+ETOT=
+PLASTIC=
+ELASTIC=
+PARRES
+
+

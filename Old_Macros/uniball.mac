@@ -1,0 +1,12 @@
+!
+! macro UNIBALL,node1 (base),node2 (connection)
+!
+! macro takes a pipe element connected to a pipe system and to ground and adds 
+! proper coupling and fixities.
+!
+*get,nmin,ndmx
+cs,39,,arg1,arg2,nmin
+csys,39
+nrotat,arg1
+ddele,arg1,all
+d,arg1,ux,,,,,uy,uz,rotx

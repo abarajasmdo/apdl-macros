@@ -1,0 +1,24 @@
+/nopr
+!
+!                     fm18.mac              Forces and Moments on stif18.MAC
+!           
+!                                                This macro sets is used in /POST1 prior to
+!                                                 issuing the SET command , and sets up
+!                                                 the postprocessing for obtaining forces
+!                                                 and moments for STIF18 elements.
+!
+stress,fx8i,18,1                                                                
+,fy8i,18,2                                                                      
+,fz8i,18,3                                                                      
+,mx8i,18,4                                                                      
+,my8i,18,5                                                                      
+,mz8i,18,6                                                                      
+,fx8j,18,7                                                                      
+,fy8j,18,8                                                                       
+,fz8j,18,9                                                                      
+,mx8j,18,10                                                                     
+,my8j,18,11                                                                     
+,mz8j,18,12                                                                     
+/gopr
+
+

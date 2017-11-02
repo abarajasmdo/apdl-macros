@@ -1,0 +1,179 @@
+!/nopr
+!
+!   case1stp.mac   a macro to create postprocessing plots
+!                         for the right side of the 7th stage hpt system
+!                         for seismic excitation
+!
+!                         usage: case1stp,mstart,mend
+!
+cnt=arg1
+!
+!  enter loop for mode plots
+
+!:lp
+!*stat
+!*if,cnt,gt,arg2,:end
+stress,fxi,16,1
+
+,fyi,16,2
+
+,fzi,16,3
+
+,mxi,16,4
+
+,myi,16,5
+
+,mzi,16,6
+
+,fxj,16,7
+
+,fyj,16,8
+
+,fzj,16,9
+
+,mxj,16,10
+
+,myj,16,11
+
+,mzj,16,12
+
+,sigi,16,27
+,sigj,16,31
+
+
+
+lclim,10
+lcabs,1
+lcase,1
+set,1,cnt
+lcase,2
+set,2,cnt
+lcase,3
+set,3,cnt
+lcsrss,4,1,2,3
+lcase,4
+/title,61100 right side w/o fwd or aft brkt   case b dlb
+
+!  set up 4 windows
+
+/reset
+/win,1,ltop
+,2,lbot
+,3,rbot
+,4,rtop
+/type,1,4
+rp4,1
+/view,1,,1
+/angle,1,90,zs
+/view,2,-1
+/view,3,
+!/angle,3,-20
+/view,4,2,1,1
+!/vup,4,-y
+/dist,1,28
+rp3,1
+/auto,4
+/show
+eall
+nall
+! plot 21 is below
+top
+plns,sige
+bot
+plns,sige
+
+!   get tubes
+
+esel,real,1
+ease,real,13
+nele
+top
+plns,sige
+bot
+plns,sige
+
+!  get tees and tabs
+
+esel,real,2
+ease,real,5,6
+nele
+/auto,1
+rp4,1
+top
+! plot 25 is below
+plns,sige
+bot
+plns,sige
+
+!  get flanges and tabs
+
+esel,real,8,9
+nele
+/auto,1
+rp4,1
+top
+plns,sige
+bot
+plns,sige
+
+! get brackets
+
+esel,real,3,4
+ease,real,7
+ease,real,10,11
+ease,real,17
+ease,real,19
+nele
+/auto,1
+rp4,1
+top
+plns,sige
+bot
+! plot 30 is below
+plns,sige
+
+! get brackets w/o high stress elements
+
+esel,real,7
+nele
+enode
+nele
+enode
+einv
+ersel,real,3
+ease,real,10,11
+ease,real,17
+ease,real,19
+ease,real,4
+nele
+top
+plns,sige
+bot
+! plot 32 is the last plot
+plns,sige
+
+
+
+!  calculate forces and moments at flanges
+
+!esel,,
+nsel,,13627,13632
+csys,11
+prrf
+!prst,fxi,fyi,fzi,mxi,myi,mzi
+!prst,fxj,fyj,fzj,mxj,myj,mzj
+
+
+
+eall
+nall
+
+reset
+
+/reset
+/tlab,dele
+!cnt=cnt+1
+!*go,:lp
+!:end
+/gopr
+

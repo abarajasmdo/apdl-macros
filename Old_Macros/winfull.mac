@@ -1,0 +1,13 @@
+/wind,2,dele
+/wind,3,dele
+/wind,4,dele
+/wind,5,dele
+/plop,leg1,0
+/plop,leg2,0
+/plop,leg3,0
+/plop,info,0
+/plop,vers,0
+/plop,frame,1
+/plopts,logo,off
+/wind,1,-1,1.67,-1,1
+/replot

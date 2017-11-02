@@ -1,0 +1,96 @@
+!animset  current limit is 49 plots by /ui command
+/sys,rm *.jpg
+/ui,copy,save,jpeg,grap,colo,norm,port,,100
+*get,rev_,active,,rev
+dmax_=arg1 	! dscale max
+*get,jbname1_,active,,jobnam          ! dscale max
+*if,arg2,gt,1,then   ! set nplots_ if arg2 supplied
+nplots_=arg2
+*else
+nplots_=10
+*endif
+
+_ABORT = 0
+_PROGRS = 0
+AR99 = 0
+AR11 = 5
+AR12 = .10
+AR13 = 5
+*IF,ARG1,NE,0,THEN
+  AR11 = ARG1
+*ENDIF
+*IF,ARG2,NE,0,THEN
+  AR12 = ARG2
+*ENDIF
+*IF,ARG3,NE,0,THEN
+  AR13 = ARG3
+*ENDIF
+
+  *GET,_SMIN,COMMON,,D3COM,,REAL,291
+  *GET,_SMAX,COMMON,,D3COM,,REAL,292
+  *GET,_NUM,GRAPH,1,CONTOUR,NCONT          !  Retrieve number of contours
+  _RNG=(_SMAX-_SMIN)                       !  Total stress range
+  _DDD=_RNG/arg1
+  _MIN=_SMIN                               !  Maximum value for minimum contour
+  _MAX=_SMAX
+  *GET,AR21,GRAPH,1,DSCALE,DMULT
+  _DSC=0.0
+
+*do,_I,1,nplots_
+!/gopr
+!/dsca,1,-1*dmax_+(dmax_*(is_-1)/(nplots_-1)+1e-7
+/replo
+*if,_I,eq,1,then
+/user
+*endif
+!*if,rev_,lt,5.6,then
+!jpeg
+    _PROGRS = _I*(100/AR11)
+    *ABCHECK,_PROGRS
+    _ABORT = _RETURN
+    *IF,_ABORT,GT,0,EXIT
+    _CMX=_RNG*(AR11)
+    _CMX=(_CMX/_I)+_SMIN
+    /CONT,ALL,_NUM,_MIN,,_CMX
+    /DSCAL,1,(AR21*_DSC)+0.0000001
+    /REPLOT
+    _DSC=_DSC+_DDD
+
+/title,plot %_I%
+/ui,copy,save,jpeg,grap,colo,norm,port,,100
+!*else
+!jpeg
+!/ui,copy,save,jpeg,grap,colo,norm,port,,100
+!*endif
+*msg,info,_I
+Plot # %I done
+*enddo
+!*if,rev_,lt,5.6,then
+type_='jpg'
+!*else
+!type_='jpg'
+!*endif
+*stat,type_
+/out,animrun_.in
+*vwrite,jbname1_
+(a,a)
+*vwrite,type_
+(a)
+*vwrite,nplots_
+(f5.0)
+/out
+/auto
+new='test'
+/syp,fix,%jbname1_%,%new%
+/sys,sed 's/  *//' animrun_.in > animrun__.in
+/sys, anim.run<animrun__.in
+!/sys,rm -f animrun_.in
+!/sys,rm -f animrun__.in
+*stat,rev_
+*stat,type_
+jbname1_=
+jbname2_=
+dmax_=
+nplots_=
+
+/eof

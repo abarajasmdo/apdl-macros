@@ -1,0 +1,252 @@
+From - Fri Aug 24 09:58:18 2001
+Received: from bcsmsx.ae.ge.com ([129.202.40.118]) by ev001msxaege.ae.ge.com with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2653.13)
+	id RNFY2LV2; Thu, 23 Aug 2001 19:22:14 -0400
+Received: from int-ch1gw-3.online-age.net (int-ch1gw-3.online-age.net [3.159.232.67])
+	by bcsmsx.ae.ge.com (8.8.6 (PHNE_17135)/8.8.6) with ESMTP id TAA11369
+	for <dan.bohlen@ae.ge.com>; Thu, 23 Aug 2001 19:24:15 -0400 (EDT)
+Received: from ext-ch1gw-3.online-age.net (localhost [127.0.0.1])
+	by int-ch1gw-3.online-age.net (8.9.3+Sun/8.9.1/990426-RLH) with ESMTP id TAA19902
+	for <dan.bohlen@ae.ge.com>; Thu, 23 Aug 2001 19:23:44 -0400 (EDT)
+Received: from n7.groups.yahoo.com (n7.groups.yahoo.com [216.115.96.57])
+	by ext-ch1gw-3.online-age.net (8.9.3+Sun/8.9.1/990426-RLH) with SMTP id TAA29366
+	for <dan.bohlen@ae.ge.com>; Thu, 23 Aug 2001 19:23:43 -0400 (EDT)
+Received: from [10.1.4.55] by fj.egroups.com with NNFMP; 23 Aug 2001 23:23:20 -0000
+Received: (EGP: mail-7_3_1); 23 Aug 2001 23:23:19 -0000
+Received: (qmail 64954 invoked from network); 23 Aug 2001 23:17:17 -0000
+Received: from unknown (10.1.10.142)
+  by l9.egroups.com with QMQP; 23 Aug 2001 23:17:17 -0000
+Received: from unknown (HELO melip407.aus.airnz.com) (203.47.114.32)
+  by mta3 with SMTP; 23 Aug 2001 23:17:17 -0000
+Received: (from uucp@localhost)
+	by melip407.aus.airnz.com (8.9.1a/8.9.1) id JAA07046
+	for <xansys@yahoogroups.com>; Fri, 24 Aug 2001 09:17:14 +1000 (EST)
+Received: from melim402.aus.airnz.com(10.1.133.79) by melip407.aus.airnz.com via smap (V5.0)
+	id xma006592; Fri, 24 Aug 01 09:15:34 +1000
+Received: from melis02w.aus.airnz.com (melis02w.aus.airnz.com [10.1.133.89])
+	by melim402.aus.airnz.com (8.9.1a/8.9.1) with ESMTP id JAA16655
+	for <xansys@yahoogroups.com>; Fri, 24 Aug 2001 09:15:33 +1000 (EST)
+Received: from melex001.ansett.com.au (not verified[10.1.128.61]) by melis02w.aus.airnz.com with MailMarshal (4,1,0,0) 
+	id <B000291d73>; Fri, 24 Aug 2001 09:14:39 +1200
+Received: by melex001.airnz.co.nz with Internet Mail Service (5.5.2653.19)
+	id <R3MDJCQV>; Fri, 24 Aug 2001 09:15:33 +1000
+X-eGroups-Return: sentto-57960-27566-998609000-dan.bohlen=ae.ge.com@returns.onelist.com
+X-Sender: Ernst.Hustedt@airnz.co.nz
+X-Apparently-To: xansys@yahoogroups.com
+Message-ID: <31A9B338098ED111B62600805F59B8D20261E972@chcex01w.airnz.co.nz>
+To: "'xansys@yahoogroups.com'" <xansys@yahoogroups.com>
+X-Mailer: Internet Mail Service (5.5.2653.19)
+From: "Hustedt, Ernst" <Ernst.Hustedt@airnz.co.nz>
+MIME-Version: 1.0
+Mailing-List: list xansys@yahoogroups.com; contact xansys-owner@yahoogroups.com
+Delivered-To: mailing list xansys@yahoogroups.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xansys-unsubscribe@yahoogroups.com>
+Date: Fri, 24 Aug 2001 09:15:29 +1000
+Reply-To: xansys@yahoogroups.com
+Subject: RE: [xansys] STRUC: Helical thread geometry
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Mozilla-Status: 8011
+X-Mozilla-Status2: 00000000
+X-UIDL: AAAb+L0BAAgm5J5JQCgg3Gx0utjVdfJq
+
+For what it's worth, here is a macro I made some years ago ('94) for doing
+thread profiles for axisym analysis.
+Looking at it now, I am not sure if the UN thread option works correctly, I
+can't remember that I actually used it, but the ISO should be O.K.
+You can spin the profile along Don's helix.
+
+Ernst H
+AIRNZ, Chch
+
+!====================================
+*get,ic_,ACTIVE,,ROUT
+*if,ic_,ne,17,then
+*msg,error,
+You are not in /PREP7
+*go,:QUIT_
+*endif
+
+*get,ic_,ACTIVE,,CSYS
+*if,ic_,gt,1,then
+  *msg,info,ic_
+   The active coordinate system must be rectangular ! %/ %/ Current CSYS =
+%I
+  *ask,ic_,'<CR> to continue',0
+  *if,ic_,ne,0,:QUIT_
+*endif
+
+*msg,info,
+THREAD TYPE %/ <0> ... ISO Thread (metric) %/ <1> ... UN Thread (inch)
+&
+%/ <2> ... UNR Thread (inch) %/ Note: Generation is in [m] or ["]
+repectively !
+*ask,it_,'Thread Type',0
+
+*ask,dd_,'Thread Size [mm] or [in]',0
+*if,dd_,le,0,:QUIT_
+
+*ask,pp_,'Pitch [mm] or TPI',0
+*if,pp_,le,0,:QUIT_
+
+fac_=0.001                                    ! Convert [MM] to [M]
+d_=dd_*fac_
+p_=pp_*fac_
+
+*if,it_,ne,0,then                             ! Convert ["] to [M]
+*ask,fac_,factor to convert Coords [m],0.0254
+p_=1/pp_*fac_                                
+d_=dd_*fac_
+*endif
+
+agle_=60
+agle_=agle_*atan(1)/45
+h_=p_*sin(agle_)
+
+h1_=0.54127*p_
+h3_=0.61343*p_
+r_=h_/6.0
+d3_=d_-1.22687*p_
+
+d_=d_/2
+d3_=d3_/2
+
+cm,kill1_,kp                        ! store current set of KPOINTS
+ksel,all
+*get,kpmax_,KP,,num,max
+
+ksel,inve                           ! to unselect all kp
+
+*ask,ic_,'Bolt Thread ? (1 for yes)',1
+*if,ic_,eq,1,then
+
+*if,it_,ne,1,then          ! ------------------- ISO and UNR BOLT
+
+k,1+kpmax_, d3_      ,  0.0
+k,2+kpmax_, d_ - h1_ ,h_/4*tan(agle_/2)
+k,3+kpmax_, d_ - h1_ , 0.0
+
+larc,1+kpmax_,2+kpmax_,3+kpmax_,r_
+
+k,3+kpmax_, d_       ,(h3_+h_/6)*tan(agle_/2)
+dy_=2*h_/8*tan(agle_/2)
+kgen,2,3+kpmax_, , , 0.0 , dy_ , 0.0 , 1
+k,5+kpmax_, d_ - h1_ , p_ - h_/4*tan(agle_/2)
+k,6+kpmax_, d3_ , p_
+k,7+kpmax_, d_ , p_
+
+l,2+kpmax_,3+kpmax_
+l,3+kpmax_,4+kpmax_
+l,4+kpmax_,5+kpmax_
+larc,5+kpmax_,6+kpmax_,7+kpmax_,r_
+
+*else                      ! -------------------- UN BOLT
+
+k,1+kpmax_, d3_      ,  0.0
+k,2+kpmax_, d3_      ,h_/6*tan(agle_/2)
+k,3+kpmax_, d_ - h1_ ,h_/4*tan(agle_/2)
+k,4+kpmax_, d_       ,(h3_+h_/6)*tan(agle_/2)
+dy_=2*h_/8*tan(agle_/2)
+kgen,2,4+kpmax_, , , 0.0 , dy_ , 0.0 , 1
+k,6+kpmax_, d_ - h1_ , p_ - h_/4*tan(agle_/2)
+k,7+kpmax_, d3_      , p_ - h_/6*tan(agle_/2)
+k,8+kpmax_, d3_      , p_
+
+l,1+kpmax_,2+kpmax_
+l,2+kpmax_,3+kpmax_
+l,3+kpmax_,4+kpmax_
+l,4+kpmax_,5+kpmax_
+l,5+kpmax_,6+kpmax_
+l,6+kpmax_,7+kpmax_
+l,7+kpmax_,8+kpmax_
+
+*endif
+
+
+*endif
+
+*ask,ic_,'Nut Thread ? (1 for yes)',1
+*if,ic_,eq,1,then
+
+*if,it_,ne,1,then   ! ---------------- ISO and UNR Nut
+
+k,7+kpmax_, d_+h_/8 , p_+ p_/2
+kgen,2,4+kpmax_, , , 0.0 , p_    , 0.0 , 4
+kgen,2,5+kpmax_, , , 0.0 , p_    , 0.0 , 4
+kgen,2,2+kpmax_, , , 0.0 , 2*p_  , 0.0 , 8
+kgen,2,3+kpmax_, , , 0.0 , 2*p_  , 0.0 , 8
+k,12+kpmax_, d_+h_/8 , p_ + 3/2*p_
+
+l,7+kpmax_,8+kpmax_
+l,8+kpmax_,9+kpmax_
+l,9+kpmax_,10+kpmax_
+l,10+kpmax_,11+kpmax_
+l,11+kpmax_,12+kpmax_
+
+*else               ! ---------------- UN Nut
+
+k,9+kpmax_, d_+h_/8 , p_ + p_/2
+kgen,2,5+kpmax_, , , 0.0 , p_    , 0.0 , 5
+kgen,2,6+kpmax_, , , 0.0 , p_    , 0.0 , 5
+kgen,2,3+kpmax_, , , 0.0 , 2*p_  , 0.0 , 9
+kgen,2,4+kpmax_, , , 0.0 , 2*p_  , 0.0 , 9
+k,14+kpmax_, d_+h_/8 , p_ + 3/2*p_
+
+l,9+kpmax_ ,10+kpmax_
+l,10+kpmax_,11+kpmax_
+l,11+kpmax_,12+kpmax_
+l,12+kpmax_,13+kpmax_
+l,13+kpmax_,14+kpmax_
+*endif
+
+*else
+kdel,7+kpmax_
+
+*endif
+
+cmsel,a,kill1_                   ! add to current set
+cmdel,kill1_
+*go,:quit_
+
+:QUIT1_
+cmsel,s,kill1_
+cmdel,kill1_
+
+:QUIT_
+it_=
+ic_=
+d_=
+d3_=
+p_=
+r_=
+h_=
+h1_=
+h3_=
+agle_=
+kpmax_=
+dy_=
+
+____________________________________________________________________
+CAUTION - This message may contain privileged and confidential 
+information intended only for the use of the addressee named above.
+If you are not the intended recipient of this message you are hereby 
+notified that any use, dissemination, distribution or reproduction 
+of this message is prohibited. If you have received this message in 
+error please notify Air New Zealand immediately. Any views expressed 
+in this message are those of the individual sender and may not 
+necessarily reflect the views of Air New Zealand.
+_____________________________________________________________________
+For more information on the Air New Zealand Group, visit us online
+at http://www.airnewzealand.com or http://www.ansett.com.au
+_____________________________________________________________________
+
+-----------------------------------------------------------------
+
+TO SUBSCRIBE:   send blank email to xansys-subscribe@yahoogroups.com
+TO UNSUBSCRIBE: send blank email to xansys-unsubscribe@yahoogroups.com
+
+ARCHIVED on:
+http://www.yahoogroups.com/messages/xansys 
+
+Your use of Yahoo! Groups is subject to http://docs.yahoo.com/info/terms/ 
+

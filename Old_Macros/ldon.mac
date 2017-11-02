@@ -1,0 +1,8 @@
+/nopr                                                                           
+!
+!    ldon.mac  A macro to turn on line direction 
+!              arrows on.
+!
+/psym,ldir,1                                                                    
+/repl                                                                           
+/gopr                                                                           

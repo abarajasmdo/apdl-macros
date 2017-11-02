@@ -1,0 +1,50 @@
+!
+! below.mac  goes thru all components, for those that are assemblies
+!		select areas and below and make new assembly
+PARSAV
+/SOLU
+zmof
+pbof
+*GET,_NUM,COMP,,NCOMP	! # OF COMPS
+!*DO,C,1,1
+*DO,C,1,_NUM
+*GET,_NAME,COMP,C,NAME
+*GET,SUB_,COMP,%_NAME%,NSCOMP
+*IF,SUB_,GT,0,THEN
+CMSEL,,%_NAME%
+!LSLA
+!KSLL
+!NSLA,,1 
+!ESLN,,1 
+eplot
+!*ASK,DUMMY,RETURN FOR NEXT) HERE IS ASSEMBLY %_NAME% ,0
+!/title,WEIGHT RUN FOR %_NAME%
+/prep7
+/solu
+ANTYPE,0
+!/output,mass,out
+!/title,WEIGHT RUN FOR %_NAME%
+!SOLVE,,,,,NOCH
+/output,term
+/sys,grep WEIGHT mass.out >list
+/sys,grep "TOTAL MASS" mass.out>>list
+*uilist,list
+pbof
+*ASK,DUMMY,RETURN FOR NEXT) HERE IS ASSEMBLY %_NAME% ,0
+*ENDIF
+*ENDDO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

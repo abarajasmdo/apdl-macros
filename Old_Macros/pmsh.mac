@@ -1,0 +1,177 @@
+/nopr
+!
+!     PMSH.MAC   a macro to mesh all selected lines with
+!                pipe elements
+!
+!     written by: Tom Parimore    last updated:10-20-93
+!
+!     usage: pmsh,ratio
+!
+!                ratio = desired element length to tube 
+!                diameter ratio (default = 5).
+!
+!                current mat, real, and type is used to mesh 
+!                all selected lines. the element type must
+!                be pipe16. this macro will create and use
+!                type pipe18 and real constants for pipe18.
+!
+!                flex real constant is calculated w/o
+!                pressure term.
+!
+!                a good number of warnings will be written
+!                to file.err. they are do to changing the
+!                material proporites and nodal information
+!                of pipe16 elements to create pipe18 elements.
+!                a few warnings are due to the way the next
+!                avaible et number and real number are found.
+!                these warnings are ok and can be ignore.
+!
+!
+*get,curet,active,,type
+*get,etname,etyp,curet,attr,enam
+*if,etname,eq,16,:okstart
+*msg,warn
+Current Type must be Pipe16
+*go,:bot
+!
+!
+:okstart
+/nerr,0
+!
+*get,curr,active,,real
+*get,diam,rcon,curr,1
+*get,walltk,rcon,curr,2
+*get,fldens,rcon,curr,6
+!
+*if,arg1,eq,0,:defratio
+lgth=arg15*diam            ! element length to diameter ratio = arg1
+*go,:skp
+:defratio
+lgth=5*diam           ! element length to diameter ratio = 5(default)
+:skp
+!
+save
+!
+numcmp,node  ! for some reason this stops ansys from reusing nodes
+!              that are attached to "directgen" elements durning
+!              lmesh operation?
+!
+lesize,all,lgth
+lmesh,all
+!
+cm,lset,line           ! lset is comp. name for all selected lines
+!
+*get,nmax,mxnd
+tn=nmax+1              ! tn is third node for center command
+cn=nmax+1              ! cn is center node number
+!
+nextet=0                   ! find avaible et number for pipe18
+:etloop
+nextet=nextet+1
+etname=0
+*get,etname,etyp,nextet,attr,enam
+*if,etname,ne,0,:etloop
+et,nextet,18,,,,,,2
+!
+!
+!
+*get,lmax,line,,num,max
+!
+:lloop
+cm,subset,line
+cn=cn+1
+*get,lmin,line,,num,min
+!
+*get,kp1,line,lmin,kp,1
+*get,kp2,line,lmin,kp,2
+!
+*get,x1,kp,kp1,loc,x
+*get,y1,kp,kp1,loc,y
+*get,z1,kp,kp1,loc,z
+*get,x2,kp,kp2,loc,x
+*get,y2,kp,kp2,loc,y
+*get,z2,kp,kp2,loc,z
+!
+dx2=(x2-x1)**2        ! calculate distance between kp's
+dy2=(y2-y1)**2
+dz2=(z2-z1)**2
+d=(dx2+dy2+dz2)**.5
+!
+*get,ll,line,lmin,leng                  ! get length of line
+!
+dd=ll-d               ! calculate difference between line
+!                       length and distance between kp's
+!
+*if,dd,le,.001,:testend   ! dd </= .001 implies straight line
+!
+!
+lsel,s,line,,lmin           ! select curved line
+esll,s                   ! select elements based on curved line
+!
+n,tn,lx(lmin,.5),ly(lmin,.5),lz(lmin,.5)   ! third node for center cmd
+center,cn,node(x1,y1,z1),tn,node(x2,y2,z2)
+!
+*get,x3,node,cn,loc,x
+*get,y3,node,cn,loc,y
+*get,z3,node,cn,loc,z
+!
+dx2=(x3-x1)**2        ! calculate radius of curature
+dy2=(y3-y1)**2
+dz2=(z3-z1)**2
+roc=(dx2+dy2+dz2)**.5
+!
+h=walltk*roc/(diam/2-walltk/2)**2
+flex=1.65/h              ! w/o pressure term
+*if,flex,gt,1,:skip1
+flex=1
+:skip1
+sif=.9/h**(2/3)
+*if,sif,gt,1,:skip2
+sif=1
+:skip2
+!
+nextr=0              ! find next avaible real number
+:rloop
+nextr=nextr+1
+rc1=0
+*get,rc1,rcon,nextr,const,1
+*if,rc1,ne,0,:rloop
+!
+r,nextr,diam,walltk,roc,sif,sif,flex
+rmore,fldens
+!
+type,nextet
+real,nextr
+!
+*get,emax,elem,,num,max
+:eloop
+*get,emin,elem,,num,min
+*get,n1,elem,emin,node,1
+*get,n2,elem,emin,node,2
+emodif,emin,1,n1,n2,cn                 ! modify to pipe18
+esel,u,elem,,emin
+*if,emin,ne,emax,:eloop
+!
+ndel,tn
+!
+:testend
+*if,lmin,eq,lmax,:end
+!
+cmsel,s,subset
+lsel,u,line,,lmin
+esll,s
+!
+*go,:lloop
+!
+!
+:end
+cmsel,s,lset
+esll,s
+eplot
+!
+numcmp,node
+/nerr,5
+*msg,note
+***PMSH is complete. If mesh is unacceptable, issue resume cmd***
+:bot
+/gopr

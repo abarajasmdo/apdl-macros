@@ -1,0 +1,47 @@
+/nopr
+!
+!          psplt.mac    Usage: psplt,element number,new node number (optional)
+!
+!         A macro to split pipe elements in two.
+!         The new elements have the same REAL,
+!         MAT, and TYPE that the original element
+!         had.  The new node number in the middle is
+!         assigned the node number supplied as argument 2,
+!         or if argument 2 isn't supplied (arg2=0) it is
+!         automatically assigned MXND+1.
+!
+!                                  
+!
+!
+*if,arg2,eq,0,:lp1
+n4=arg2
+*go,:lp2
+:lp1
+*get,n3,mxnd
+n4=n3+1
+:lp2
+*get,n1,en1,arg1                                                                
+*get,n2,en2,arg1                                                                
+fill,n1,n2,1,n4                                                               
+*get,r1,real,arg1                                                               
+*get,m1,mat,arg1                                                                
+*get,t1,type,arg1                                                               
+real,r1                                                                         
+mat,m1                                                                          
+type,t1                                                                         
+edel,arg1                                                                       
+e,n1,n4                                                                    
+e,n4,n2                                                                       
+n1=
+n2=
+n3=
+n4=
+r1=
+m1=
+t1=
+/gopr
+
+
+
+
+

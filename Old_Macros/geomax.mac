@@ -1,0 +1,16 @@
+/nopr
+!
+!          geomax.mac        This macro displays the maximum ID numbers
+!                                          for volumes, areas, lines, and keypoints.
+!                             
+*get,ar11,mxvl 
+*get,ar12,mxar
+*get,ar13,mxls
+*get,ar14,mxkp
+*msg,info,ar11,ar12,ar13,ar14
+('Max. Volu',f8.0,/'Max Area',f8.0,/'Max Line',f8.0,/'Max Kpoi',f8.0)                                                                 
+!
+/gopr
+
+
+

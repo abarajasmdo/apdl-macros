@@ -1,0 +1,473 @@
+! counter stuff
+!/nopr
+__nerr=erinqr(9)	! get users /nerr setting
+/nerr,0			! tunr off error/warning msgs
+__tnu0c_=		! clear array
+*dim,__tnu0c_,,1
+*vread,__tnu0c_(1),espec,,/global/c0112/bohlen/macro_count/
+(F20.0)
+__tnu0c_(1)=__tnu0c_(1)+1
+*cfopen,espec,,/global/c0112/bohlen/macro_count/
+*vwrit,__tnu0c_(1)
+(F20.0)
+*cfclos
+/sys,echo ${LOGNAME}"@"`uname -n` `date` >>/global/c0112/bohlen/macro_count/espec.who
+/sys,/global/c0112/bohlen/macro_count/_SORT espec
+__tnu0c_=
+/nerr,__nerr		! reset users /nerr
+__nerr=
+/nopr
+!
+! espec.mac  uses siesta to input basic mechanical matl properties into
+!a model.
+!
+!  By:  Dan Bohlen    4/10/96
+!
+!
+!  MACRO PROMPTS USER FOR ANSYS MATL REF # AND ESPEC MATL NUMBER FROM
+!   A LIST.  IT CHECKS TO SEE FOR THE ANSYS MATL NUMBER EXISTS,  BUT WILL
+!   OVERWRITE.  IT ALSO CHECK SUCCESSFUL COMPLETION
+!
+!	PARAMETER TABLE
+!
+!   From menu granules
+!	ar20=mnum=_z1	ar21=mmax=_z2	ar22=minc=_z3
+!	ar23=matl=_z4	ar24=ortho=_z5	ar32=hole_dia=_z6	
+!	ar33=hole_cl=_z7		ar34=nofholes=_z8	
+!	ar31=XDOW=_z9			
+!			
+!	_z(1-16)=FEXX ....FKZZ		
+!
+!	Internal macro params
+!
+!	ar26=exmat	ar27=mname	ar25=overwrit
+!	ar29=amper	ar30=f		ar35=loop
+!	ar40=use_dow
+!
+!/pmacro
+!parsav,scalar	
+/prep7
+/sys,touch  Aa Bb ESPEC.INPUT	
+!	Read in variables
+!
+*IF,ARG1,LT,-.5,THEN	! check whether called from command line or menu
+!	
+*ELSE
+	!parsav,scalar
+	_z1=arg1
+	*IF,_z1,LT,1,THEN
+		_z1=mpinqr(,,14)+1
+	*ENDIF
+	_z2=ARG2
+	_z3=ARG3
+	_z4=arg4
+	_z5=0		! no ortho from command line
+*ENDIF
+!			set other do loop indices defaults
+*IF,_z2,LT,_z1,THEN
+_z2=_z1
+*ELSE
+*ENDIF
+*IF,_z3,LT,1,THEN
+_z3=1
+*ENDIF
+!	does matl exist?
+				*DO,ar35,_z1,_z2,_z3				
+ar25='Y'
+ar26=MPINQR(ar35,,1)
+__nerr=erinqr(9)
+/nerr,0		! turns off those annoying warning messages
+*IF,ar26,GT,.1,THEN
+*ASK,ar25,Y OR N... Material # %ar35% exists. Overwrite? ,'Y'
+*ENDIF
+*IF,ar25,EQ,'N',:END
+*IF,ar25,EQ,'NO',:END
+*IF,ar25,EQ,'n',:END
+*IF,ar25,EQ,'no',:END
+*IF,ar26,GT,.1,THEN		! IF NOT NO THEN DELETE EXISTING MATLS
+MPDELE,ALL,ar35
+*ENDIF
+
+!  write siesta input file
+!
+!  IF statements for espec matl number
+!
+/nopr
+/sys,echo ANSYS > Aa
+*IF,_z4,EQ,1,THEN
+/sys,echo "17-4 PH" >> Aa
+ar27='17_4 PH'
+*ELSEIF,_z4,EQ,2
+/sys,echo "17-4 PH D" >> Aa
+ar27='17_4 PH D'
+*ELSEIF,_z4,EQ,3
+/sys,echo "17-7 PH" >> Aa
+ar27='17_7 PH'
+*ELSEIF,_z4,EQ,4
+/sys,echo "2024" >> Aa
+ar27='2024'
+*ELSEIF,_z4,EQ,5
+/sys,echo "355" >> Aa
+ar27='355'
+*ELSEIF,_z4,EQ,6
+/sys,echo "5052S" >> Aa
+ar27='5052S'
+*ELSEIF,_z4,EQ,7
+/sys,echo "6061" >> Aa
+ar27='6061'
+*ELSEIF,_z4,EQ,8
+/sys,echo "A 286" >> Aa
+ar27='A 286'
+*ELSEIF,_z4,EQ,9
+/sys,echo "A 356" >> Aa
+ar27='A 356'
+*ELSEIF,_z4,EQ,10
+/sys,echo "AF 115" >> Aa
+ar27='AF 115'
+*ELSEIF,_z4,EQ,11
+/sys,echo "AISI 302" >> Aa
+ar27='AISI 302'
+*ELSEIF,_z4,EQ,12
+/sys,echo "AISI 310" >> Aa
+ar27='AISI 310'
+*ELSEIF,_z4,EQ,13
+/sys,echo "AISI 316" >> Aa
+ar27='AISI 316'
+*ELSEIF,_z4,EQ,14
+/sys,echo "AISI 321" >> Aa
+ar27='AISI 321'
+*ELSEIF,_z4,EQ,15
+/sys,echo "AISI 347" >> Aa
+ar27='AISI 347'
+*ELSEIF,_z4,EQ,16
+/sys,echo "AISI 403" >> Aa
+ar27='AISI 403'
+*ELSEIF,_z4,EQ,17
+/sys,echo "AISI 410" >> Aa
+ar27='AISI 410'
+*ELSEIF,_z4,EQ,18
+/sys,echo "AISI 4340" >> Aa
+ar27='AISI 4340'
+*ELSEIF,_z4,EQ,19
+/sys,echo "AM 355" >> Aa
+ar27='AM 355'
+*ELSEIF,_z4,EQ,20
+/sys,echo "ASCOLOY" >> Aa
+ar27='ASCOLOY'
+*ELSEIF,_z4,EQ,21
+/sys,echo "ASTROLOY" >> Aa
+ar27='ASTROLOY'
+*ELSEIF,_z4,EQ,22
+/sys,echo "B5F5" >> Aa
+ar27='B5F5'
+*ELSEIF,_z4,EQ,23
+/sys,echo "CR-MO-V" >> Aa
+ar27='CR_MO_V'
+*ELSEIF,_z4,EQ,24
+/sys,echo "EZ33A" >> Aa
+ar27='EZ33A'
+*ELSEIF,_z4,EQ,25
+/sys,echo "GTD 222" >> Aa
+ar27='GTD 222'
+*ELSEIF,_z4,EQ,26
+/sys,echo "GTD 222 CC" >> Aa
+ar27='GTD 222 CC'
+*ELSEIF,_z4,EQ,27
+/sys,echo "HAST B" >> Aa
+ar27='HAST B'
+*ELSEIF,_z4,EQ,28
+/sys,echo "HAST X" >> Aa
+ar27='HAST X'
+*ELSEIF,_z4,EQ,29
+/sys,echo "HIDU RR 350" >> Aa
+ar27='HIDU RR 350'
+*ELSEIF,_z4,EQ,30
+/sys,echo "HS 188" >> Aa
+ar27='HS 188'
+*ELSEIF,_z4,EQ,31
+/sys,echo "INCO 600" >> Aa
+ar27='INCO 600'
+*ELSEIF,_z4,EQ,32
+/sys,echo "INCO 625" >> Aa
+ar27='INCO 625'
+*ELSEIF,_z4,EQ,33
+/sys,echo "INCO 625  S" >> Aa
+ar27='INCO 625 S'
+*ELSEIF,_z4,EQ,34
+/sys,echo "INCO 702" >> Aa
+ar27='INCO 702'
+*ELSEIF,_z4,EQ,35
+/sys,echo "INCO 706" >> Aa
+ar27='INCO 706'
+*ELSEIF,_z4,EQ,36
+/sys,echo "INCO 713C" >> Aa
+ar27='INCO 713C'
+*ELSEIF,_z4,EQ,37
+/sys,echo "INCO 718" >> Aa
+ar27='INCO 718'
+*ELSEIF,_z4,EQ,38
+/sys,echo "INCO 718  C" >> Aa
+ar27='INCO 718 C'
+*ELSEIF,_z4,EQ,39
+/sys,echo "INCO 718 DA" >> Aa
+ar27='INCO 718 DA'
+*ELSEIF,_z4,EQ,40
+/sys,echo "INCO 722" >> Aa
+ar27='INCO 722'
+*ELSEIF,_z4,EQ,41
+/sys,echo "INCO 738" >> Aa
+ar27='INCO 738'
+*ELSEIF,_z4,EQ,42
+/sys,echo "INCO 903" >> Aa
+ar27='INCO 903'
+*ELSEIF,_z4,EQ,43
+/sys,echo "INCO 907" >> Aa
+ar27='INCO 907'
+*ELSEIF,_z4,EQ,44
+/sys,echo "INCO 909" >> Aa
+ar27='INCO 909'
+*ELSEIF,_z4,EQ,45
+/sys,echo "INCO X-750" >> Aa
+ar27='INCO X_750'
+*ELSEIF,_z4,EQ,46
+/sys,echo "L 605" >> Aa
+ar27='L 605'
+*ELSEIF,_z4,EQ,47
+/sys,echo "M 152" >> Aa
+ar27='M 152'
+*ELSEIF,_z4,EQ,48
+/sys,echo "M-50" >> Aa
+ar27='M_50'
+*ELSEIF,_z4,EQ,49
+/sys,echo "MA 754" >> Aa
+ar27='MA 754'
+*ELSEIF,_z4,EQ,50
+/sys,echo "MAR-M 509" >> Aa
+ar27='MAR_M 509'
+*ELSEIF,_z4,EQ,51
+/sys,echo "MARAGE 200" >> Aa
+ar27='MARAGE 200'
+*ELSEIF,_z4,EQ,52
+/sys,echo "MARAGE 250" >> Aa
+ar27='MARAGE 250'
+*ELSEIF,_z4,EQ,53
+/sys,echo "NITR 135" >> Aa
+ar27='NITR 135'
+*ELSEIF,_z4,EQ,54
+/sys,echo "PH 15-7" >> Aa
+ar27='PH 15_7'
+*ELSEIF,_z4,EQ,55
+/sys,echo "RENE  95" >> Aa
+ar27='RENE 95'
+*ELSEIF,_z4,EQ,56
+/sys,echo "RENE  95PM" >> Aa
+ar27='RENE 95PM'
+*ELSEIF,_z4,EQ,57
+/sys,echo "RENE 100" >> Aa
+ar27='RENE 100'
+*ELSEIF,_z4,EQ,58
+/sys,echo "RENE 108" >> Aa
+ar27='RENE 108'
+*ELSEIF,_z4,EQ,59
+/sys,echo "RENE 120" >> Aa
+ar27='RENE 120'
+*ELSEIF,_z4,EQ,60
+/sys,echo "RENE 125" >> Aa
+ar27='RENE 125'
+*ELSEIF,_z4,EQ,61
+/sys,echo "RENE 142LONG" >> Aa
+ar27='RENE 142LONG'
+*ELSEIF,_z4,EQ,62
+/sys,echo "RENE 142TRAV" >> Aa
+ar27='RENE 142TRAV'
+*ELSEIF,_z4,EQ,63
+/sys,echo "RENE 162" >> Aa
+ar27='RENE 162'
+*ELSEIF,_z4,EQ,64
+/sys,echo "RENE 220  C" >> Aa
+ar27='RENE 220 C'
+*ELSEIF,_z4,EQ,65
+/sys,echo "RENE 41" >> Aa
+ar27='RENE 41'
+*ELSEIF,_z4,EQ,66
+/sys,echo "RENE 77   C" >> Aa
+ar27='RENE 77 C'
+*ELSEIF,_z4,EQ,67
+/sys,echo "RENE 77   W" >> Aa
+ar27='RENE 77 W'
+*ELSEIF,_z4,EQ,68
+/sys,echo "RENE 77CENT" >> Aa
+ar27='RENE 77CENT'
+*ELSEIF,_z4,EQ,69
+/sys,echo "RENE 80" >> Aa
+ar27='RENE 80'
+*ELSEIF,_z4,EQ,70
+/sys,echo "RENE 80LONG" >> Aa
+ar27='RENE 80LONG'
+*ELSEIF,_z4,EQ,71
+/sys,echo "RENE 80TRAV" >> Aa
+ar27='RENE 80TRAV'
+*ELSEIF,_z4,EQ,72
+/sys,echo "RENE 88DTEI" >> Aa
+ar27='RENE 88DTEI'
+*ELSEIF,_z4,EQ,73
+/sys,echo "RENE N4<001>" >> Aa
+ar27='RENE N4<001>'
+*ELSEIF,_z4,EQ,74
+/sys,echo "RENE N4<011>" >> Aa
+ar27='RENE N4<011>'
+*ELSEIF,_z4,EQ,75
+/sys,echo "RENE N4<111>" >> Aa
+ar27='RENE N4<111>'
+*ELSEIF,_z4,EQ,76
+/sys,echo "RENE N5<001>" >> Aa
+ar27='RENE N5<001>'
+*ELSEIF,_z4,EQ,77
+/sys,echo "RENE N6<001>" >> Aa
+ar27='RENE N6<001>'
+*ELSEIF,_z4,EQ,78
+/sys,echo "RENE N6<011>" >> Aa
+ar27='RENE N6<011>'
+*ELSEIF,_z4,EQ,79
+/sys,echo "RENE N6<111>" >> Aa
+ar27='RENE N6<111>'
+*ELSEIF,_z4,EQ,80
+/sys,echo "SEL" >> Aa
+ar27='SEL'
+*ELSEIF,_z4,EQ,81
+/sys,echo "TI 17 A-B" >> Aa
+ar27='TI 17 A_B'
+*ELSEIF,_z4,EQ,82
+/sys,echo "TI 17 B" >> Aa
+ar27='TI 17 B'
+*ELSEIF,_z4,EQ,83
+/sys,echo "TI 3-2.5" >> Aa
+ar27='TI 3_2.5'
+*ELSEIF,_z4,EQ,84
+/sys,echo "TI 48-2-2" >> Aa
+ar27='TI 48_2_2'
+*ELSEIF,_z4,EQ,85
+/sys,echo "TI 5-2.5" >> Aa
+ar27='TI 5_2.5'
+*ELSEIF,_z4,EQ,86
+/sys,echo "TI 6-2-4-2A" >> Aa
+ar27='TI 6_2_4_2A'
+*ELSEIF,_z4,EQ,87
+/sys,echo "TI 6-2-4-2B" >> Aa
+ar27='TI 6_2_4_2B'
+*ELSEIF,_z4,EQ,88
+/sys,echo "TI 6-4    F" >> Aa
+ar27='TI 6_4 F'
+*ELSEIF,_z4,EQ,89
+/sys,echo "TI 6-6-2" >> Aa
+ar27='TI 6_6_2'
+*ELSEIF,_z4,EQ,90
+/sys,echo "TI 70" >> Aa
+ar27='TI 70'
+*ELSEIF,_z4,EQ,91
+/sys,echo "TI 8-1-1" >> Aa
+ar27='TI 8_1_1'
+*ELSEIF,_z4,EQ,92
+/sys,echo "U 500     C" >> Aa
+ar27='U 500 C'
+*ELSEIF,_z4,EQ,93
+/sys,echo "U 500     W" >> Aa
+ar27='U 500 W'
+*ELSEIF,_z4,EQ,94
+/sys,echo "U 700" >> Aa
+ar27='U 700'
+*ELSEIF,_z4,EQ,95
+/sys,echo "U 720" >> Aa
+ar27='U 720'
+*ELSEIF,_z4,EQ,96
+/sys,echo "V 57" >> Aa
+ar27='V 57'
+*ELSEIF,_z4,EQ,97
+/sys,echo "WASPALOY" >> Aa
+ar27='WASPALOY'
+*ELSEIF,_z4,EQ,98
+/sys,echo "X 40" >> Aa
+ar27='X 40'
+*ELSE
+*MSG,WARNING,
+You either entered a ESPEC matl other than 1-98 or %/ &
+you have a MENU ERROR: CONTACT DAN BOHLEN
+*ENDIF
+!/gopr
+!
+!  ORTHOTROPIC SECTION
+!  
+		*IF,_z5,EQ,1,THEN
+*GET,ar40,PARM,_z9,TYPE
+*IF,ar40,EQ ,-1,THEN		! IF DOW NOT DEFINED CALC IT
+_z9=_z6/(_z7)/(3.141592654/_z8)
+*ENDIF
+!
+/sys,echo "MATL DOW" >> Aa
+*CFOPEN,Bb
+*VWRITE,ar35,_z9
+(I8,2X,F20.16)
+*CFWRITE,q
+*CFCLOS
+DOW%ar35%=_z9
+*MSG,info,ar35,_z9
+............. %/ &
+DOW (D/W) for matl %I is %G %/ 
+		*ELSEIF,_z5,EQ,2,THEN
+ar29=' &'
+/sys,echo "MATL FEXX FEYY FEZZ FGXY FGXZ FGYZ FNXY &">> Aa
+/sys,echo "FNXZ FNYZ FAXX FAYY FAZZ FRHO FKXX FKYY FKZZ" >> Aa
+*CFOPEN,Bb
+*VWRITE,ar35,ar29
+(F5.0,1x,A)
+*VWRITE,_z(1),ar29
+(F20.16,1x,A)
+*CFWRITE,q
+*CFCLOS
+*MSG,INFO
+INDIVIDUAL MODIFICATION FACTORS INPUT!
+		*ELSE
+	!  ISOTROPIC MATLS	
+/sys,echo "MATL" >> Aa
+*CFOPEN,Bb
+*VWRITE,ar35
+(I8)
+*CFWRITE,q
+*CFCLOS
+DOW%ar35%=	! clears DOW parameter (in case of redefining a mat)
+*CFCLOS
+		*ENDIF
+!
+! write matl variable name for ALL cases
+!
+MAT%ar35%=ar27
+/sys,cat Aa Bb >ESPEC.INPUT
+!	prep for SIESTA
+! remove output file
+/sys,touch f35.dat f32.dat
+/sys,mv f35.dat .F35.DaT.TeMp
+/sys,mv f32.dat .F32.DaT.TeMp
+/sys,siesta espec<ESPEC.INPUT > /dev/null
+/INP,f35,dat
+/syp,mv f35.dat,MATL_%ar35%
+ar30='f32.'
+/syp,mv f32.dat,%ar30%%ar35%
+/sys,mv .F32.DaT.TeMp f32.dat
+/sys,mv .F35.DaT.TeMp f35.dat
+:END
+		*ENDDO	
+!parres,	! READ THE OLD VARIABLES BACK IN
+/sys,rm ESPEC.INPUT Aa Bb
+/output,term
+/nerr,__nerr
+__nerr=
+_z1=
+_z2=
+_z3=
+_z4=
+_z5=
+!/GOPR
+
+
+	
+

@@ -1,0 +1,21 @@
+/PMACRO
+/nopr
+*IF,RLarge,LE,0.0,THEN
+   RLarge = 2.0
+   RSmall = 1.0
+   LLarge = 6.0
+   LSmall = 4.0 
+   RFillet= 0.25  
+   NFillet= 10 
+*ENDIF
+multipro,'start',6
+   *cset,1,3,RLarge,'Enter RLarge Value',RLarge
+   *cset,4,6,RSmall,'Enter RSmall Value',RSmall
+   *cset,7,9,LLarge,'Enter LLarge Value',LLarge
+   *cset,10,12,LSmall,'Enter LSmall Value',LSmall
+   *cset,13,15,RFillet,'Enter RFillet Value',RFillet
+   *cset,16,18,NFillet,'Enter NFillet Value',NFillet
+   *cset,61,62,'This Analysis is for stepped',' shafts with a stress'
+   *cset,63,64,' concentration due to a',' fillet between the sizes'
+multipro,'end'
+/go
