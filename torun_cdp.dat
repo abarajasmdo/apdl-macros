@@ -1,0 +1,190 @@
+/output,'CDP_Joint_mu00_assembly',out
+resume,cdp_baseline,db
+!
+/prep7
+/input,bf_0,prp
+/input,cb_0,inp
+/input,input_s0,inp
+/input,pres_s0,inp
+time,0.0001
+title,'LM9000 HPCR CDP Seal 3D Model - Frictionless Assembly'
+save,'CDP_Joint_mu00_assembly',db,,model
+!
+/solution
+ANTYPE,,new,,,,
+rescontrol,,last,last
+solcontrol,on
+nlgeom,on
+sstif,on
+nsubst,1,1,1,off
+nropt,full,,off
+lnsrch,on
+eqslv,sparse
+cnvtol,f,10000,0.0001
+neqit,50
+solve
+rescontrol,FILE_SUMMARY
+finish
+/copy,file,rst,,'CDP_Joint_mu00_assembly',rst
+/delete,file,rst
+!
+/output,term
+*do,i,1,3,1
+  *do,j,0,10,1
+    k=i
+    *if,j,EQ,0,then
+      *if,i,EQ,1,then
+        name='assembly'
+      *else
+        name='unload'
+        k=k-1
+      *endif
+      tpoint=0.001
+      code=0
+    *endif
+    *if,j,EQ,1,then
+      name='00266_19'
+      tpoint=266.19
+      code=150
+    *endif
+    *if,j,EQ,2,then
+      name='00276_90'
+      tpoint=276.90
+      code=151
+    *endif
+    *if,j,EQ,3,then
+      name='00285_00'
+      tpoint=285.00
+      code=152
+    *endif
+    *if,j,EQ,4,then
+      name='00400_00'
+      tpoint=400.00
+      code=158
+    *endif
+    *if,j,EQ,5,then
+      name='02500_00'
+      tpoint=2500.00
+      code=168
+    *endif
+    *if,j,EQ,6,then
+      name='58165_50'
+      tpoint=58165.50
+      code=171
+    *endif
+    *if,j,EQ,7,then
+      name='58565_50'
+      tpoint=58565.50
+      code=258
+    *endif
+    *if,j,EQ,8,then
+      name='59100_50'
+      tpoint=59100.50
+      code=324
+    *endif
+    *if,j,EQ,9,then
+      name='62305_50'
+      tpoint=62305.50
+      code=363
+    *endif
+    *if,j,EQ,10,then
+      name='64805_50'
+      tpoint=64805.50
+      code=367
+    *endif
+    /output,'CDP_Joint_mu%k%_%name%_s',out
+    parsav,,cdp_data,inp
+    /solution
+    ANTYPE,,restart,,,,
+    rescontrol,,last,last
+    !
+    parres,change,cdp_data,inp
+    cpdele,1573
+    !
+    /input,bf_%code%,prp
+    /input,cb_%code%,inp
+    /input,input_s%code%,inp
+    /input,pres_s%code%,inp
+    !
+    mp,mu,7,0.45
+    mp,mu,8,0.45
+    mp,mu,9,0.45
+    mp,mu,10,0.45
+    mp,mu,11,0.45
+    mp,mu,12,0.45
+    mp,mu,13,0.45
+    mp,mu,14,0.45
+    mp,mu,15,0.45
+    !
+    tpoint2=((i-1)*100000) + tpoint
+    time,tpoint2
+    title,'LM9000 HPCR CDP Seal 3D Model - Friction Pass %k% TP %tpoint% s'
+    save,'CDP_Joint_mu%k%_%name%_s',db,,model
+    !
+    solcon,on
+    _omgsqrd=1.0
+    nropt,full,,off
+    lnsrch,on
+    nlgeom,on
+    sstif,on
+    pred,off
+    nsubst,20,500,10,off
+    cnvtol,f,10000,0.0005
+    eqslv,sparse
+    neqit,50
+    solve
+    rescontrol,FILE_SUMMARY
+    !
+    finish
+    /copy,file,rst,,'CDP_Joint_mu%k%_%name%_s',rst
+    /delete,file,rst
+    !
+    /output,term
+  *enddo
+*enddo
+k=i-1
+/output,'CDP_Joint_mu%k%_unload',out
+parsav,,cdp_data,inp
+/solution
+ANTYPE,,restart,,,,
+rescontrol,,last,last
+!
+parres,change,cdp_data,inp
+cpdele,1573
+!
+/input,bf_0,prp
+/input,cb_0,inp
+/input,input_s0,inp
+/input,pres_s0,inp
+!
+mp,mu,7,0.45
+mp,mu,8,0.45
+mp,mu,9,0.45
+mp,mu,10,0.45
+mp,mu,11,0.45
+mp,mu,12,0.45
+mp,mu,13,0.45
+mp,mu,14,0.45
+mp,mu,15,0.45
+!
+time,400000.001
+title,'LM9000 HPCR CDP Seal 3D Model - Friction Pass %k% Unload'
+save,'CDP_Joint_mu%k%_unload',db,,model
+!
+solcon,on
+_omgsqrd=1.0
+nropt,full,,on
+lnsrch,auto
+nlgeom,on
+sstif,on
+pred,off
+nsubst,20,250,10,off
+cnvtol,f,10000,0.0005
+eqslv,sparse
+neqit,50
+solve
+rescontrol,FILE_SUMMARY
+!
+finish
+/copy,file,rst,,'CDP_Joint_mu%k%_unload',rst
+/delete,file,rst

@@ -1,0 +1,66 @@
+/input,cdp_comp,inp
+*DIM,ldcase,ARRAY,11,2
+ldcase(1,1)=1,2,3,4,6,8,9,10
+ldcase(9,1)=13,14,16
+ldcase(1,2)=0,150,151,152,158,168,171,258
+ldcase(9,2)=324,363,367
+
+*do,i,1,11,1
+	set,,,,,,,ldcase(i,1)
+	cmsel,all
+	allsel
+	!
+	*cfopen,cb_%ldcase(i,2)%,inp
+	!  Spool cut boundary  UX and UY
+	*cfwrite,/com Spool cut boundary UX and UY
+	*cfwrite,d,cb_1_1,ux,ux(46826)
+	*cfwrite,d,cb_1_1,uy,uy(46826)
+	*cfwrite,d,cb_1_2,ux,ux(46835)
+	*cfwrite,d,cb_1_2,uy,uy(46835)
+	*cfwrite,d,cb_1_3,ux,ux(46836)
+	*cfwrite,d,cb_1_3,uy,uy(46836)
+	*cfwrite,d,cb_1_4,ux,ux(46837)
+	*cfwrite,d,cb_1_4,uy,uy(46837)
+	*cfwrite,d,cb_1_5,ux,ux(46834)
+	*cfwrite,d,cb_1_5,uy,uy(46834)
+	!  Shaft cut boundary  UX and UY
+	*cfwrite,/com Shaft cut boundary UX only (FY)
+	*cfwrite,d,cb_2_1,ux,ux(153787)
+	*cfwrite,d,cb_2_2,ux,ux(153790)
+	*cfwrite,d,cb_2_3,ux,ux(153789)
+	*cfwrite,d,cb_2_4,ux,ux(153788)
+	*cfwrite,d,cb_2_5,ux,ux(153779)
+	!  get cut forces
+	*dim,node2d,,5
+	node2d(1)=153787
+	node2d(2)=153790
+	node2d(3)=153789
+	node2d(4)=153788
+	node2d(5)=153779
+	cmsel,,cdp_shaft
+	*do,loop,1,5
+		nsel,,%node2d(loop)%
+		fsum
+		*get,fy_2d,fsum,,item,fy
+		*cfwrite,f,cb_2_%loop%,fy,fy_2d/96/9	! 1/96th sector , 9 nodes
+	*enddo
+	*cfclos
+	node2d=
+
+	cmsel,,cdp_spool
+	nsle
+	bfint,cdp_spool_cn,txt,,bf_%ldcase(i,2)%,prp,,1,:spool,,1
+	cmsel,,cdp_seal
+	nsle
+	bfint,cdp_seal_cn,txt,,bf_%ldcase(i,2)%,prp,,1,:seal,,1
+	cmsel,,cdp_shaft
+	nsle
+	bfint,cdp_shaft_cn,txt,,bf_%ldcase(i,2)%,prp,,1,:shaft,,1
+	cmsel,,cdp_bolt
+	nsle
+	bfint,cdp_bolt_cn,txt,,bf_%ldcase(i,2)%,prp,,1,:bolt,,1
+	cmsel,,cdp_nut
+	nsle
+	bfint,cdp_nut_cn,txt,,bf_%ldcase(i,2)%,prp,,1,:nut,,1
+*enddo
+ldcase=

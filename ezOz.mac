@@ -1,0 +1,500 @@
+*CREATE,ezOverlay,eui
+package require Tk
+package require Iwidgets
+
+#proc selectDirectory { } {
+#global data
+#set data(workDirectory) [tk_chooseDirectory]
+#}
+
+proc plotOverlayGUI { } {
+
+global data
+set data(eSC_type) "aft"
+set data(zoom_type) "fullthreed"
+set data(comp_File) ""
+set data(comp_Name) ""
+set data(axialOffset) "0"
+set data(dScale) "20"
+set data(prefix3DRst) ""
+set data(prefix2DRst) ""
+set data(projectName) "Project"
+set data(version) "6.12.08.10"
+
+wm withdraw .
+
+toplevel .plotOverlay
+
+wm title .plotOverlay "ezOverlay $data(version): 2D 3D Displacement Overlay Plots"
+
+set notes ""
+append notes "\nTool to generate 2D 3D Displacement Overlay Plots for given 2D 3D rst files.\n"
+label .plotOverlay.notes -text $notes -foreground blue -background yellow
+grid .plotOverlay.notes -columnspan 3 -pady 5
+
+#label .plotOverlay.workDirectory_lbl -text "Working Directory"
+#entry .plotOverlay.workDirectory_ent -textvariable data(workDirectory) -width 50
+#button .plotOverlay.workDirectory_but -text "Select" -command "selectDirectory"
+#grid .plotOverlay.workDirectory_lbl .plotOverlay.workDirectory_ent .plotOverlay.workDirectory_but -padx 5 -pady 5
+#grid .plotOverlay.workDirectory_lbl -column 2 -columnspan 1
+#grid .plotOverlay.workDirectory_but -column 1 -columnspan 1
+#grid .plotOverlay.workDirectory_ent -column 0 -columnspan 1
+
+iwidgets::Labeledframe .plotOverlay.engSysFrame -labelpos n  -labeltext "Engine System Convention"
+radiobutton .plotOverlay.engSysFrame.pYaft -text "+Y Axis Pointing from Fwd to Aft" -value aft -variable data(eSC_type)
+radiobutton .plotOverlay.engSysFrame.pYfwd -text "+Y Axis Pointing from Aft to Fwd " -value fwd -variable data(eSC_type)
+grid .plotOverlay.engSysFrame.pYaft .plotOverlay.engSysFrame.pYfwd
+grid .plotOverlay.engSysFrame -columnspan 5 -sticky news
+
+iwidgets::Labeledframe .plotOverlay.zoomingOption -labelpos n  -labeltext "3D Model Extent in Overlay Plot"
+radiobutton .plotOverlay.zoomingOption.full -text "Full 3D Model" -value fullthreed -variable data(zoom_type)
+radiobutton .plotOverlay.zoomingOption.sub -text "Portion of 3D Model" -value subthreed -variable data(zoom_type)
+grid .plotOverlay.zoomingOption.full .plotOverlay.zoomingOption.sub
+grid .plotOverlay.zoomingOption -columnspan 5 -sticky news
+
+set wi1 .plotOverlay.zoomingOption
+set wi2 .plotOverlay.zoomingOption
+
+grid [label .plotOverlay.zoomingOption.lb1 -text "3D Component File Name"] \
+     [entry .plotOverlay.zoomingOption.en1 -textvariable data(comp_File) -width 40]
+grid [label .plotOverlay.zoomingOption.lb2 -text "3D Component Name"] \
+     [entry .plotOverlay.zoomingOption.en2 -textvariable data(comp_Name) -width 40]
+
+[set wi1].full configure -command [list controlGUIstate [set wi1].en1 [set wi2].en2]
+[set wi2].sub configure -command [list controlGUIstate [set wi1].en1 [set wi2].en2]
+
+controlGUIstate [set wi1].en1 [set wi2].en2
+
+iwidgets::Labeledframe .plotOverlay.jobInfo -labelpos n  -labeltext "Current Job Info"
+grid .plotOverlay.jobInfo -columnspan 3 -rowspan 4 -sticky news
+label .plotOverlay.jobInfo.jobInfo_lbl -text "Project Name"
+entry .plotOverlay.jobInfo.jobInfo_ent -textvariable data(projectName) -width 50
+grid .plotOverlay.jobInfo.jobInfo_lbl .plotOverlay.jobInfo.jobInfo_ent -padx 5 -pady 5
+grid .plotOverlay.jobInfo.jobInfo_lbl -column 2 -columnspan 1
+grid .plotOverlay.jobInfo.jobInfo_ent -column 0 -columnspan 2
+
+label .plotOverlay.jobInfo.prefix2DRst_lbl -text "2D rst Prefix"
+entry .plotOverlay.jobInfo.prefix2DRst_ent -textvariable data(prefix2DRst) -width 50
+grid .plotOverlay.jobInfo.prefix2DRst_lbl .plotOverlay.jobInfo.prefix2DRst_ent -padx 5 -pady 5
+grid .plotOverlay.jobInfo.prefix2DRst_lbl -column 2 -columnspan 1
+grid .plotOverlay.jobInfo.prefix2DRst_ent -column 0 -columnspan 2
+
+
+label .plotOverlay.jobInfo.prefix3DRst_lbl -text "3D rst Prefix"
+entry .plotOverlay.jobInfo.prefix3DRst_ent -textvariable data(prefix3DRst) -width 50
+grid .plotOverlay.jobInfo.prefix3DRst_lbl .plotOverlay.jobInfo.prefix3DRst_ent -padx 5 -pady 5
+grid .plotOverlay.jobInfo.prefix3DRst_lbl -column 2 -columnspan 1
+grid .plotOverlay.jobInfo.prefix3DRst_ent -column 0 -columnspan 2
+
+
+iwidgets::Labeledframe .plotOverlay.sclrFact -labelpos n  -labeltext "Scalar Parameters"
+grid .plotOverlay.sclrFact -columnspan 3 -rowspan 2 -sticky news
+
+label .plotOverlay.sclrFact.dScale_lbl -text "DSCALE factor (Zoom Level)"
+iwidgets::entryfield .plotOverlay.sclrFact.dScale_ent -textvariable data(dScale) -width 8 -validate real
+grid .plotOverlay.sclrFact.dScale_lbl .plotOverlay.sclrFact.dScale_ent -padx 5 -pady 5
+grid .plotOverlay.sclrFact.dScale_lbl -column 2 -columnspan 1
+grid .plotOverlay.sclrFact.dScale_ent -column 1 -columnspan 1
+
+label .plotOverlay.sclrFact.axialOffset_lbl -text "Axial Offset factor (To be applied on 2D)"
+iwidgets::entryfield .plotOverlay.sclrFact.axialOffset_ent -textvariable data(axialOffset) -width 8 -validate real
+grid .plotOverlay.sclrFact.axialOffset_lbl .plotOverlay.sclrFact.axialOffset_ent -padx 5 -pady 5
+grid .plotOverlay.sclrFact.axialOffset_lbl -column 2 -columnspan 1
+grid .plotOverlay.sclrFact.axialOffset_ent -column 1 -columnspan 1
+
+
+
+button .plotOverlay.cancel -text "Cancel" -command "destroy .plotOverlay" -padx 5 -pady 8
+button .plotOverlay.plot -text "Generate Overlay Plots" -command "getOverlayPlots" -padx 5 -pady 8
+button .plotOverlay.clearform -text "Clear Form" -command "clearForm" -padx 5 -pady 8
+grid .plotOverlay.plot .plotOverlay.cancel .plotOverlay.clearform -columnspan 1 -sticky w
+
+
+
+
+}
+
+proc getOverlayPlots { } {
+
+global data
+
+
+set length3D [string length $data(prefix3DRst)]
+set length2D [string length $data(prefix2DRst)]
+
+if {$data(zoom_type) == "subthreed"} {
+set lengthcompFile [string length $data(comp_File)]
+set lengthcompName [string length $data(comp_Name)]
+if {$lengthcompFile == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "Please Specify 3D Componenet File!!!!\n"
+catch {file delete -force clear_file.inp}
+return
+}
+if {$lengthcompName == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "Please Specify 3D Componenet Name !!!!\n"
+catch {file delete -force clear_file.inp}
+return
+}
+}
+
+set lengthpN [string length $data(projectName)]
+set lengthaxloff [string length $data(axialOffset)]
+set lengthdscl [string length $data(dScale)]
+
+if {$lengthpN == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "Project Name Please!!!!\n"
+catch {file delete -force clear_file.inp}
+return
+}
+if {$length2D == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "Please specify 2D rst prefix !!!!\n"
+catch {file delete -force clear_file.inp}
+return
+}
+if {$length3D == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "Please specify 3D rst prefix !!!!\n"
+catch {file delete -force clear_file.inp}
+return
+}
+if {$lengthdscl == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "Ensure value for DSCALE !!!!\n"
+catch {file delete -force clear_file.inp}
+return
+}
+if {$lengthaxloff == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "Enter Axial Offset (Entering '0' (Numeric Zero) is permitted) !!!!\n"
+catch {file delete -force clear_file.inp}
+return
+}
+
+
+set fstart [open clear_file.inp w+]
+puts $fstart "fini"
+puts $fstart "/clear,nostart"
+close $fstart
+ans_sendcommand "/inp,clear_file,inp"
+package require Tk
+wm withdraw .
+#set workDirectory $data(workDirectory)
+#ans_sendcommand "/cwd,$workDirectory"
+set projectName $data(projectName)
+set eSC $data(eSC_type)
+set zoom_type $data(zoom_type)
+set comp_File $data(comp_File)
+set comp_Name $data(comp_Name)
+set compNameList 1
+set viewT 1
+set numberOfRsts $data(numberOfRsts)
+set dScale $data(dScale)
+set axialOffset $data(axialOffset)
+set 3DrstPrefix $data(prefix3DRst)
+set 2DrstPrefix $data(prefix2DRst)
+set 3Drstlistgz [glob -nocomplain $3DrstPrefix*gz]
+if {[llength $3Drstlistgz] != 0} {
+catch {exec gzip -d $3DrstPrefix*rst*gz}
+}
+set 2Drstlistgz [glob -nocomplain $2DrstPrefix*gz]
+if {[llength $2Drstlistgz] != 0} {
+catch {exec gzip -d $2DrstPrefix*rst*gz}
+}
+catch {exec gzip -d $comp_File*}
+
+set 3Drstlist [lsort [glob -nocomplain $3DrstPrefix*rst]]
+set 2Drstlist [lsort [glob -nocomplain $2DrstPrefix*rst]]
+set compFileList [glob -nocomplain $comp_File]
+
+if {[llength $2Drstlist] == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "$2DrstPrefix*rst are not present in Working Directory\n"
+catch {file delete -force clear_file.inp}
+return
+}
+if {[llength $3Drstlist] == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "$3DrstPrefix*rst are not present in Working Directory\n"
+catch {file delete -force clear_file.inp}
+return
+}
+
+if {$data(zoom_type) == "subthreed"} {
+
+if {[llength $compFileList] == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "$comp_File is not present in Working Directory\n"
+catch {file delete -force clear_file.inp}
+return
+}
+
+set fjunk [open $comp_File r]
+set bufferjunk [read $fjunk]
+close $fjunk
+set compL [string toupper [split $bufferjunk \n]]
+set cmpName [string toupper $comp_Name]
+if  {[lsearch -glob $compL *[set cmpName]*] == -1 } {
+set compNameList 0
+} else {
+set compNameList 1
+}
+
+
+if {$compNameList == 0} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "3D Component $comp_Name is not defined in $comp_File\n"
+catch {file delete -force clear_file.inp}
+return
+}
+}
+
+set 3Dtriml [string length $3DrstPrefix]
+set 2Dtriml [string length $2DrstPrefix]
+set timept3D ""
+for {set i 0} {$i < [llength $3Drstlist]} {incr i} {
+lappend timept3D [string range [file root [lindex $3Drstlist $i]] $3Dtriml end]
+}
+set timept2D ""
+for {set i 0} {$i < [llength $2Drstlist]} {incr i} {
+lappend timept2D [string range [file root [lindex $2Drstlist $i]] $2Dtriml end]
+}
+set Match 0
+for {set i 0} {$i < [llength $2Drstlist]} {incr i} {
+if {[string compare [lindex $timept3D $i] [lindex $timept2D $i]]!= 0} {
+set Match 1
+}
+}
+if {$Match == 1} {
+tk_messageBox -title "** Error **" -icon error -type ok -message "Inconsistent naming convention for rsts !!!!!\n$timept3D \n$timept2D"
+catch {file delete -force clear_file.inp}
+return
+}
+set noOfTimepoint [llength $2Drstlist]
+
+ if {[string is true [string equal $data(eSC_type) "fwd"]]} {
+
+ set viewT -1
+ }
+
+for {set cntr 0} {$cntr < [llength $timept2D] } {incr cntr} {
+catch {file delete -force XXXX2D.db}
+catch {file delete -force XXXX3D.cdb}
+
+set exe [file join v: aerotools_nlr aero_win32 aws bin aero mbgrid MBGUsageTracker.exe]
+set gstartTime [clock seconds]
+
+
+set tp [lindex $timept2D $cntr]
+
+ans_sendcommand "/com,----------------2D RST input--------------------"
+ans_sendcommand "/inp,clear_file,inp"
+ans_sendcommand "/UIS,MSGPOP,3"
+ans_sendcommand "/PREP7"
+catch {ans_sendcommand "SHPP,OFF,ALL"}
+ans_sendcommand "/post1"
+ans_sendcommand "file,$2DrstPrefix$tp,rst"
+catch {ans_sendcommand "set,last"}
+ans_sendcommand "allsel,all"
+ans_sendcommand "/TITLE,$projectName t=$tp sec; dscale=$dScale"
+ans_sendcommand "RSYS,0"
+catch {ans_sendcommand "upcoord,$dScale"}
+ans_sendcommand "/PREP7"
+catch {ans_sendcommand "SHPP,OFF,ALL"}
+ans_sendcommand "CSYS,0"
+ans_sendcommand "allsel"
+catch {ans_sendcommand "ddel,all,all"}
+catch {ans_sendcommand "fdel,all,all"}
+ans_sendcommand "esel,u,ename,,42"
+ans_sendcommand "nsle"
+catch {ans_sendcommand "edel,all,all"}
+catch {ans_sendcommand "ndel,all,all"}
+ans_sendcommand "allsel"
+ans_sendcommand "save,XXXX2D,db,,model"
+ans_sendcommand "FINI"
+ans_sendcommand "/inp,clear_file,inp"
+ans_sendcommand "/com,----------------3D RST input--------------------"
+ans_sendcommand "/inp,clear_file,inp"
+ans_sendcommand "/UIS,MSGPOP,3"
+ans_sendcommand "/PREP7"
+catch {ans_sendcommand "SHPP,OFF,ALL"}
+ans_sendcommand "/post1"
+ans_sendcommand "file,$3DrstPrefix$tp,rst"
+catch {ans_sendcommand "SET,last"}
+ans_sendcommand "allsel,all"
+ans_sendcommand "CSYS,5"
+ans_sendcommand "RSYS,5"
+ans_sendcommand "esel,s,ename,,45"
+ans_sendcommand "esel,a,ename,,92"
+ans_sendcommand "esel,a,ename,,95"
+ans_sendcommand "nsle"
+ans_sendcommand "CM,temp,ELEM"
+ans_sendcommand "ALLSEL"
+catch {ans_sendcommand "UPCOORD,$dScale"}
+ans_sendcommand "ALLSEL"
+ans_sendcommand "/PREP7"
+catch {ans_sendcommand "SHPP,OFF,ALL"}
+ans_sendcommand "CSYS,5"
+ans_sendcommand "allsel"
+catch {ans_sendcommand "ddel,all,all"}
+catch {ans_sendcommand "fdel,all,all"}
+ans_sendcommand "cmsel,s,temp"
+ans_sendcommand "esel,inve"
+ans_sendcommand "nsle"
+catch {ans_sendcommand "edel,all,all"}
+catch {ans_sendcommand "ndel,all,all"}
+ans_sendcommand "allsel"
+ans_sendcommand "esel,u,ename,,45"
+ans_sendcommand "esel,u,ename,,92"
+ans_sendcommand "esel,u,ename,,95"
+ans_sendcommand "nsle"
+catch {ans_sendcommand "edel,all,all"}
+catch {ans_sendcommand "ndel,all,all"}
+ans_sendcommand "allsel"
+catch {ans_sendcommand "nmodif,all,,0"}
+ans_sendcommand "ALLSEL"
+if {$zoom_type == "subthreed"} {
+catch {ans_sendcommand "/inp,$comp_File"}
+ans_sendcommand "cmsel,r,$comp_Name"
+ans_sendcommand "nsle"
+}
+ans_sendcommand "/vup,,x"
+ans_sendcommand "/auto,1"
+ans_sendcommand "/repl"
+ans_sendcommand "*get,f1,graph,1,focus,x"
+ans_sendcommand "*get,f2,graph,1,focus,y"
+ans_sendcommand "*get,f3,graph,1,focus,z"
+ans_sendcommand "*get,dis,graph,1,dist"
+ans_sendcommand "parsav,all"
+ans_sendcommand "ALLSEL"
+catch {ans_sendcommand "CDWRITE,DB,XXXX3D,cdb"}
+ans_sendcommand "FINI"
+ans_sendcommand "/inp,clear_file,inp"
+ans_sendcommand "/UIS,MSGPOP,3"
+ans_sendcommand "/prep7"
+catch {ans_sendcommand "SHPP,OFF,ALL"}
+ans_sendcommand "RESUME,XXXX2D,db"
+catch {ans_sendcommand "SHPP,OFF,ALL"}
+ans_sendcommand "CSYS,0"
+ans_sendcommand "allsel"
+catch {ans_sendcommand "NGEN,2, ,ALL, , , ,$axialOffset, ,1, "}
+ans_sendcommand "cm,twod,elem"
+ans_sendcommand "/color,elem,blue"
+catch {ans_sendcommand "CDREAD,DB,XXXX3D,cdb"}
+ans_sendcommand "allsel"
+ans_sendcommand "cmsel,u,twod"
+ans_sendcommand "/color,elem,red"
+ans_sendcommand "cm,threed,elem"
+ans_sendcommand "/vup,,x"
+ans_sendcommand "/view,,,,-1"
+ans_sendcommand "/edge,,1"
+ans_sendcommand "allsel"
+ans_sendcommand "/PLOPTS,INFO,0"
+ans_sendcommand "/PLOPTS,LEG1,1"
+ans_sendcommand "/PLOPTS,LEG2,0"
+ans_sendcommand "/PLOPTS,LEG3,1"
+ans_sendcommand "/PLOPTS,FRAME,1"
+ans_sendcommand "/PLOPTS,TITLE,1"
+ans_sendcommand "/PLOPTS,MINM,1"
+ans_sendcommand "/PLOPTS,FILE,0"
+ans_sendcommand "/PLOPTS,LOGO,0"
+ans_sendcommand "/PLOPTS,WINS,1"
+ans_sendcommand "/PLOPTS,WP,0"
+ans_sendcommand "/PLOPTS,DATE,0"
+ans_sendcommand "/TRIAD,LBOT "
+ans_sendcommand "/TITLE,$projectName t=$tp sec; dscale=$dScale"
+ans_sendcommand "/GRAPHICS,POWER"
+ans_sendcommand "/TYPE,1,2"
+ans_sendcommand "/CPLANE,0"
+ans_sendcommand "/SHADE,1,1"
+ans_sendcommand "/HBC,1,0"
+ans_sendcommand "/REPLOT"
+ans_sendcommand "parres"
+ans_sendcommand "dsys,5"
+ans_sendcommand "/VIEW,1,,$viewT "
+ans_sendcommand "/FOC,   1,   f1,0,f2"
+ans_sendcommand "/DIST,  1,  dis"
+if {$zoom_type == "subthreed"} {
+catch {ans_sendcommand "/inp,$comp_File"}
+}
+ans_sendcommand "esel,s,ename,,45"
+ans_sendcommand "esel,a,ename,,92"
+ans_sendcommand "esel,a,ename,,95"
+ans_sendcommand "nsle"
+if {$zoom_type == "subthreed"} {
+ans_sendcommand "cmsel,r,$comp_Name"
+ans_sendcommand "nsle"
+}
+ans_sendcommand "/RGB,INDEX,100,100,100, 0"
+ans_sendcommand "/RGB,INDEX, 80, 80, 80,13"
+ans_sendcommand "/RGB,INDEX, 60, 60, 60,14"
+ans_sendcommand "/RGB,INDEX, 0, 0, 0,15"
+ans_sendcommand "/repl"
+ans_sendcommand "/color,elem,red"
+ans_sendcommand "/edge,,0"
+ans_sendcommand "/show,,,1"
+ans_sendcommand "eplot"
+ans_sendcommand "/noerase"
+ans_sendcommand "esel,s,ename,,42"
+ans_sendcommand "nsle"
+ans_sendcommand "/color,outl,blue"
+ans_sendcommand "/edge,,1"
+ans_sendcommand "nsle"
+catch {ans_sendcommand "/annot,dele"}
+catch {ans_sendcommand "/ANUM ,0,1, 1.20 , 0.75"}
+catch {ans_sendcommand "/TSPEC,4, 1.0, 1,   0,   0"}
+catch {ans_sendcommand "/TLAB,1.2,0.9,Outline: 2D"}
+catch {ans_sendcommand "/TSPEC,12, 1.0, 1,   0,   0"}
+catch {ans_sendcommand "/TLAB,1.2, 0.82,Mesh: 3D"}
+ans_sendcommand "eplot"
+ans_sendcommand "/image,save,$projectName[set tp]_2d_3d,jpeg"
+ans_sendcommand "/erase"
+ans_sendcommand "/show,,,"
+ans_sendcommand "/edge,,"
+ans_sendcommand "/RGB,INDEX, 0, 0, 0, 0"
+ans_sendcommand "/RGB,INDEX, 60, 60, 60,13"
+ans_sendcommand "/RGB,INDEX, 80, 80, 80,14"
+ans_sendcommand "/RGB,INDEX,100,100,100,15"
+ans_sendcommand "/repl"
+ans_sendcommand "/inp,clear_file,inp"
+catch {file delete -force XXXX2D.db}
+catch {file delete -force XXXX3D.cdb}
+
+if {[string is true [file exists $exe ]]} {
+	    catch {exec $exe ezOverlay "Displacement Overlay" 1.0 $gstartTime [clock seconds] success "$data(version)" 0}
+	}
+
+}
+
+catch {file delete -force clear_file.inp}
+}
+
+proc controlGUIstate {wi1 wi2} {
+global data
+if {$data(zoom_type) == "fullthreed"} {
+$wi1 configure -state disabled
+$wi2 configure -state disabled
+} else {
+$wi1 configure -state normal
+$wi2 configure -state normal
+}
+}
+
+
+proc clearForm { } {
+global data
+#set data(workDirectory) ""
+set data(eSC_type) "aft"
+set data(zoom_type) "fullthreed"
+set data(comp_File) ""
+set data(comp_Name) ""
+set ww1 .plotOverlay.zoomingOption.en1
+set ww2 .plotOverlay.zoomingOption.en2
+$ww1 configure -state disabled
+$ww2 configure -state disabled
+set data(projectName) "Project"
+set data(dScale) "20"
+set data(axialOffset) "0"
+set data(prefix3DRst) "CDP_Joint_mu_3D_t"
+set data(prefix2DRst) "CDP_Joint_mu_2D_t"
+set data(numberOfRsts) ""
+}
+
+plotOverlayGUI
+clearForm
+
+*END
+~eui,'source ezOverlay.eui'
+~eui,'file delete -force ezOverlay.eui'

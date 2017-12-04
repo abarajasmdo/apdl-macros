@@ -1,0 +1,141 @@
+! Macro to generate 2D vs 3D geometric overlay plots
+!Original:???
+!Modification: Arturo Mart�nez and Jorge S�enz (May 30th, 2007)
+!
+!
+!Nomenclature:
+!	arg1: 3D model name
+!	arg2: 2D model name
+!	arg3: Temporary 2D file name (it will be automatically deleted)
+!	arg4: Jobname
+!
+! Usage: geometric_overlay
+
+
+! Resume 3D model
+/pmacro
+finish
+/clear
+! arg1='cdp_baseline'								!3D
+! arg2='lm9000_2d_hpcr_mu0_021417'			!2D
+! arg3='temp_2d'									!2D temp
+! arg4='Geometry_overlay'					!jobname
+
+/filn,temp_2d
+resume,'cdp_baseline',db,
+/nerr,0
+esel,,ename,,45
+nsle
+csys,0
+dsys,5
+/VIEW,1,,1
+/ANG,1,0
+/REPLO
+/ZOOM,1,RECT,0.293483,-0.807487,0.373452392287,-0.887436507922
+/REPLO
+eplo
+
+*del,all
+*get,distance,graph,1,dist
+*get,xfoc,graph,1,focus,x
+*get,yfoc,graph,1,focus,z
+parsav,scalar,viewsett,parm
+
+! Start configuring display settings on 3D model
+/TITLE,
+/rep
+/PSF,DEFA, ,1,0,1
+/PBF,DEFA, ,1
+/PIC,DEFA, ,1
+/PSYMB,CS,0
+/PSYMB,NDIR,0
+/PSYMB,ESYS,0
+/PSYMB,LDIV,0
+/PSYMB,LDIR,0
+/PSYMB,ADIR,0
+/PSYMB,ECON,0
+/PSYMB,XNODE,0
+/PSYMB,DOT,1
+/PSYMB,PCONV,
+/PSYMB,LAYR,0
+/PSYMB,FBCS,0
+/PBC,ALL, ,0
+
+/dev,font,1,Courier*New,400,0,-20,0,0,,,
+/plopts,INFO,3
+/plopts,LEG1,1
+/plopts,LEG2,1
+/plopts,LEG3,1
+/plopts,FRAME,1
+/plopts,TITLE,1
+/plopts,MINM,1
+/plopts,FILE,0
+/plopts,LOGO,0
+/plopts,WINS,1
+/plopts,WP,0
+/plopts,DATE,0
+/triad,ORIG
+/edge,1,1,45
+/replot
+/gline,1,0
+/show,,,1
+/TYPE,1,0
+/CPLANE,0
+/SHADE,1,1
+/VIEW,1,0,1,0
+/VUP,1,X
+/gsave,tempcol,gsav
+
+! Resume 2D model
+resume,'lm9000_2d_hpcr_mu0_021417',db,'../../Information/2d/torun'
+dsys,5
+/title,
+!cmsel,s,disk_1-2
+!more_sel_stg14												!*********** PORTION OF 2D MODEL TO CHOOSE
+!nelem
+
+! Creation of temporary 2D file						!***********
+/TITLE,3D (black) vs 2D (red) Geometric Overlay Plot
+/gresume,tempcol,gsav
+/color,elem,blac
+/color,outl,red
+parres,change,viewsett,parm
+/dist,1,distance,0
+/focus,1,xfoc,,yfoc
+/show,,,1
+/TYPE,1,0
+/CPLANE,0
+/SHADE,1,1
+/VUP,1,X
+/REP
+save,temp_2d,db,,mode
+
+
+!Creating the overaly plot
+resume,'cdp_baseline',db,
+/nerr,0
+esel,,ename,,45
+nsle
+!allsel
+!allsel,below,volu
+!esel,r,type,,2,4
+!esel,a,ename,,92,95
+csys,0
+dsys,5
+/gresume,tempcol,gsav
+parres,change,viewsett,parm
+/dist,1,distance,0
+/focus,1,xfoc,,yfoc
+/show,,,1
+/rep
+/noerase
+
+! Resume 2D temp model
+resume,temp_2d,db,
+/rep
+! Create picture *.png
+/ui,copy,save,png,graph,color,reverse,portrait,yes
+
+finish
+/delete,temp_2d,db
+/delete,temp_2d,dbb

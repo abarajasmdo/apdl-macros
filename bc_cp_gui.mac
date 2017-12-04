@@ -1,0 +1,169 @@
+*CREATE,bcCP,eui
+
+# ===============================================================================================
+# bc_cp_gui.mac  ANSYS11 VER 1.0 8/30/2010 Roger Wang
+# You can pick a master node. 
+# This macro will create couple equations at cut boundaries based on the DOF and CP set number.
+# The program will choose nodes to be coupled with master node based on the tolerance.
+#
+proc bcCPMain {} {
+    package require Tk
+    package require Iwidgets
+    global t w dof setid cptol node_id
+    catch { destroy .t }
+    set t [toplevel .t -class Ansys]
+    ::euidl::registerWindow .t
+    wm title .t "bcCP : BC CP creaction tool"
+    set w [frame .t.ez -width 5.4i -height 7.3i]
+    pack $w
+    set node_id 0
+    set cptol 1.0e-4
+    ans_sendcommand "CM,TEMPNODEGROUP,NODE"
+
+    label $w.label_dof -text "Choose Degree-of-Freedom:"
+    radiobutton $w.rdb1 -text "ALL" -variable dof -value "ALL"
+    radiobutton $w.rdb2 -text "UX" -variable dof -value "UX"
+    radiobutton $w.rdb3 -text "UY" -variable dof -value "UY"
+    radiobutton $w.rdb4 -text "UZ" -variable dof -value "UZ"
+    $w.rdb1 select
+    grid $w.label_dof -row 0 -column 0 -sticky nsew
+    grid $w.rdb1 -row 1 -column 0 -sticky nsew
+    grid $w.rdb2 -row 1 -column 1 -sticky nsew
+    grid $w.rdb3 -row 1 -column 2 -sticky nsew
+    grid $w.rdb4 -row 1 -column 3 -columnspan 4
+
+    label $w.space_lbl1 -text " "
+    label $w.label_id -text "CP Set Number:"
+    entry $w.ent_id -width 8 -textvariable id`
+    grid $w.space_lbl1 -row 2 -column 0
+    grid $w.label_id -row 3 -column 0 -sticky nsew
+    grid $w.ent_id -row 4 -column 0 -sticky nsew
+    set maxcp [ expr [ans_getvalue "ACTIVE, ,CP"] + 1]
+    $w.ent_id delete 0 end
+    $w.ent_id insert end $maxcp
+
+    label $w.space_lbl2 -text " "
+    label $w.label_tol -text "Nodal selection Tolerance:"
+    entry $w.ent_tol -width 8 -textvariable tol`
+    grid $w.space_lbl2 -row 5 -column 0
+    grid $w.label_tol -row 6 -column 0 -sticky nsew
+    grid $w.ent_tol -row 7 -column 0 -sticky nsew
+    $w.ent_tol delete 0 end
+    $w.ent_tol insert end $cptol
+
+    label $w.space_lbl3 -text " "
+    label $w.label_master -text "Choose the Master Node:"
+    entry $w.ent_node -width 8 -textvariable node`
+    button $w.but_node -text "Pick Node" -command "pickNode"
+    $w.ent_node delete 0 end
+    $w.ent_node insert end $node_id
+	
+    grid $w.space_lbl3 -row 8 -column 0
+    grid $w.label_master -row 9 -column 0
+    grid $w.ent_node -row 10 -column 0
+    grid $w.but_node -row 10 -column 1 -columnspan 2
+
+    label $w.space_lbl4 -text " "
+    label $w.label_create -text "Create CP:"
+    button $w.apply -text "Apply" -command applyButton
+    button $w.close -text "Cancel" -command closeButton
+    grid $w.space_lbl4 -row 11 -column 0
+    grid $w.label_create -row 12 -column 0
+    grid $w.apply -row 13 -column 0 -sticky nsew
+    grid $w.close -row 13 -column 1  -columnspan 2
+}
+
+# ===============================================================================================
+proc applyButton {} {
+    global t w dof setid cptol node_id
+    set setid [$w.ent_id get]
+    set cptol [$w.ent_tol get]
+    ans_sendcommand "DIR='$dof'"
+    ans_sendcommand "MXCP=$setid"
+    ans_sendcommand "TOL=$cptol"
+    ans_sendcommand "*GET,CUS,ACTIVE, ,CSYS"
+    ans_sendcommand "CSYS,5"
+    ans_sendcommand "*GET,IDMIN,NODE,,NUM,MIN"            
+    ans_sendcommand "CMSEL,S,TEMPNODEGROUP"
+    ans_sendcommand "NSEL,R,LOC,X,NX(IDMIN)-TOL,NX(IDMIN)+TOL"
+    ans_sendcommand "NSEL,R,LOC,Z,NZ(IDMIN)-TOL,NZ(IDMIN)+TOL"
+    ans_sendcommand "*GET,NONODE,NODE,,COUNT"   
+    ans_sendcommand "INDEX0=IDMIN"
+    ans_sendcommand "I0=2"
+    ans_sendcommand "*GET,INDEX,NODE,,NUM,MIN"
+    ans_sendcommand "*IF,INDEX, EQ, INDEX0, THEN"
+    ans_sendcommand "  *GET,INDEX,NODE,INDEX,NXTH"
+    ans_sendcommand "  I0=3"
+    ans_sendcommand "*ENDIF"
+    ans_sendcommand "*IF,DIR,EQ,'ALL',THEN"
+    ans_sendcommand "  CP,MXCP,UX,INDEX0,INDEX"
+    ans_sendcommand "  CP,MXCP+1,UY,INDEX0,INDEX"
+    ans_sendcommand "  CP,MXCP+2,UZ,INDEX0,INDEX"
+    ans_sendcommand "*ELSE"
+    ans_sendcommand "  CP,MXCP,DIR,INDEX0,INDEX"
+    ans_sendcommand "*ENDIF"
+    ans_sendcommand "*DO,I,I0,NONODE"
+    ans_sendcommand "*GET,INDEX,NODE,INDEX,NXTH"
+    ans_sendcommand "*IF,INDEX,NE,INDEX0,THEN"
+    ans_sendcommand "  *IF,DIR,EQ,'ALL',THEN"
+    ans_sendcommand "    CP,MXCP,UX,INDEX"
+    ans_sendcommand "    CP,MXCP+1,UY,INDEX"
+    ans_sendcommand "    CP,MXCP+2,UZ,INDEX"
+    ans_sendcommand "  *ELSE"
+    ans_sendcommand "    CP,MXCP,DIR,INDEX"
+    ans_sendcommand "  *ENDIF"
+    ans_sendcommand "*ENDIF"
+    ans_sendcommand "*ENDDO"
+    ans_sendcommand "CMSEL,S,TEMPNODEGROUP"
+    ans_sendcommand "/REPLOT"
+    ans_sendcommand "CMDELE,TEMPNODEGROUP"
+    ans_sendcommand "CSYS,CUS"
+    ans_sendcommand "MXCP="
+    ans_sendcommand "NONODE="
+    ans_sendcommand "INDEX0="
+    ans_sendcommand "INDEX="
+    ans_sendcommand "ZMIN="
+    ans_sendcommand "IDMIN="
+    ans_sendcommand "/GOPR"
+    destroy .t
+}
+
+# ===============================================================================================
+proc closeButton {} {
+    destroy .t
+}
+	    
+
+# ===============================================================================================
+proc callBackOfPickNode {buttonPressed} {
+    global t w dof setid cptol node_id
+    if {$buttonPressed == 1} {
+	.t configure -cursor {}
+	return true
+    }
+    if {[ans_getvalue "NODE,0,COUNT"] != 1} {
+	tk_messageBox -title "** Error **" -icon error -type ok -message "Pick only one node"
+	.t configure -cursor {}
+	return true
+    }
+    ans_sendcommand "N_REF="
+    ans_sendcommand "N_REF=NDNEXT(0)"
+    set node_id "[ans_getvalue PARM,N_REF,VALUE]"
+    $w.ent_node delete 0 end
+    $w.ent_node insert end $node_id
+    .t configure -cursor {}
+    raise .t
+    return true
+}
+
+# ===============================================================================================
+proc pickNode {} {
+    .t configure -cursor wait
+     ::uidl::callFnc Fnc_NSEL_R callBackOfPickNode
+    return true
+}
+
+bcCPMain
+*END
+~eui,'source bcCP.eui'
+~eui,'file delete -force bcCP.eui'
