@@ -1,0 +1,16 @@
+/pmacro
+shpp,off
+cm,ntemp,node
+nsel,r,p
+nnum=0
+*do,i,1,ndinqr(0,13),1
+  nnum=ndnext(nnum)
+  xcor=nx(nnum)
+  ycor=ny(nnum)
+  zcor=nz(nnum)
+  nmodif,nnum,xcor+%arg1%,ycor+%arg2%,zcor+%arg3%
+*enddo
+cmsel,,ntemp
+cmdele,ntemp
+nplo
+shpp,on

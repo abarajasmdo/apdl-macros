@@ -9,17 +9,17 @@ totz=0
 nod=ndnext(nod)
 totx=totx+ux(nod)
 toty=toty+uy(nod)
-!totz=totz+uz(nod)
+totz=totz+uz(nod)
 *enddo
 totx=totx/nnod
 toty=toty/nnod
-!totz=totz/nnod
+totz=totz/nnod
 *msg,note,totx,toty,totz
 Nodal Displacement Averages %/UX = %G %/UY = %G %/UZ = %G
 nod=
 !totx=
-toty=
-totz=
+!toty=
+!totz=
 nnod=
 i=
 /uis,msgpop,2

@@ -1,0 +1,35 @@
+/pmacro
+cm,ntemp,node
+cm,ktemp,kp
+cm,temp,node
+csys,5
+nsel,r,loc,y,0
+cm,temp2,node
+ncnt=ndinqr(0,13)
+nnum=0
+*do,i,1,ncnt,1
+  nnum=ndnext(nnum)
+  krcor=NX(nnum)
+  kacor=NZ(nnum)
+  knum=KP(krcor,0,kacor)
+  rcor=KX(knum)
+  acor=KZ(knum)
+  cmsel,,temp
+  nsel,r,loc,x,krcor-0.01,krcor+0.01
+  nsel,r,loc,z,kacor-0.01,kacor+0.01
+  nmodif,all,rcor,,acor
+  cmsel,,temp2
+*enddo
+csys,
+nnum=
+knum=
+krcor=
+kacor=
+rcor=
+acor=
+cmdele,temp
+cmsel,,ktemp
+cmdele,ktemp
+cmsel,,ntemp
+cmdele,ntemp
+gplo

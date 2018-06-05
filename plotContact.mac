@@ -1,0 +1,46 @@
+cmsel,all
+allsel
+PARSAV
+/annot,DELE
+/annot,on
+/annot,TMOD,1
+*cfopen,junk
+*do,ii,101,130,1
+  esel,,real,,%ii%
+  nsle
+  *GET,NELES,NODE,,COUNT
+  ELE=NDNEXT(0)
+  SUMX=0
+  SUMY=0
+  SUMZ=0
+  *DO,LOOP,1,NELES
+    SUMX=((NX(ELE)+NX(ELE))/2)+SUMX
+    SUMY=((NY(ELE)+NY(ELE))/2)+SUMY
+    SUMZ=((NZ(ELE)+NZ(ELE))/2)+SUMZ
+    ELE=NDNEXT(ELE)
+  *ENDDO
+  LOCX=(SUMX/NELES)
+  LOCY=(SUMY/NELES)
+  LOCZ=(SUMY/NELES)
+  *if,MOD(II,3),EQ,0,then
+    LOCX2=LOCX+0.5
+  *elseif,MOD(II,3),EQ,1,then
+    LOCX2=LOCX+0.65
+  *else
+    LOCX2=LOCX+.8
+  *endif
+  *if,LOCY,GT,264,then
+    LOCY2=LOCY+0.5
+  *else
+    LOCY2=LOCY-1
+  *endif
+  LOCZ2=LOCZ
+  TXT='REAL_%II%'
+  *CFWRIT,/AN3D,TEXT,LOCX2,LOCY2,LOCZ2,TXT
+  *CFWRIT,/AN3D,ARROW,1,LOCX2,LOCY2,LOCZ2,LOCX,LOCY,LOCZ
+*enddo
+*cfclos
+/INP,junk
+PARRES
+cmsel,all
+allsel

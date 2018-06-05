@@ -1,0 +1,101 @@
+#!/bin/bash
+###############################################################################################
+# Macro to get pressure from 2D RST FILES
+###############################################################################################
+# Input: Four input require
+# 1st input =  2D rst prefix (All 2D rsts should be in the same directory)
+###############################################################################################
+clear
+echo
+echo  "#####  GET PRESSURE FROM 2D MACRO VER 1.0  ######"
+echo
+echo
+date >time_status.dat
+##################################################
+#     PROMPT FOR 2D RSTS PREFIXES         #
+##################################################
+pref_2d=
+while [ -z "$pref_2d" ]
+do
+echo -n "Enter the 2D RST's Prefix  : "
+read pref_2d
+if [ -n "$pref_2d" ]
+then
+{ if [ "$pref_2d" =  ".dir" ]
+then
+{ bbb=`ls *.rst`
+echo $bbb
+echo
+echo -n "Enter the 2D RST's Prefix  : "
+read pref_2d
+ }
+fi
+}
+fi
+done
+
+echo -n "Enter the ANSYS Version to use: (Ex: ansys172x64) : "
+read c_anverr
+
+ls ${pref_2d}*.rst >2drstslist.dat
+awk '{sub (/.rst/, "")};{print $1}' 2drstslist.dat >list_2d.dat
+awk -v var2=$pref_2d '{sub (var2, "")};{print $1}' list_2d.dat >list_2dt.dat
+cat list_2dt.dat | /usr/bin/sort -n >tplist_2d.dat
+rm list_*.dat
+
+###############################################################################################
+# To Calculate 2D Forces and Average Displacements for all time points be reading nodal and elemental components
+# from the Initial Input
+################################################################################################
+for time in `awk '{print $1}' tplist_2d.dat`
+do
+echo "
+/post1
+FILE,${pref_2d}${time},rst
+SET,LAST
+
+
+/input,cdp_model,inp
+
+*cfopen,cb_${time},inp
+cmsel,,cdp_submodel
+
+!  spool cut boundary  UX and UY
+*cfwrite,/com Spool cut boundary UX and UY
+*do,loop,1,5
+	nsel,,CDP_CB_1_%loop%
+	nnum=ndnext(0)
+	*cfwrite,d,cb_1_%loop%,ux,ux(nnum)
+	*cfwrite,d,cb_1_%loop%,uy,uy(nnum)
+*enddo
+
+*cfwrite,/com Shaft cut boundary UX only (FY)
+*do,loop,1,7
+	nsel,,CDP_CB_2_%loop%
+	nnum=ndnext(0)
+	*cfwrite,d,cb_2_%loop%,ux,ux(nnum)
+	fsum
+	*get,fy_2d,fsum,,item,fy
+	*cfwrite,f,cb_2_%loop%,fy,-fy_2d/96	! 1/96th sector
+*enddo
+*cfclos
+
+fini
+/exit,nosav" > getCB_${time}.inp
+echo "$c_anverr  -b -p ane3fl -i getCB_${time}.inp -o getCB_${time}.out" > c__run.sss
+sh ./c__run.sss
+done
+date >>time_status.dat
+
+echo "
+*********************************************************************************
+#     Files created in working directory                   	  	 	#
+#                                                           		 	#
+# Please check *.prp Files Generated                            	#
+#                                                            		 	#
+ ************************************************************************	*
+#                                                            		 	#
+#     SCRIPT DEVELOPED BY Antonio Barajas +52 442 456 7611 			 	#
+#              Last Updated 28-Nov-2017                      		 	#
+#                                                            		 	#
+*********************************************************************************"

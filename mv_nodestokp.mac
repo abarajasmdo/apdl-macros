@@ -1,0 +1,16 @@
+/pmacro
+cm,ntemp,node
+cm,ktemp,kp
+nsel,,p
+csys,5
+ksel,,p
+nnum=kP(0,0,0)
+rcor=KX(nnum)
+acor=KZ(nnum)
+nmodif,all,rcor,,acor
+csys,
+cmsel,,ktemp
+cmdele,ktemp
+cmsel,,ntemp
+cmdele,ntemp
+gplo

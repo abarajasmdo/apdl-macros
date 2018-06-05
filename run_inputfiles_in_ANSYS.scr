@@ -1,0 +1,65 @@
+#!/bin/bash
+###############################################################################################
+# Macro to run with ANSYS multiple Input Files
+###############################################################################################
+# Input: Four input require
+# 1st input = prefix (All inp should be in the same directory)
+# 2nd input = ANSYS VERSION
+###############################################################################################
+clear
+echo
+echo  "#####  RUN INPUT FULES MACRO VER 1.0  ######"
+echo
+echo
+date >time_status.dat
+##################################################
+#     PROMPT FOR 2D RSTS PREFIXES         #
+##################################################
+pref=
+while [ -z "$pref" ]
+do
+echo -n "Enter the INP's Prefix  : "
+read pref
+if [ -n "$pref" ]
+then
+{ if [ "$pref" =  ".dir" ]
+then
+{ bbb=`ls *.inp`
+echo $bbb
+echo
+echo -n "Enter the INP's Prefix  : "
+read pref
+ }
+fi
+}
+fi
+done
+
+echo -n "Enter the ANSYS Version to use: (Ex: ansys180x64) : "
+read c_anverr
+
+ls ${pref}*.inp >inpslist.dat
+awk '{sub (/.inp/, "")};{print $1}' inpslist.dat >list_inp.dat
+awk -v var2=$pref '{sub (var2, "")};{print $1}' list_inp.dat >list_inpt.dat
+cat list_inpt.dat | /usr/bin/sort -n >tplist.dat
+rm list_*.dat
+
+for time in `awk '{print $1}' tplist.dat`
+do
+echo "$c_anverr  -b -p ane3fl -i ${pref}${time}.inp -o ${pref}${time}.out" > c__run.sss
+sh ./c__run.sss
+done
+date >>time_status.dat
+
+echo "
+*********************************************************************************
+#     Files created in working directory                   	  	 	#
+#                                                           		 	#
+# Please check *.out Files Generated                            	#
+#                                                            		 	#
+ ************************************************************************	*
+#                                                            		 	#
+#     SCRIPT DEVELOPED BY Antonio Barajas +52 442 456 7611 			 	#
+#              Last Updated 20-Feb-2018                      		 	#
+#                                                            		 	#
+*********************************************************************************"

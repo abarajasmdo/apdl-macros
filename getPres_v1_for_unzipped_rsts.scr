@@ -1,0 +1,109 @@
+#!/bin/bash
+###############################################################################################
+# Macro to get pressure from 2D RST FILES
+###############################################################################################
+# Input: Four input require
+# 1st input =  2D rst prefix (All 2D rsts should be in the same directory)
+###############################################################################################
+clear
+echo
+echo  "#####  GET PRESSURE FROM 2D MACRO VER 1.0  ######"
+echo
+echo
+date >time_status.dat
+##################################################
+#     PROMPT FOR 2D RSTS PREFIXES         #
+##################################################
+pref_2d=
+while [ -z "$pref_2d" ]
+do
+echo -n "Enter the 2D RST's Prefix  : "
+read pref_2d
+if [ -n "$pref_2d" ]
+then
+{ if [ "$pref_2d" =  ".dir" ]
+then
+{ bbb=`ls *.rst`
+echo $bbb
+echo
+echo -n "Enter the 2D RST's Prefix  : "
+read pref_2d
+ }
+fi
+}
+fi
+done
+
+echo -n "Enter the ANSYS Version to use: (Ex: ansys172x64) : "
+read c_anverr
+
+ls ${pref_2d}*.rst >2drstslist.dat
+awk '{sub (/.rst/, "")};{print $1}' 2drstslist.dat >list_2d.dat
+awk -v var2=$pref_2d '{sub (var2, "")};{print $1}' list_2d.dat >list_2dt.dat
+cat list_2dt.dat | /usr/bin/sort -n >tplist_2d.dat
+rm list_*.dat
+
+###############################################################################################
+# To Calculate 2D Forces and Average Displacements for all time points be reading nodal and elemental components
+# from the Initial Input
+################################################################################################
+for time in `awk '{print $1}' tplist_2d.dat`
+do
+echo "
+/post1
+FILE,${pref_2d}${time},rst
+SET,LAST
+
+esel,,ename,,42
+nsle
+elcnt=elmiqr(0,13)
+elnm=0
+*cfopen,PresVal_${time},prp
+*do,ii,1,elcnt,1
+  p1=0
+  p2=0
+  p3=0
+  p4=0
+  elnm=elnext(elnm)
+  *get,p1,elem,elnm,smisc,2
+  *get,p2,elem,elnm,smisc,4
+  *get,p3,elem,elnm,smisc,6
+  *get,p4,elem,elnm,smisc,8
+  *if,p1,NE,0,then
+     *vwrite,'sfe,','%elnm%',',1,pres,',',',p1
+     (A4,A6,A8,A1,F15.11)
+  *endif
+  *if,p2,NE,0,then
+    *vwrite,'sfe,','%elnm%',',2,pres,',',',p2
+    (A4,A6,A8,A1,F15.11)
+  *endif
+  *if,p3,NE,0,then
+    *vwrite,'sfe,','%elnm%',',3,pres,',',',p3
+    (A4,A6,A8,A1,F15.11)
+  *endif
+  *if,p4,NE,0,then
+    *vwrite,'sfe,','%elnm%',',4,pres,',',',p4
+    (A4,A6,A8,A1,F15.11)
+  *endif
+*enddo
+*cfclos
+
+fini
+/exit,nosav" > getPres_${time}.inp
+echo "$c_anverr  -b -p ane3fl -i getPres_${time}.inp -o getPres_${time}.out" > c__run.sss
+sh ./c__run.sss
+done
+date >>time_status.dat
+
+echo "
+*********************************************************************************
+#     Files created in working directory                   	  	 	#
+#                                                           		 	#
+# Please check *.prp Files Generated                            	#
+#                                                            		 	#
+ ************************************************************************	*
+#                                                            		 	#
+#     SCRIPT DEVELOPED BY Antonio Barajas +52 442 456 7611 			 	#
+#              Last Updated 28-Nov-2017                      		 	#
+#                                                            		 	#
+*********************************************************************************"

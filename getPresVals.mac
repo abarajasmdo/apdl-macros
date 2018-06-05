@@ -1,0 +1,33 @@
+esel,,ename,,42
+nsle
+elcnt=elmiqr(0,13)
+elnm=0
+*cfopen,presdata,prp
+*do,ii,1,elcnt,1
+  p1=0
+  p2=0
+  p3=0
+  p4=0
+  elnm=elnext(elnm)
+  *get,p1,elem,elnm,smisc,2
+  *get,p2,elem,elnm,smisc,4
+  *get,p3,elem,elnm,smisc,6
+  *get,p4,elem,elnm,smisc,8
+  *if,p1,NE,0,then
+     *vwrite,'sfe,','%elnm%',',1,pres,',p1
+     (A4,A6,A8,F15.11)
+  *endif
+  *if,p2,NE,0,then
+    *vwrite,'sfe,','%elnm%',',2,pres,',p2
+    (A4,A6,A8,F15.11)
+  *endif
+  *if,p3,NE,0,then
+    *vwrite,'sfe,','%elnm%',',3,pres,',p3
+    (A4,A6,A8,F15.11)
+  *endif
+  *if,p4,NE,0,then
+    *vwrite,'sfe,','%elnm%',',4,pres,',p4
+    (A4,A6,A8,F15.11)
+  *endif
+*enddo
+*cfclos
